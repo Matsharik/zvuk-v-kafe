@@ -43137,7 +43137,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.0.15";
+	const appVersion = "v0.0.16";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43243,6 +43243,13 @@ function App() {
 		if (role === "cafe") return 4;
 		return 1;
 	};
+	const handlePrevOnboardingStep = () => {
+		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred("light");
+		setCurrentStepOnboarding((prev) => {
+			if (prev <= 1) return 1;
+			return prev - 1;
+		});
+	};
 	(0, import_react.useEffect)(() => {
 		async function initTelegramAuth() {
 			const tg = window.Telegram?.WebApp;
@@ -43327,13 +43334,6 @@ function App() {
 		setActiveTab,
 		setShowVerificationModal
 	]);
-	const handlePrevOnboardingStep = () => {
-		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred("light");
-		setCurrentStepOnboarding((prev) => {
-			if (prev <= 1) return 1;
-			return prev - 1;
-		});
-	};
 	const handleNextOnboardingStep = async () => {
 		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred("medium");
 		if (role === "musician" && currentStepOnboarding === 6) try {
