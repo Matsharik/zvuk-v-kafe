@@ -43117,11 +43117,11 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.1.35";
+	const appVersion = "v0.1.36";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
-	const [activeTab, setActiveTab] = (0, import_react.useState)("map");
+	const [activeTab, setActiveTab] = (0, import_react.useState)(null);
 	const [role, setRole] = (0, import_react.useState)(null);
 	const [errorStatus, setErrorStatus] = (0, import_react.useState)(null);
 	const [currentStepOnboarding, setCurrentStepOnboarding] = (0, import_react.useState)(0);
@@ -44137,10 +44137,9 @@ function App() {
 					}), currentStepOnboarding > 0 && (() => {
 						const expStr = String(onboardingData.experienceYears ?? "");
 						const isExperienceValid = expStr !== "" && /^(0|[1-9]\d*)$/.test(expStr) && Number(expStr) <= 120;
-						const isMusicianDisabled = onboardingData.role === "musician" && currentStepOnboarding === 4 && !isExperienceValid;
+						const isMusicianDisabled = role === "musician" && currentStepOnboarding == 4 && !isExperienceValid;
 						const isDescriptionValid = Boolean(onboardingData.description?.trim());
-						const isCafeDisabled = onboardingData.role === "cafe" && currentStepOnboarding === 3 && !isDescriptionValid;
-						const isDisabled = isMusicianDisabled || isCafeDisabled;
+						const isDisabled = isMusicianDisabled || role === "cafe" && currentStepOnboarding == 3 && !isDescriptionValid;
 						return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 							type: "button",
 							onClick: handleNextOnboardingStep,
@@ -44892,4 +44891,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-DwkUsIj5.js.map
+//# sourceMappingURL=index-CCuxePfl.js.map
