@@ -43137,14 +43137,13 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.0.21";
+	const appVersion = "v0.0.22";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
 	const [activeTab, setActiveTab] = (0, import_react.useState)("map");
 	const [role, setRole] = (0, import_react.useState)(null);
 	const [errorStatus, setErrorStatus] = (0, import_react.useState)(null);
-	const [hasSeenOnboarding, setHasSeenOnboarding] = (0, import_react.useState)(false);
 	const [currentStepOnboarding, setCurrentStepOnboarding] = (0, import_react.useState)(0);
 	const [selectedRating, setSelectedRating] = (0, import_react.useState)(0);
 	const [selectedInstrument, setSelectedInstrument] = (0, import_react.useState)("");
@@ -43163,7 +43162,7 @@ function App() {
 		},
 		equipment: {},
 		videoUrl: null,
-		hasSeenOnboarding: 0,
+		currentStepOnboarding: 0,
 		address: "г. Минск, ул. ",
 		description: "",
 		coordinates: [53.9006, 27.559],
@@ -43188,7 +43187,7 @@ function App() {
 		const payload = {
 			name: onboardingData.name,
 			first_name: window.Telegram?.WebApp.initDataUnsafe?.user.first_name,
-			has_seen_onboarding: 6,
+			has_seen_onboarding: currentStepOnboarding,
 			instruments: onboardingData.instruments,
 			genres: onboardingData.genres,
 			experience_years: Number(onboardingData.experienceYears) || 0,
@@ -43246,8 +43245,8 @@ function App() {
 		}));
 	};
 	const getMaxSteps = () => {
-		if (role === "musician") return 8;
-		if (role === "cafe") return 5;
+		if (role === "musician") return 7;
+		if (role === "cafe") return 4;
 		return 1;
 	};
 	const handlePrevOnboardingStep = () => {
@@ -43292,11 +43291,12 @@ function App() {
 					setUser(userData);
 					const savedRole = userData?.role;
 					if (savedRole) setRole(savedRole);
-					setHasSeenOnboarding(userData?.has_seen_onboarding);
+					setCurrentStepOnboarding(userData?.has_seen_onboarding);
 					console.log("✅ Пользователь авторизован:", userData);
+					console.log("userData?.has_seen_onboarding:", userData?.has_seen_onboarding);
 				} else {
 					console.warn("⚠️ [App] Новые данные пользователя не найдены. Направляем на онбординг.");
-					setHasSeenOnboarding(0);
+					setCurrentStepOnboarding(0);
 				}
 				else setErrorStatus(`Ошибка бэкенда при авторизации`);
 			} catch (err) {
@@ -43343,15 +43343,15 @@ function App() {
 	]);
 	const handleNextOnboardingStep = async () => {
 		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred("medium");
+		if (currentStepOnboarding === getMaxSteps() - 1) {
+			console.log("Финальное завершение онбординга");
+			setCurrentStepOnboarding(currentStepOnboarding + 1);
+		} else setCurrentStepOnboarding((prev) => prev + 1);
 		if (currentStepOnboarding != 0) try {
 			await saveOnboardDataToServer();
 		} catch (err) {
 			console.error("Ошибка сохранения данных музыканта перед видео:", err);
 		}
-		if (currentStepOnboarding === getMaxSteps() - 1) {
-			console.log("Финальное завершение онбординга");
-			setHasSeenOnboarding(currentStepOnboarding + 1);
-		} else setCurrentStepOnboarding((prev) => prev + 1);
 	};
 	const handleAddGigClick = () => {
 		if (!onboardingData.isVerified) setShowVerificationModal(true);
@@ -43385,7 +43385,7 @@ function App() {
 			})
 		]
 	});
-	if (hasSeenOnboarding != getMaxSteps()) {
+	if (currentStepOnboarding != getMaxSteps()) {
 		const totalSteps = getMaxSteps();
 		return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 			style: globalStyle,
@@ -43441,7 +43441,7 @@ function App() {
 							className: "flex gap-1.5 justify-start items-center w-full mb-5",
 							children: [...Array(totalSteps)].map((_, idx) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: `h-1.5 rounded-full transition-all duration-300 ${idx === currentStepOnboarding ? "w-6 bg-pink-500" : "w-2 bg-white/20"}` }, idx))
 						}),
-						currentStepOnboarding === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						currentStepOnboarding == 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "w-full",
 							children: [
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
@@ -44038,7 +44038,7 @@ function App() {
 						children: role === "cafe" ? "☕ Заведение" : "🎸 Музыкант"
 					})
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-					onClick: () => setHasSeenOnboarding(1),
+					onClick: () => setCurrentStepOnboarding(1),
 					className: "text-[11px] bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-xl font-bold text-slate-300 active:scale-95 transition-all border border-white/10",
 					children: "Настройки"
 				})]
