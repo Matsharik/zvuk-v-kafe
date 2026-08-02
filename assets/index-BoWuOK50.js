@@ -43117,7 +43117,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.1.36";
+	const appVersion = "v0.1.37";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43429,8 +43429,9 @@ function App() {
 					const savedRole = data?.role;
 					if (savedRole) {
 						setRole(savedRole);
-						if (role == "cafe") setActiveTab("gigs");
-						if (role == "musician") setActiveTab("requests");
+						console.log(`savedRole: ${data?.role}`);
+						if (savedRole == "cafe") setActiveTab("gigs");
+						if (savedRole == "musician") setActiveTab("requests");
 					}
 					setCurrentStepOnboarding(userData?.has_seen_onboarding);
 					console.log("✅ Пользователь авторизован:", userData);
@@ -44891,4 +44892,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-CCuxePfl.js.map
+//# sourceMappingURL=index-BoWuOK50.js.map
