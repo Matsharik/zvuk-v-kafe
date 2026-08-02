@@ -43137,7 +43137,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.0.26";
+	const appVersion = "v0.0.27";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43182,13 +43182,13 @@ function App() {
 		if (!result.success) throw new Error(result.error || "Ошибка создания профиля");
 		return result;
 	};
-	const saveOnboardDataToServer = async () => {
-		console.log(`saveOnboardDataToServer() called, currentStepOnboarding: ${currentStepOnboarding}`);
+	const saveOnboardDataToServer = async (hackStep) => {
+		console.log(`saveOnboardDataToServer() called, hackStep: ${hackStep}`);
 		const telegramInitData = window.Telegram?.WebApp?.initData || "";
 		const payload = {
 			name: onboardingData.name,
 			first_name: window.Telegram?.WebApp.initDataUnsafe?.user.first_name,
-			has_seen_onboarding: currentStepOnboarding,
+			has_seen_onboarding: hackStep,
 			instruments: onboardingData.instruments,
 			genres: onboardingData.genres,
 			experience_years: Number(onboardingData.experienceYears) || 0,
@@ -43347,7 +43347,7 @@ function App() {
 		console.log(`handleNextOnboardingStep() called, currentStepOnboarding: ${currentStepOnboarding}`);
 		setCurrentStepOnboarding(currentStepOnboarding + 1);
 		if (currentStepOnboarding != 0) try {
-			await saveOnboardDataToServer();
+			await saveOnboardDataToServer(currentStepOnboarding + 1);
 		} catch (err) {
 			console.error("Ошибка сохранения данных музыканта перед видео:", err);
 		}
