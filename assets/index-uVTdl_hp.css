@@ -1217,10 +1217,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
     z-index: 1000;
   }
 
-  .z-9999 {
-    z-index: 9999;
-  }
-
   .z-10000 {
     z-index: 10000;
   }
@@ -2404,10 +2400,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
     padding-bottom: calc(var(--spacing) * 12);
   }
 
-  .pb-24 {
-    padding-bottom: calc(var(--spacing) * 24);
-  }
-
   .pb-28 {
     padding-bottom: calc(var(--spacing) * 28);
   }
@@ -2679,6 +2671,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
   .placeholder-gray-500::placeholder {
     color: var(--color-gray-500);
+  }
+
+  .placeholder-slate-400::placeholder {
+    color: var(--color-slate-400);
   }
 
   .accent-pink-500 {

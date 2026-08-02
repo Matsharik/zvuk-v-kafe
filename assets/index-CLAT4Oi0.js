@@ -43137,7 +43137,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.0.18";
+	const appVersion = "v0.0.19";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43187,7 +43187,7 @@ function App() {
 		const telegramInitData = window.Telegram?.WebApp?.initData || "";
 		const payload = {
 			name: onboardingData.name,
-			first_name: userData.first_name,
+			first_name: user.first_name,
 			has_seen_onboarding: 6,
 			instruments: onboardingData.instruments,
 			genres: onboardingData.genres,
@@ -44030,7 +44030,7 @@ function App() {
       }
     ` }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
-				className: "glass-header px-4 py-3 flex justify-between items-center z-50",
+				className: "glass-header px-4 py-3 flex justify-between items-center z-50 shrink-0",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 					className: "flex items-center gap-2",
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
@@ -44126,10 +44126,7 @@ function App() {
 									border: "1px solid rgba(255,255,255,0.05)"
 								},
 								className: "p-4 rounded-2xl flex items-center justify-between mb-4 shadow-xl",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									className: "text-xs text-slate-400 block font-semibold mb-0.5",
-									children: "Статус аккаунта"
-								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 									className: "text-sm font-bold flex items-center gap-1.5",
 									children: ["Верификация:", onboardingData.isVerified ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "text-emerald-400 font-extrabold flex items-center gap-1",
@@ -44138,7 +44135,7 @@ function App() {
 										className: "text-amber-400 font-extrabold flex items-center gap-1",
 										children: " Нет ⏳"
 									})]
-								})] }), !onboardingData.isVerified && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+								}) }), !onboardingData.isVerified && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 									onClick: () => alert("Запрос на верификацию отправлен"),
 									className: "px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold rounded-xl text-slate-200 transition-all active:scale-95",
 									children: "Пройти"
@@ -44212,10 +44209,10 @@ function App() {
 						})]
 					}),
 					activeTab === "musicians" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "p-4 flex flex-col gap-4 pb-24",
+						className: "p-4 flex flex-col gap-4 pb-28 h-full overflow-y-auto relative z-20",
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
-								className: "text-xl font-black uppercase tracking-wide",
+								className: "text-xl font-black text-white uppercase tracking-wide",
 								children: "Каталог музыкантов"
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -44223,7 +44220,7 @@ function App() {
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
 									type: "text",
 									placeholder: "Поиск по имени или жанру...",
-									className: "w-full px-4 py-3 bg-slate-800/80 border border-slate-700 rounded-2xl text-sm outline-none focus:border-pink-500 transition-colors"
+									className: "w-full px-4 py-3 bg-slate-800/80 border border-slate-700 rounded-2xl text-sm text-white placeholder-slate-400 outline-none focus:border-pink-500 transition-colors"
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 									className: "flex flex-col gap-3 my-3",
 									children: [
@@ -44359,7 +44356,7 @@ function App() {
 			}),
 			" ",
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("footer", {
-				className: "glass-footer px-4 py-3 flex justify-around items-center z-9999",
+				className: "glass-footer px-4 py-3 flex justify-around items-center z-50 shrink-0",
 				children: role === "cafe" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 						onClick: () => setActiveTab("gigs"),
