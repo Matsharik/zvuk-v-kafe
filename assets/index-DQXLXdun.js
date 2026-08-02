@@ -43137,7 +43137,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.0.23";
+	const appVersion = "v0.0.24";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43183,7 +43183,7 @@ function App() {
 		return result;
 	};
 	const saveOnboardDataToServer = async () => {
-		console.log("saveOnboardDataToServer() called");
+		console.log(`saveOnboardDataToServer() called, currentStepOnboarding: ${currentStepOnboarding}`);
 		const telegramInitData = window.Telegram?.WebApp?.initData || "";
 		const payload = {
 			name: onboardingData.name,
@@ -43344,10 +43344,7 @@ function App() {
 	]);
 	const handleNextOnboardingStep = async () => {
 		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred("medium");
-		if (currentStepOnboarding === getMaxSteps() - 1) {
-			console.log("Финальное завершение онбординга");
-			setCurrentStepOnboarding(currentStepOnboarding + 1);
-		} else setCurrentStepOnboarding((prev) => prev + 1);
+		setCurrentStepOnboarding(currentStepOnboarding + 1);
 		if (currentStepOnboarding != 0) try {
 			await saveOnboardDataToServer();
 		} catch (err) {
