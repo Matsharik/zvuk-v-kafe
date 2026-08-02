@@ -43137,7 +43137,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.0.28";
+	const appVersion = "v0.0.29";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43204,7 +43204,7 @@ function App() {
 		}
 	];
 	const [selectedCafe, setSelectedCafe] = (0, import_react.useState)(null);
-	const carouselRef = useRef(null);
+	const carouselRef = (0, import_react.useRef)(null);
 	const scrollCarousel = (direction) => {
 		if (carouselRef.current) {
 			const scrollAmount = direction === "left" ? -260 : 260;
