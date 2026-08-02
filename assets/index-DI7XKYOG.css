@@ -1150,10 +1150,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
 @layer components;
 
 @layer utilities {
-  .pointer-events-auto {
-    pointer-events: auto;
-  }
-
   .pointer-events-none {
     pointer-events: none;
   }
@@ -1701,10 +1697,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
   .gap-8 {
     gap: calc(var(--spacing) * 8);
-  }
-
-  .gap-12 {
-    gap: calc(var(--spacing) * 12);
   }
 
   :where(.space-y-1\.5 > :not(:last-child)) {
@@ -2980,16 +2972,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
     }
   }
 
-  .shadow-pink-500\/50 {
-    --tw-shadow-color: #f6339a80;
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .shadow-pink-500\/50 {
-      --tw-shadow-color: color-mix(in oklab, color-mix(in oklab, var(--color-pink-500) 50%, transparent) var(--tw-shadow-alpha), transparent);
-    }
-  }
-
   .shadow-purple-600\/25 {
     --tw-shadow-color: #9810fa40;
   }
@@ -3007,16 +2989,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
   @supports (color: color-mix(in lab, red, red)) {
     .shadow-purple-600\/30 {
       --tw-shadow-color: color-mix(in oklab, color-mix(in oklab, var(--color-purple-600) 30%, transparent) var(--tw-shadow-alpha), transparent);
-    }
-  }
-
-  .shadow-purple-600\/50 {
-    --tw-shadow-color: #9810fa80;
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .shadow-purple-600\/50 {
-      --tw-shadow-color: color-mix(in oklab, color-mix(in oklab, var(--color-purple-600) 50%, transparent) var(--tw-shadow-alpha), transparent);
     }
   }
 
@@ -3160,13 +3132,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
     .group-hover\:text-white:is(:where(.group):hover *) {
       color: var(--color-white);
-    }
-
-    .hover\:scale-110:hover {
-      --tw-scale-x: 110%;
-      --tw-scale-y: 110%;
-      --tw-scale-z: 110%;
-      scale: var(--tw-scale-x) var(--tw-scale-y);
     }
 
     .hover\:border-emerald-500:hover {
