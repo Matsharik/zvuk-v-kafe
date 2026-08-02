@@ -43117,7 +43117,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.1.34";
+	const appVersion = "v0.1.35";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43183,6 +43183,18 @@ function App() {
 			icon: "🥁"
 		}
 	];
+	const verifyCafe = async () => {
+		const telegramInitData = window.Telegram?.WebApp?.initData || "";
+		const result = await (await fetch(`${hrefWebSite}api-zvuk/cafes/verify-request`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${telegramInitData}`
+			}
+		})).json();
+		if (!result.success) throw new Error(result.error || "Ошибка при отправке запроса на верификацию");
+		return true;
+	};
 	const [selectedCafe, setSelectedCafe] = (0, import_react.useState)(null);
 	const carouselRef = (0, import_react.useRef)(null);
 	const scrollCarousel = (direction) => {
@@ -43296,15 +43308,27 @@ function App() {
 	const saveOnboardDataToServer = async (hackStep) => {
 		console.log(`saveOnboardDataToServer() called, hackStep: ${hackStep}`);
 		const telegramInitData = window.Telegram?.WebApp?.initData || "";
-		const payload = {
+		let payload = null;
+		if (role == "cafe") payload = {
 			name: onboardingData.name,
 			first_name: window.Telegram?.WebApp.initDataUnsafe?.user.first_name,
 			has_seen_onboarding: hackStep,
+			description: onboardingData.description,
+			address: onboardingData.address,
+			coordinates: onboardingData.coordinates,
+			cafe_types: onboardingData.cafeTypes
+		};
+		if (role == "musician") payload = {
+			name: onboardingData.name,
+			first_name: window.Telegram?.WebApp.initDataUnsafe?.user.first_name,
+			has_seen_onboarding: hackStep,
+			description: onboardingData.description,
 			instruments: onboardingData.instruments,
 			genres: onboardingData.genres,
 			experience_years: Number(onboardingData.experienceYears) || 0,
 			education: onboardingData.education,
-			equipment: onboardingData.equipment
+			equipment: onboardingData.equipment,
+			video_url: onboardingData.videoUrl
 		};
 		const result = await (await fetch(`${hrefWebSite}api-zvuk/db/update-user-data`, {
 			method: "POST",
@@ -44366,7 +44390,10 @@ function App() {
 										children: " Нет ⏳"
 									})]
 								}) }), !onboardingData.isVerified && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-									onClick: () => alert("Запрос на верификацию отправлен"),
+									onClick: () => {
+										verifyCafe();
+										alert("Запрос на верификацию отправлен");
+									},
 									className: "px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold rounded-xl text-slate-200 transition-all active:scale-95",
 									children: "Пройти"
 								})]
@@ -44865,4 +44892,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-C8l-vitH.js.map
+//# sourceMappingURL=index-DwkUsIj5.js.map
