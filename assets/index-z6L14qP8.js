@@ -43137,7 +43137,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.0.16";
+	const appVersion = "v0.0.17";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43146,6 +43146,9 @@ function App() {
 	const [errorStatus, setErrorStatus] = (0, import_react.useState)(null);
 	const [hasSeenOnboarding, setHasSeenOnboarding] = (0, import_react.useState)(false);
 	const [currentStepOnboarding, setCurrentStepOnboarding] = (0, import_react.useState)(0);
+	const [selectedRating, setSelectedRating] = (0, import_react.useState)(0);
+	const [selectedInstrument, setSelectedInstrument] = (0, import_react.useState)("");
+	const [selectedGenre, setSelectedGenre] = (0, import_react.useState)("");
 	const [showVerificationModal, setShowVerificationModal] = (0, import_react.useState)(false);
 	const [onboardingData, setOnboardingData] = (0, import_react.useState)({
 		name: "",
@@ -43160,8 +43163,9 @@ function App() {
 		},
 		equipment: {},
 		videoUrl: null,
+		hasSeenOnboarding: 0,
 		address: "г. Минск, ул. ",
-		description: "Не оставляйте это поле пустым, мы спросим его у вас для верификации!",
+		description: "",
 		coordinates: [53.9006, 27.559],
 		cafeTypes: ["Паб", "Кальянная"]
 	});
@@ -43182,6 +43186,8 @@ function App() {
 		const telegramInitData = window.Telegram?.WebApp?.initData || "";
 		const payload = {
 			name: onboardingData.name,
+			first_name: userData.first_name,
+			has_seen_onboarding: 6,
 			instruments: onboardingData.instruments,
 			genres: onboardingData.genres,
 			experience_years: Number(onboardingData.experienceYears) || 0,
@@ -43240,7 +43246,7 @@ function App() {
 	};
 	const getMaxSteps = () => {
 		if (role === "musician") return 8;
-		if (role === "cafe") return 4;
+		if (role === "cafe") return 5;
 		return 1;
 	};
 	const handlePrevOnboardingStep = () => {
@@ -43285,11 +43291,11 @@ function App() {
 					setUser(userData);
 					const savedRole = userData?.role;
 					if (savedRole) setRole(savedRole);
-					if (userData?.has_seen_onboarding) setHasSeenOnboarding(true);
+					setHasSeenOnboarding(userData?.has_seen_onboarding);
 					console.log("✅ Пользователь авторизован:", userData);
 				} else {
 					console.warn("⚠️ [App] Новые данные пользователя не найдены. Направляем на онбординг.");
-					setHasSeenOnboarding(false);
+					setHasSeenOnboarding(0);
 				}
 				else setErrorStatus(`Ошибка бэкенда при авторизации`);
 			} catch (err) {
@@ -43344,8 +43350,10 @@ function App() {
 		} finally {
 			setLoading(false);
 		}
-		if (currentStepOnboarding === getMaxSteps() - 1) setHasSeenOnboarding(true);
-		else setCurrentStepOnboarding((prev) => prev + 1);
+		if (currentStepOnboarding === getMaxSteps() - 1) {
+			console.log("Финальное завершение онбординга");
+			setHasSeenOnboarding(currentStepOnboarding + 1);
+		} else setCurrentStepOnboarding((prev) => prev + 1);
 	};
 	const handleAddGigClick = () => {
 		if (!onboardingData.isVerified) setShowVerificationModal(true);
@@ -43379,38 +43387,38 @@ function App() {
 			})
 		]
 	});
-	if (!hasSeenOnboarding) {
+	if (hasSeenOnboarding != getMaxSteps()) {
 		const totalSteps = getMaxSteps();
 		return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 			style: globalStyle,
 			className: "fixed inset-0 w-screen h-screen bg-[#070a13] text-white select-none overflow-hidden z-99999 flex flex-col justify-between p-6",
 			children: [
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("style", { children: `
-          @keyframes onboardingTextAppear {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-          .animate-text-step {
-            animation: onboardingTextAppear 0.35s cubic-bezier(0.215, 0.610, 0.355, 1) forwards;
-          }
-          .liquid-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
-          }
-          .liquid-input {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            color: #ffffff;
-            backdrop-filter: blur(10px);
-          }
-          .liquid-input:focus {
-            outline: none;
-            border-color: rgba(236, 72, 153, 0.6);
-          }
-        ` }),
+        @keyframes onboardingTextAppear {
+          from { opacity: 0; transform: translateY(12px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-text-step {
+          animation: onboardingTextAppear 0.35s cubic-bezier(0.215, 0.610, 0.355, 1) forwards;
+        }
+        .liquid-card {
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(25px);
+          -webkit-backdrop-filter: blur(25px);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+        }
+        .liquid-input {
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          color: #ffffff;
+          backdrop-filter: blur(10px);
+        }
+        .liquid-input:focus {
+          outline: none;
+          border-color: rgba(236, 72, 153, 0.6);
+        }
+      ` }),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 					style: {
 						top: "10%",
@@ -43456,7 +43464,7 @@ function App() {
 										onClick: async () => {
 											setRole("musician");
 											await initUserRole("musician");
-											setCurrentStepOnboarding(1);
+											setCurrentStepOnboarding(2);
 										},
 										className: `liquid-card p-5 rounded-3xl text-left transition-all ${role === "musician" ? "border-pink-500 bg-pink-500/10" : ""}`,
 										children: [
@@ -43477,7 +43485,7 @@ function App() {
 										onClick: async () => {
 											setRole("cafe");
 											await initUserRole("cafe");
-											setCurrentStepOnboarding(1);
+											setCurrentStepOnboarding(2);
 										},
 										className: `liquid-card p-5 rounded-3xl text-left transition-all ${role === "cafe" ? "border-indigo-500 bg-indigo-500/10" : ""}`,
 										children: [
@@ -43531,7 +43539,7 @@ function App() {
 							currentStepOnboarding === 2 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								className: "w-full flex flex-col h-full overflow-hidden",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									className: "hrink-0 mb-4",
+									className: "shrink-0 mb-4",
 									children: [
 										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 											className: "text-pink-500 text-[10px] tracking-[0.25em] font-black uppercase",
@@ -43616,51 +43624,52 @@ function App() {
 									})
 								]
 							}),
-							currentStepOnboarding === 4 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								className: "w-full",
-								children: [
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										className: "text-pink-500 text-[10px] tracking-[0.25em] font-black uppercase",
-										children: "МУЗЫКАНТ • ШАГ 4"
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
-										className: "text-2xl font-black text-white uppercase mt-1 mb-2",
-										children: "Опыт выступлений"
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-										className: "text-xs text-slate-400 mb-4 font-medium",
-										children: "Сколько лет вы выступаете на публике?"
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-										type: "number",
-										min: "0",
-										max: "120",
-										value: onboardingData.experienceYears,
-										onKeyDown: (e) => {
-											if ([
-												"e",
-												"E",
-												"+",
-												"-",
-												".",
-												","
-											].includes(e.key)) e.preventDefault();
-										},
-										onChange: (e) => {
-											let val = e.target.value.replace(/\D/g, "");
-											if (val !== "") {
-												if (Number(val) > 120) val = "120";
-											}
-											setOnboardingData({
-												...onboardingData,
-												experienceYears: val
-											});
-										},
-										placeholder: "Например: 3",
-										className: "w-full px-4 py-3.5 rounded-2xl liquid-input text-base font-bold text-center"
-									})
-								]
-							}),
+							currentStepOnboarding === 4 && (() => {
+								const valStr = String(onboardingData.experienceYears ?? "");
+								const isValidExperience = valStr !== "" && /^(0|[1-9]\d*)$/.test(valStr) && Number(valStr) <= 120;
+								const isInvalid = valStr !== "" && !isValidExperience;
+								return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "w-full",
+									children: [
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "text-pink-500 text-[10px] tracking-[0.25em] font-black uppercase",
+											children: "МУЗЫКАНТ • ШАГ 4"
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+											className: "text-2xl font-black text-white uppercase mt-1 mb-2",
+											children: "Опыт выступлений"
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+											className: "text-xs text-slate-400 mb-4 font-medium",
+											children: "Сколько лет вы выступаете на публике?"
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+											type: "text",
+											inputMode: "numeric",
+											pattern: "[0-9]*",
+											value: onboardingData.experienceYears ?? "",
+											onChange: (e) => {
+												let cleanVal = e.target.value.replace(/\D/g, "");
+												if (cleanVal.length > 1 && cleanVal.startsWith("0")) {
+													cleanVal = cleanVal.replace(/^0+/, "");
+													if (cleanVal === "") cleanVal = "0";
+												}
+												if (cleanVal !== "" && Number(cleanVal) > 120) cleanVal = "120";
+												setOnboardingData({
+													...onboardingData,
+													experienceYears: cleanVal
+												});
+											},
+											placeholder: "Например: 3",
+											className: `w-full px-4 py-3.5 rounded-2xl liquid-input text-base font-bold text-center transition-all ${isInvalid ? "border-2 border-red-500 bg-red-500/10 text-red-200 focus:outline-none focus:border-red-500" : "border border-white/10 text-white"}`
+										}),
+										isInvalid && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+											className: "text-[11px] text-red-400 font-semibold mt-2 text-center animate-pulse",
+											children: "Укажите корректный опыт от 0 до 120 лет (без нулей впереди)"
+										})
+									]
+								});
+							})(),
 							currentStepOnboarding === 5 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								className: "w-full",
 								children: [
@@ -43776,7 +43785,8 @@ function App() {
 											...onboardingData,
 											description: newBio
 										}),
-										maxLength: 400
+										maxLength: 400,
+										placeholder: "Расскажите о своем репертуаре, опыте выступлений, о вас..."
 									})
 								]
 							}),
@@ -43906,6 +43916,7 @@ function App() {
 										children: onboardingData.cafeTypes.map((type) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 											className: "px-3 py-1.5 rounded-xl bg-pink-500/20 border border-pink-500/40 text-pink-300 text-xs font-bold flex items-center gap-2",
 											children: [type, /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+												type: "button",
 												onClick: () => removeCafeType(type),
 												className: "text-pink-400 hover:text-white font-black",
 												children: "×"
@@ -43918,20 +43929,41 @@ function App() {
 											"Ресторан",
 											"Кофейня",
 											"Бар с коктейлями",
+											"Паб",
+											"Кальянная",
 											"Крафтовый бар"
-										].map((preset) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+										].filter((preset) => !onboardingData.cafeTypes.includes(preset)).map((preset) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 											type: "button",
-											onClick: () => {
-												const cleanName = preset.replace("Это ", "");
-												if (!onboardingData.cafeTypes.includes(cleanName)) addCafeType(cleanName);
-											},
-											className: "px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] font-semibold text-slate-300",
+											onClick: () => addCafeType(preset),
+											className: "px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] font-semibold text-slate-300 transition-colors",
 											children: ["+ ", preset]
 										}, preset))
 									})
 								]
 							}),
 							currentStepOnboarding === 3 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "w-full",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "text-pink-500 text-[10px] tracking-[0.25em] font-black uppercase",
+										children: "ЗАВЕДЕНИЕ • ШАГ 3"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+										className: "text-2xl font-black text-white uppercase mt-1 mb-2",
+										children: "О заведении"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(BioInput, {
+										value: onboardingData.description || "",
+										onChange: (newBio) => setOnboardingData({
+											...onboardingData,
+											description: newBio
+										}),
+										maxLength: 400,
+										placeholder: "Не оставляйте это поле пустым, мы спросим его у вас для верификации!"
+									})
+								]
+							}),
+							currentStepOnboarding === 4 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								className: "w-full text-center flex flex-col items-center pt-2",
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
@@ -43965,11 +43997,18 @@ function App() {
 						onClick: handlePrevOnboardingStep,
 						className: "w-1/3 py-3.5 px-4 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 font-medium active:scale-95 transition",
 						children: "Назад"
-					}), currentStepOnboarding > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-						onClick: handleNextOnboardingStep,
-						className: "flex-1 py-3.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold shadow-lg shadow-purple-600/30 active:scale-95 transition",
-						children: currentStepOnboarding === getMaxSteps() - 1 ? "ГОТОВО 🚀" : "ДАЛЕЕ"
-					})]
+					}), currentStepOnboarding > 0 && (() => {
+						const expStr = String(onboardingData.experienceYears ?? "");
+						const isExperienceValid = expStr !== "" && /^(0|[1-9]\d*)$/.test(expStr) && Number(expStr) <= 120;
+						const isDisabled = onboardingData.role === "musician" && currentStepOnboarding === 4 && !isExperienceValid;
+						return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+							type: "button",
+							onClick: handleNextOnboardingStep,
+							disabled: isDisabled,
+							className: `flex-1 py-3.5 px-4 rounded-xl font-semibold transition ${isDisabled ? "bg-purple-900/40 text-slate-500 cursor-not-allowed shadow-none active:scale-100" : "bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-600/30 active:scale-95"}`,
+							children: currentStepOnboarding === getMaxSteps() - 1 ? "ГОТОВО 🚀" : "ДАЛЕЕ"
+						});
+					})()]
 				})
 			]
 		});
@@ -43979,29 +44018,29 @@ function App() {
 		className: "flex flex-col h-screen antialiased select-none",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("style", { children: `
-        .glass-header {
-          background: rgba(15, 23, 42, 0.75);
-          backdrop-filter: blur(15px);
-          -webkit-backdrop-filter: blur(15px);
-          border-b: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .glass-footer {
-          background: rgba(15, 23, 42, 0.85);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-          border-t: 1px solid rgba(255, 255, 255, 0.06);
-        }
-      ` }),
+      .glass-header {
+        background: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-b: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .glass-footer {
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-t: 1px solid rgba(255, 255, 255, 0.06);
+      }
+    ` }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
-				className: "glass-header px-4 py-3.5 flex justify-between items-center z-9999",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
-					className: "text-base font-black tracking-wider bg-linear-to-r from-pink-400 to-indigo-400 bg-clip-text text-transparent",
-					children: "ЗВУК В КАФЕ"
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-					className: "text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5",
-					children: ["Режим: ", role === "cafe" ? "☕ Заведение" : "🎸 Музыкант"]
-				})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-					onClick: () => setHasSeenOnboarding(false),
+				className: "glass-header px-4 py-3 flex justify-between items-center z-50",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "flex items-center gap-2",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+						className: "text-[11px] font-extrabold uppercase tracking-wider text-slate-200 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "w-2 h-2 rounded-full bg-pink-500 animate-pulse" }), role === "cafe" ? "☕ Заведение" : "🎸 Музыкант"]
+					})
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+					onClick: () => setHasSeenOnboarding(1),
 					className: "text-[11px] bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-xl font-bold text-slate-300 active:scale-95 transition-all border border-white/10",
 					children: "Настройки"
 				})]
@@ -44126,7 +44165,7 @@ function App() {
 					activeTab === "gigs" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "flex flex-col h-full p-4 gap-4",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							className: "flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none w-full",
+							className: "flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar w-full",
 							children: [[
 								{
 									date: "Сегодня",
@@ -44186,50 +44225,101 @@ function App() {
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
 									type: "text",
 									placeholder: "Поиск по имени или жанру...",
-									className: "w-full px-4 py-3 bg-slate-800/80 border border-slate-700 rounded-2xl text-sm"
+									className: "w-full px-4 py-3 bg-slate-800/80 border border-slate-700 rounded-2xl text-sm outline-none focus:border-pink-500 transition-colors"
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									className: "flex gap-2 overflow-x-auto pb-1 scrollbar-none text-xs",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("select", {
-										className: "bg-slate-800 border border-slate-700 text-slate-300 rounded-xl px-3 py-2 outline-none",
-										children: [
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
-												value: "",
-												children: "Все инструменты"
-											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
-												value: "vocal",
-												children: "Вокал"
-											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
-												value: "guitar",
-												children: "Акустическая гитара"
-											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
-												value: "sax",
-												children: "Саксофон"
-											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
-												value: "dj",
-												children: "DJ-пульт"
-											})
-										]
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("select", {
-										className: "bg-slate-800 border border-slate-700 text-slate-300 rounded-xl px-3 py-2 outline-none",
-										children: [
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
-												value: "",
-												children: "Любой рейтинг"
-											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
-												value: "5",
-												children: "⭐️ 5.0"
-											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
-												value: "4",
-												children: "⭐️ 4.0+"
-											})
-										]
-									})]
+									className: "flex flex-col gap-3 my-3",
+									children: [
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "flex items-center gap-1.5 overflow-x-auto custom-scrollbar pb-0.5",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "text-[10px] uppercase font-black text-slate-400 mr-1 shrink-0 tracking-wider",
+												children: "Рейтинг:"
+											}), [
+												{
+													label: "Все",
+													val: 0
+												},
+												{
+													label: "★ 4.0+",
+													val: 4
+												},
+												{
+													label: "★ 4.5+",
+													val: 4.5
+												},
+												{
+													label: "★ 4.8+",
+													val: 4.8
+												},
+												{
+													label: "★ 5.0",
+													val: 5
+												}
+											].map((item) => {
+												return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+													type: "button",
+													onClick: () => setSelectedRating(item.val),
+													className: `px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all border ${selectedRating === item.val ? "bg-amber-500/20 border-amber-400 text-amber-300 shadow-md shadow-amber-500/10" : "bg-white/5 border-white/10 text-slate-400 hover:text-slate-200"}`,
+													children: item.label
+												}, item.label);
+											})]
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "text-[10px] uppercase font-black text-slate-400 mr-1 shrink-0 tracking-wider",
+												children: "Инструмент:"
+											}), [
+												"Все",
+												"Вокал",
+												"Акустическая гитара",
+												"Электрогитара",
+												"Бас-гитара",
+												"Саксофон",
+												"DJ-пульт",
+												"Клавишные / Пианино",
+												"Ударные",
+												"Кахон",
+												"Скрипка",
+												"Труба",
+												"Аккордеон",
+												"Битбокс"
+											].map((inst) => {
+												return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+													type: "button",
+													onClick: () => setSelectedInstrument(inst === "Все" ? "" : inst),
+													className: `px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all border ${selectedInstrument === inst || inst === "Все" && !selectedInstrument ? "bg-pink-500 border-pink-400 text-white shadow-lg shadow-pink-500/25" : "bg-white/5 border-white/10 text-slate-400 hover:text-slate-200"}`,
+													children: inst
+												}, inst);
+											})]
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "text-[10px] uppercase font-black text-slate-400 mr-1 shrink-0 tracking-wider",
+												children: "Жанр:"
+											}), [
+												"Все",
+												"Поп",
+												"Рок",
+												"Джаз / Блюз",
+												"Лаундж",
+												"Электроника",
+												"Каверы",
+												"Реп / Хип-хоп",
+												"Классика",
+												"Инди",
+												"Фолк"
+											].map((genre) => {
+												return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+													type: "button",
+													onClick: () => setSelectedGenre(genre === "Все" ? "" : genre),
+													className: `px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all border ${selectedGenre === genre || genre === "Все" && !selectedGenre ? "bg-purple-600 border-purple-400 text-white shadow-lg shadow-purple-600/25" : "bg-white/5 border-white/10 text-slate-400 hover:text-slate-200"}`,
+													children: genre
+												}, genre);
+											})]
+										})
+									]
 								})]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
@@ -44269,6 +44359,7 @@ function App() {
 					})
 				]
 			}),
+			" ",
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("footer", {
 				className: "glass-footer px-4 py-3 flex justify-around items-center z-9999",
 				children: role === "cafe" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [

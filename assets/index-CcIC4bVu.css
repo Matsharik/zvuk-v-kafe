@@ -738,8 +738,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
       "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
+    --color-red-200: oklch(88.5% .062 18.334);
     --color-red-400: oklch(70.4% .191 22.216);
     --color-red-500: oklch(63.7% .237 25.331);
+    --color-amber-300: oklch(87.9% .169 91.605);
     --color-amber-400: oklch(82.8% .189 84.429);
     --color-amber-500: oklch(76.9% .188 70.08);
     --color-emerald-400: oklch(76.5% .177 163.223);
@@ -764,6 +766,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     --color-purple-400: oklch(71.4% .203 305.504);
     --color-purple-500: oklch(62.7% .265 303.9);
     --color-purple-600: oklch(55.8% .288 302.321);
+    --color-purple-900: oklch(38.1% .176 304.987);
     --color-purple-950: oklch(29.1% .149 302.717);
     --color-pink-300: oklch(82.3% .12 346.018);
     --color-pink-400: oklch(71.8% .202 349.761);
@@ -1206,6 +1209,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
     z-index: 20;
   }
 
+  .z-50 {
+    z-index: 50;
+  }
+
   .z-1000 {
     z-index: 1000;
   }
@@ -1230,6 +1237,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
     margin-inline: auto;
   }
 
+  .my-3 {
+    margin-block: calc(var(--spacing) * 3);
+  }
+
   .mt-0\.5 {
     margin-top: calc(var(--spacing) * .5);
   }
@@ -1248,6 +1259,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
   .mt-6 {
     margin-top: calc(var(--spacing) * 6);
+  }
+
+  .mr-1 {
+    margin-right: var(--spacing);
   }
 
   .mr-3 {
@@ -1312,6 +1327,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
   .h-1\.5 {
     height: calc(var(--spacing) * 1.5);
+  }
+
+  .h-2 {
+    height: calc(var(--spacing) * 2);
   }
 
   .h-3\.5 {
@@ -1542,10 +1561,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
     resize: none;
   }
 
-  .scrollbar-none {
-    scrollbar-width: none;
-  }
-
   .appearance-none {
     appearance: none;
   }
@@ -1757,6 +1772,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
     border-style: none;
   }
 
+  .border-amber-400 {
+    border-color: var(--color-amber-400);
+  }
+
   .border-amber-500\/20 {
     border-color: #f99c0033;
   }
@@ -1853,6 +1872,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
     }
   }
 
+  .border-purple-400 {
+    border-color: var(--color-purple-400);
+  }
+
   .border-purple-500\/60 {
     border-color: #ac4bff99;
   }
@@ -1861,6 +1884,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
     .border-purple-500\/60 {
       border-color: color-mix(in oklab, var(--color-purple-500) 60%, transparent);
     }
+  }
+
+  .border-red-500 {
+    border-color: var(--color-red-500);
   }
 
   .border-red-500\/20 {
@@ -1946,6 +1973,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
   @supports (color: color-mix(in lab, red, red)) {
     .bg-amber-500\/10 {
       background-color: color-mix(in oklab, var(--color-amber-500) 10%, transparent);
+    }
+  }
+
+  .bg-amber-500\/20 {
+    background-color: #f99c0033;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-amber-500\/20 {
+      background-color: color-mix(in oklab, var(--color-amber-500) 20%, transparent);
     }
   }
 
@@ -2097,6 +2134,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
     }
   }
 
+  .bg-purple-900\/40 {
+    background-color: #59168b66;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-purple-900\/40 {
+      background-color: color-mix(in oklab, var(--color-purple-900) 40%, transparent);
+    }
+  }
+
   .bg-red-500\/10 {
     background-color: #fb2c361a;
   }
@@ -2217,20 +2264,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
     }
   }
 
-  .bg-linear-to-r {
-    --tw-gradient-position: to right;
-  }
-
-  @supports (background-image: linear-gradient(in lab, red, red)) {
-    .bg-linear-to-r {
-      --tw-gradient-position: to right in oklab;
-    }
-  }
-
-  .bg-linear-to-r {
-    background-image: linear-gradient(var(--tw-gradient-stops));
-  }
-
   .bg-gradient-to-r {
     --tw-gradient-position: to right in oklab;
     background-image: linear-gradient(var(--tw-gradient-stops));
@@ -2241,18 +2274,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
   }
 
-  .from-pink-400 {
-    --tw-gradient-from: var(--color-pink-400);
-    --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
-  }
-
   .to-cyan-400 {
     --tw-gradient-to: var(--color-cyan-400);
-    --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
-  }
-
-  .to-indigo-400 {
-    --tw-gradient-to: var(--color-indigo-400);
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
   }
 
@@ -2369,8 +2392,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
     padding-right: var(--spacing);
   }
 
-  .pb-1 {
-    padding-bottom: var(--spacing);
+  .pb-0\.5 {
+    padding-bottom: calc(var(--spacing) * .5);
   }
 
   .pb-2 {
@@ -2447,10 +2470,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
   .text-xs {
     font-size: var(--text-xs);
     line-height: var(--tw-leading, var(--text-xs--line-height));
-  }
-
-  .text-\[9px\] {
-    font-size: 9px;
   }
 
   .text-\[10px\] {
@@ -2543,6 +2562,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
     white-space: pre-wrap;
   }
 
+  .text-amber-300 {
+    color: var(--color-amber-300);
+  }
+
   .text-amber-400 {
     color: var(--color-amber-400);
   }
@@ -2597,6 +2620,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
   .text-purple-300 {
     color: var(--color-purple-300);
+  }
+
+  .text-red-200 {
+    color: var(--color-red-200);
   }
 
   .text-red-400 {
@@ -2685,6 +2712,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
 
+  .shadow-none {
+    --tw-shadow: 0 0 #0000;
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+
+  .shadow-sm {
+    --tw-shadow: 0 1px 3px 0 var(--tw-shadow-color, #0000001a), 0 1px 2px -1px var(--tw-shadow-color, #0000001a);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+
   .shadow-xl {
     --tw-shadow: 0 20px 25px -5px var(--tw-shadow-color, #0000001a), 0 8px 10px -6px var(--tw-shadow-color, #0000001a);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
@@ -2693,6 +2730,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
   .ring-1 {
     --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+
+  .shadow-amber-500\/10 {
+    --tw-shadow-color: #f99c001a;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .shadow-amber-500\/10 {
+      --tw-shadow-color: color-mix(in oklab, color-mix(in oklab, var(--color-amber-500) 10%, transparent) var(--tw-shadow-alpha), transparent);
+    }
   }
 
   .shadow-emerald-600\/20 {
@@ -2732,6 +2779,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
   @supports (color: color-mix(in lab, red, red)) {
     .shadow-pink-500\/30 {
       --tw-shadow-color: color-mix(in oklab, color-mix(in oklab, var(--color-pink-500) 30%, transparent) var(--tw-shadow-alpha), transparent);
+    }
+  }
+
+  .shadow-purple-600\/25 {
+    --tw-shadow-color: #9810fa40;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .shadow-purple-600\/25 {
+      --tw-shadow-color: color-mix(in oklab, color-mix(in oklab, var(--color-purple-600) 25%, transparent) var(--tw-shadow-alpha), transparent);
     }
   }
 
@@ -2954,6 +3011,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
       color: var(--color-gray-200);
     }
 
+    .hover\:text-slate-200:hover {
+      color: var(--color-slate-200);
+    }
+
     .hover\:text-white:hover {
       color: var(--color-white);
     }
@@ -2967,8 +3028,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
     border-color: var(--color-indigo-500);
   }
 
+  .focus\:border-pink-500:focus {
+    border-color: var(--color-pink-500);
+  }
+
   .focus\:border-purple-500:focus {
     border-color: var(--color-purple-500);
+  }
+
+  .focus\:border-red-500:focus {
+    border-color: var(--color-red-500);
   }
 
   .focus\:ring-0:focus {
@@ -2994,6 +3063,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
     --tw-scale-x: 95%;
     --tw-scale-y: 95%;
     --tw-scale-z: 95%;
+    scale: var(--tw-scale-x) var(--tw-scale-y);
+  }
+
+  .active\:scale-100:active {
+    --tw-scale-x: 100%;
+    --tw-scale-y: 100%;
+    --tw-scale-z: 100%;
     scale: var(--tw-scale-x) var(--tw-scale-y);
   }
 
@@ -3382,6 +3458,33 @@ svg.leaflet-image-layer.leaflet-interactive path {
   margin-top: 12px;
   font-size: 12px;
   line-height: 1.3;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  height: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #ffffff0d;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #ec489980;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #ec4899cc;
 }
 
 @property --tw-translate-x {
