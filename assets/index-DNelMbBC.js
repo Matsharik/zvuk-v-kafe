@@ -43137,7 +43137,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.0.24";
+	const appVersion = "v0.0.26";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43344,6 +43344,7 @@ function App() {
 	]);
 	const handleNextOnboardingStep = async () => {
 		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred("medium");
+		console.log(`handleNextOnboardingStep() called, currentStepOnboarding: ${currentStepOnboarding}`);
 		setCurrentStepOnboarding(currentStepOnboarding + 1);
 		if (currentStepOnboarding != 0) try {
 			await saveOnboardDataToServer();
