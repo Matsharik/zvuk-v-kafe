@@ -43018,7 +43018,7 @@ var GenreSelector = ({ selectedGenres = [], onChange }) => {
 };
 //#endregion
 //#region src/components/onboarding/BioInput.jsx
-var BioInput = ({ value = "", onChange, maxLength = 300 }) => {
+var BioInput = ({ value = "", onChange, maxLength = 300, textLow = "", placeholder = "" }) => {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "w-full space-y-2",
 		children: [
@@ -43042,13 +43042,13 @@ var BioInput = ({ value = "", onChange, maxLength = 300 }) => {
 					value,
 					onChange: (e) => onChange(e.target.value.slice(0, maxLength)),
 					rows: 4,
-					placeholder: "Расскажите коротко о репертуаре, опыте выступлений или в каком городе проживаете...",
+					placeholder,
 					className: "w-full bg-gray-900/80 border border-gray-800 rounded-2xl p-4 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition resize-none leading-relaxed"
 				})
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 				className: "text-xs text-gray-500 px-1",
-				children: "Дайте музыкантам или заказчикам на площадке глубже познакомится с вами!"
+				children: textLow
 			})
 		]
 	});
@@ -43137,7 +43137,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.0.27";
+	const appVersion = "v0.0.28";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43145,10 +43145,141 @@ function App() {
 	const [role, setRole] = (0, import_react.useState)(null);
 	const [errorStatus, setErrorStatus] = (0, import_react.useState)(null);
 	const [currentStepOnboarding, setCurrentStepOnboarding] = (0, import_react.useState)(0);
-	const [selectedRating, setSelectedRating] = (0, import_react.useState)(0);
-	const [selectedInstrument, setSelectedInstrument] = (0, import_react.useState)("");
 	const [selectedGenre, setSelectedGenre] = (0, import_react.useState)("");
 	const [showVerificationModal, setShowVerificationModal] = (0, import_react.useState)(false);
+	const [searchQuery, setSearchQuery] = (0, import_react.useState)("");
+	const [selectedRating, setSelectedRating] = (0, import_react.useState)(0);
+	const [selectedInstruments, setSelectedInstruments] = (0, import_react.useState)([]);
+	const [selectedGenres, setSelectedGenres] = (0, import_react.useState)([]);
+	const toggleInstrumentTABMusicians = (inst) => {
+		if (inst === "Все") {
+			setSelectedInstruments([]);
+			return;
+		}
+		setSelectedInstruments((prev) => prev.includes(inst) ? prev.filter((item) => item !== inst) : [...prev, inst]);
+	};
+	const toggleGenre = (genre) => {
+		if (genre === "Все") {
+			setSelectedGenres([]);
+			return;
+		}
+		setSelectedGenres((prev) => prev.includes(genre) ? prev.filter((item) => item !== genre) : [...prev, genre]);
+	};
+	const musiciansList = [
+		{
+			id: 1,
+			name: "Алексей Гитарист",
+			rating: 4.9,
+			reviews: 18,
+			instruments: ["Акустическая гитара", "Вокал"],
+			genres: ["Джаз / Блюз", "Каверы"],
+			icon: "🎸"
+		},
+		{
+			id: 2,
+			name: "Мария Сакс",
+			rating: 4.6,
+			reviews: 9,
+			instruments: ["Саксофон"],
+			genres: ["Джаз / Блюз", "Лаундж"],
+			icon: "🎷"
+		},
+		{
+			id: 3,
+			name: "DJ Pulse",
+			rating: 5,
+			reviews: 32,
+			instruments: ["DJ-пульт"],
+			genres: ["Электроника", "Поп"],
+			icon: "🎧"
+		},
+		{
+			id: 4,
+			name: "Иван Барабанщик",
+			rating: 4.2,
+			reviews: 5,
+			instruments: ["Ударные", "Кахон"],
+			genres: ["Рок", "Каверы"],
+			icon: "🥁"
+		}
+	];
+	const [selectedCafe, setSelectedCafe] = (0, import_react.useState)(null);
+	const carouselRef = useRef(null);
+	const scrollCarousel = (direction) => {
+		if (carouselRef.current) {
+			const scrollAmount = direction === "left" ? -260 : 260;
+			carouselRef.current.scrollBy({
+				left: scrollAmount,
+				behavior: "smooth"
+			});
+		}
+	};
+	const filteredMusicians = musiciansList.filter((m) => {
+		const query = searchQuery.toLowerCase().trim();
+		const matchesSearch = !query || m.name.toLowerCase().includes(query) || m.instruments.some((i) => i.toLowerCase().includes(query)) || m.genres.some((g) => g.toLowerCase().includes(query));
+		const matchesRating = m.rating >= selectedRating;
+		const matchesInst = selectedInstruments.length === 0 || m.instruments.some((i) => selectedInstruments.includes(i));
+		const matchesGenre = selectedGenres.length === 0 || m.genres.some((g) => selectedGenres.includes(g));
+		return matchesSearch && matchesRating && matchesInst && matchesGenre;
+	});
+	const [showCreateGigModal, setShowCreateGigModal] = (0, import_react.useState)(false);
+	const [isSubmittingGig, setIsSubmittingGig] = (0, import_react.useState)(false);
+	const [gigForm, setGigForm] = (0, import_react.useState)({
+		genres: [],
+		instruments: [],
+		date: "2026-06-21",
+		time: "17:37",
+		durationHours: 2,
+		price: 350
+	});
+	const handleAddGigClick = () => {
+		if (!onboardingData.isVerified) setShowVerificationModal(true);
+		else setShowCreateGigModal(true);
+	};
+	const handleCreateGigSubmit = async (e) => {
+		if (e) e.preventDefault();
+		if (!gigForm.genres.length || !gigForm.instruments.length) {
+			alert("Выберите хотя бы один жанр и инструмент!");
+			return;
+		}
+		setIsSubmittingGig(true);
+		try {
+			const beginAtTimestamp = (/* @__PURE__ */ new Date(`${gigForm.date}T${gigForm.time}:00`)).getTime();
+			const endAtTimestamp = beginAtTimestamp + (Number(gigForm.durationHours) || 2) * 60 * 60 * 1e3;
+			const payload = {
+				genres: gigForm.genres,
+				instruments: gigForm.instruments,
+				begin_at: beginAtTimestamp,
+				end_at: endAtTimestamp,
+				price: Number(gigForm.price),
+				status: "search"
+			};
+			const result = await (await fetch(`${hrefWebSite}api-zvuk/orders/create`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${telegramInitData}`
+				},
+				body: JSON.stringify(payload)
+			})).json();
+			if (!result.success) throw new Error(result.error || "Не удалось создать выступление");
+			setShowCreateGigModal(false);
+			alert("Выступление создано и запущено в поиск! 🚀");
+			setGigForm({
+				genres: [],
+				instruments: [],
+				date: "2026-06-21",
+				time: "17:37",
+				durationHours: 2,
+				price: 350
+			});
+		} catch (err) {
+			console.error("Ошибка сохранения выступления:", err);
+			alert(`Ошибка: ${err.message}`);
+		} finally {
+			setIsSubmittingGig(false);
+		}
+	};
 	const [onboardingData, setOnboardingData] = (0, import_react.useState)({
 		name: "",
 		instruments: [],
@@ -43202,7 +43333,7 @@ function App() {
 				"Authorization": `Bearer ${telegramInitData}`
 			},
 			body: JSON.stringify({
-				table: "musicians",
+				table: `${role}s`,
 				data: payload
 			})
 		})).json();
@@ -43269,6 +43400,7 @@ function App() {
 			console.log("📦 [App] WebApp найден. initData:", telegramInitData);
 			if (!telegramInitData) console.warn("⚠️ [App] initData пустой! Запуск вне Telegram или передача данных не удалась.");
 			tg.ready();
+			tg.setBackgroundColor("#070a13");
 			if (tg.isVersionAtLeast("7.0") && typeof tg.requestFullscreen === "function") try {
 				tg.requestFullscreen();
 				console.log("Полноэкранный режим успешно запрошен");
@@ -43291,7 +43423,11 @@ function App() {
 					const userData = data.user || data.session.user;
 					setUser(userData);
 					const savedRole = data?.role;
-					if (savedRole) setRole(savedRole);
+					if (savedRole) {
+						setRole(savedRole);
+						if (role == "cafe") setActiveTab("gigs");
+						if (role == "musician") setActiveTab("requests");
+					}
 					setCurrentStepOnboarding(userData?.has_seen_onboarding);
 					console.log("✅ Пользователь авторизован:", userData);
 					console.log("userData?.has_seen_onboarding:", userData?.has_seen_onboarding);
@@ -43318,7 +43454,7 @@ function App() {
 			"musicians",
 			"profile",
 			"requests"
-		].includes(activeTab) && !showVerificationModal) {
+		].includes(activeTab) && !showVerificationModal && currentStepOnboarding == getMaxSteps()) {
 			tg.BackButton.hide();
 			tg.enableClosingConfirmation();
 		} else {
@@ -43346,15 +43482,15 @@ function App() {
 		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred("medium");
 		console.log(`handleNextOnboardingStep() called, currentStepOnboarding: ${currentStepOnboarding}`);
 		setCurrentStepOnboarding(currentStepOnboarding + 1);
+		if (currentStepOnboarding + 1 == getMaxSteps()) {
+			if (role == "cafe") setActiveTab("gigs");
+			if (role == "musician") setActiveTab("map");
+		}
 		if (currentStepOnboarding != 0) try {
 			await saveOnboardDataToServer(currentStepOnboarding + 1);
 		} catch (err) {
 			console.error("Ошибка сохранения данных музыканта перед видео:", err);
 		}
-	};
-	const handleAddGigClick = () => {
-		if (!onboardingData.isVerified) setShowVerificationModal(true);
-		else alert("Открываем экран создания выступления!");
 	};
 	const globalStyle = {
 		fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
@@ -43763,6 +43899,7 @@ function App() {
 									})
 								})]
 							}),
+							"\"Расскажите коротко о репертуаре, опыте выступлений или в каком городе проживаете...\"",
 							currentStepOnboarding === 7 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								className: "w-full",
 								children: [
@@ -43781,7 +43918,8 @@ function App() {
 											description: newBio
 										}),
 										maxLength: 400,
-										placeholder: "Расскажите о своем репертуаре, опыте выступлений, о вас..."
+										textLow: "Дайте музыкантам или заказчикам на площадке глубже познакомится с вами!",
+										placeholder: "Расскажите о своем репертуаре, опыте выступлений, в каком населенном пункте проживаете..."
 									})
 								]
 							}),
@@ -43876,7 +44014,7 @@ function App() {
 										})]
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-										className: "w-full h-52",
+										className: "w-full h-84",
 										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LocationPickerMap, {
 											initialLat: onboardingData.lat || 53.9006,
 											initialLng: onboardingData.lng || 27.559,
@@ -43954,7 +44092,8 @@ function App() {
 											description: newBio
 										}),
 										maxLength: 400,
-										placeholder: "Не оставляйте это поле пустым, мы спросим его у вас для верификации!"
+										textLow: "Не оставляйте это поле пустым, мы спросим его у вас для верификации!",
+										placeholder: "Расскажите о своем заведении..."
 									})
 								]
 							}),
@@ -43995,7 +44134,10 @@ function App() {
 					}), currentStepOnboarding > 0 && (() => {
 						const expStr = String(onboardingData.experienceYears ?? "");
 						const isExperienceValid = expStr !== "" && /^(0|[1-9]\d*)$/.test(expStr) && Number(expStr) <= 120;
-						const isDisabled = onboardingData.role === "musician" && currentStepOnboarding === 4 && !isExperienceValid;
+						const isMusicianDisabled = onboardingData.role === "musician" && currentStepOnboarding === 4 && !isExperienceValid;
+						const isDescriptionValid = Boolean(onboardingData.description?.trim());
+						const isCafeDisabled = onboardingData.role === "cafe" && currentStepOnboarding === 3 && !isDescriptionValid;
+						const isDisabled = isMusicianDisabled || isCafeDisabled;
 						return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 							type: "button",
 							onClick: handleNextOnboardingStep,
@@ -44027,7 +44169,7 @@ function App() {
       }
     ` }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
-				className: "glass-header px-4 py-3 flex justify-between items-center z-50 shrink-0",
+				className: "glass-header px-4 py-3 flex justify-between items-center z-50 shrink-0 w-full overflow-x-hidden",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 					className: "flex items-center gap-2",
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
@@ -44043,9 +44185,181 @@ function App() {
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "flex-1 relative w-full h-full bg-[#070a13]",
 				children: [
-					activeTab === "map" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapView, {}),
+					activeTab === "map" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 36px)" },
+						className: "w-full h-full relative overflow-hidden bg-[#070a13]",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "w-full h-full relative",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapView, {}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "absolute inset-0 pointer-events-none z-10 flex items-center justify-center gap-12",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									type: "button",
+									onClick: () => setSelectedCafe({
+										id: 1,
+										title: "Кафе Звук 1",
+										address: "ул. Арбат, 15",
+										rating: 4.9,
+										reviewsCount: 24,
+										image: "☕️",
+										events: [
+											{
+												id: 101,
+												title: "Акустический вечер",
+												date: "Сегодня, 20:00",
+												price: "от 1 500 ₽"
+											},
+											{
+												id: 102,
+												title: "Джаз & Вино",
+												date: "Завтра, 19:00",
+												price: "от 2 000 ₽"
+											},
+											{
+												id: 103,
+												title: "Открытый микрофон",
+												date: "Пт, 21:00",
+												price: "Вход свободный"
+											}
+										]
+									}),
+									className: "pointer-events-auto bg-pink-500 hover:scale-110 active:scale-95 text-white font-bold p-3 rounded-full shadow-lg shadow-pink-500/50 transition-all border-2 border-white",
+									children: "☕️"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									type: "button",
+									onClick: () => setSelectedCafe({
+										id: 2,
+										title: "Lounge Bar & Jam",
+										address: "Тверская, 8",
+										rating: 4.7,
+										reviewsCount: 12,
+										image: "🎷",
+										events: [{
+											id: 201,
+											title: "Саксофон соло",
+											date: "Сегодня, 21:30",
+											price: "от 3 000 ₽"
+										}, {
+											id: 202,
+											title: "DJ Set Lounge",
+											date: "Сб, 23:00",
+											price: "от 1 000 ₽"
+										}]
+									}),
+									className: "pointer-events-auto bg-purple-600 hover:scale-110 active:scale-95 text-white font-bold p-3 rounded-full shadow-lg shadow-purple-600/50 transition-all border-2 border-white",
+									children: "🎷"
+								})]
+							})]
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: `fixed bottom-0 left-0 right-0 z-50 bg-[#0f172a] border-t border-slate-700/60 rounded-t-4xl shadow-[0_-10px_40px_rgba(0,0,0,0.8)] transition-transform duration-300 ease-out flex flex-col max-h-[85vh] ${selectedCafe ? "translate-y-0" : "translate-y-full"}`,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "w-full flex items-center justify-between px-6 pt-3 pb-2 relative",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "w-12 h-1.5 bg-slate-600/60 rounded-full mx-auto" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									type: "button",
+									onClick: () => setSelectedCafe(null),
+									className: "absolute right-4 top-3 w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold hover:text-white active:scale-90 transition-all",
+									children: "✕"
+								})]
+							}), selectedCafe && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "p-4 pt-1 flex flex-col gap-4 overflow-y-auto pb-8",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "flex items-center justify-between gap-3",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "flex items-center gap-3",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+												className: "w-14 h-14 bg-pink-500/20 border border-pink-500/30 rounded-2xl flex items-center justify-center text-2xl shrink-0",
+												children: selectedCafe.image
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+													className: "text-lg font-black text-white leading-tight",
+													children: selectedCafe.title
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+													className: "text-xs text-slate-400 mt-0.5",
+													children: selectedCafe.address
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+													className: "flex items-center gap-2 mt-1",
+													children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+														className: "text-xs text-amber-400 font-bold",
+														children: ["⭐️ ", selectedCafe.rating]
+													}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+														className: "text-[10px] text-slate-500",
+														children: [
+															"• ",
+															selectedCafe.reviewsCount,
+															" отзывов"
+														]
+													})]
+												})
+											] })]
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+											type: "button",
+											className: "px-4 py-2.5 bg-pink-500 hover:bg-pink-600 active:scale-95 text-white font-bold text-xs rounded-xl shadow-lg shadow-pink-500/25 transition-all shrink-0",
+											children: "Заявка"
+										})]
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("hr", { className: "border-slate-800" }),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "flex flex-col gap-2",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "flex items-center justify-between px-1",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "text-xs font-black uppercase text-slate-400 tracking-wider",
+												children: "Ближайшие события:"
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+												className: "flex items-center gap-1.5",
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+													type: "button",
+													onClick: () => scrollCarousel("left"),
+													className: "w-7 h-7 bg-slate-800 border border-slate-700/60 rounded-lg flex items-center justify-center active:scale-90 transition-all hover:bg-slate-700 text-pink-400 text-[10px]",
+													children: "◀"
+												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+													type: "button",
+													onClick: () => scrollCarousel("right"),
+													className: "w-7 h-7 bg-slate-800 border border-slate-700/60 rounded-lg flex items-center justify-center active:scale-90 transition-all hover:bg-slate-700 text-pink-400 text-[10px]",
+													children: "▶"
+												})]
+											})]
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+											ref: carouselRef,
+											className: "flex items-center gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar py-1 scroll-smooth",
+											children: selectedCafe.events.map((evt) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+												className: "snap-center shrink-0 w-60 p-3.5 bg-slate-800/70 border border-slate-700/60 rounded-2xl flex flex-col gap-2 transition-all hover:border-pink-500/50",
+												children: [
+													/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+														className: "flex justify-between items-start",
+														children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+															className: "text-[10px] font-bold text-pink-400 bg-pink-500/10 px-2 py-0.5 rounded-md",
+															children: evt.date
+														})
+													}),
+													/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
+														className: "text-sm font-bold text-white line-clamp-1",
+														children: evt.title
+													}),
+													/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+														className: "flex justify-between items-center mt-1",
+														children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+															className: "text-xs font-black text-slate-200",
+															children: evt.price
+														}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+															type: "button",
+															className: "text-[11px] font-bold text-purple-400 hover:text-purple-300",
+															children: "Откликнуться →"
+														})]
+													})
+												]
+											}, evt.id))
+										})]
+									})
+								]
+							})]
+						})]
+					}),
 					activeTab === "requests" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "p-4 relative z-20 h-full overflow-y-auto bg-[#070a13]",
+						style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 36px)" },
+						className: "p-4 relative z-20 h-full overflow-y-auto bg-[#070a13] w-full overflow-x-hidden",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 							className: "text-lg font-bold text-white mb-3",
 							children: "Активные события"
@@ -44057,12 +44371,13 @@ function App() {
 							className: "p-6 rounded-2xl text-center",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 								className: "text-sm text-slate-400",
-								children: "Список пуст. Создайте первую заявку в панели профиля."
+								children: "Список пуст. Подайте первую заявку, найдя заведение в разделе Карта!"
 							})
 						})]
 					}),
 					activeTab === "profile" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "p-4 pb-28 relative z-20 h-full overflow-y-auto bg-[#070a13] text-white",
+						style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 36px)" },
+						className: "p-4 pb-28 relative z-20 h-full overflow-y-auto bg-[#070a13] text-white w-full overflow-x-hidden",
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 								className: "text-lg font-bold text-white mb-4 tracking-tight",
@@ -44112,7 +44427,7 @@ function App() {
 											children: role === "cafe" ? "Адрес:" : "Жанры:"
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 											className: "text-slate-200 font-semibold text-right max-w-[60%] wrap-break-word",
-											children: onboardingData.genreOrAddress || "—"
+											children: role === "cafe" ? onboardingData.address || "—" : Array.isArray(onboardingData.genres) && onboardingData.genres.length > 0 ? onboardingData.genres.join(", ") : "—"
 										})]
 									})
 								]
@@ -44155,9 +44470,10 @@ function App() {
 						]
 					}),
 					activeTab === "gigs" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 36px)" },
 						className: "flex flex-col h-full p-4 gap-4",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							className: "flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar w-full",
+							className: "flex items-center gap-2 overflow-x-hidden pb-2 custom-scrollbar w-full",
 							children: [[
 								{
 									date: "Сегодня",
@@ -44206,109 +44522,133 @@ function App() {
 						})]
 					}),
 					activeTab === "musicians" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "p-4 flex flex-col gap-4 pb-28 h-full overflow-y-auto relative z-20",
+						style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 36px)" },
+						className: "p-4 flex flex-col gap-4 pb-28 h-full overflow-y-auto relative z-20 w-full overflow-x-hidden",
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 								className: "text-xl font-black text-white uppercase tracking-wide",
 								children: "Каталог музыкантов"
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								className: "flex flex-col gap-2",
+								className: "flex flex-col gap-3",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
 									type: "text",
-									placeholder: "Поиск по имени или жанру...",
+									value: searchQuery,
+									onChange: (e) => setSearchQuery(e.target.value),
+									placeholder: "Поиск по имени, инструменту, жанру...",
 									className: "w-full px-4 py-3 bg-slate-800/80 border border-slate-700 rounded-2xl text-sm text-white placeholder-slate-400 outline-none focus:border-pink-500 transition-colors"
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									className: "flex flex-col gap-3 my-3",
+									className: "flex flex-col gap-2.5 my-1",
 									children: [
 										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-											className: "flex items-center gap-1.5 overflow-x-auto custom-scrollbar pb-0.5",
+											className: "flex items-center gap-2",
 											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-												className: "text-[10px] uppercase font-black text-slate-400 mr-1 shrink-0 tracking-wider",
+												className: "text-[10px] uppercase font-black text-slate-400 shrink-0 min-w-18.75 tracking-wider",
 												children: "Рейтинг:"
-											}), [
-												{
-													label: "Все",
-													val: 0
-												},
-												{
-													label: "★ 4.0+",
-													val: 4
-												},
-												{
-													label: "★ 4.5+",
-													val: 4.5
-												},
-												{
-													label: "★ 4.8+",
-													val: 4.8
-												},
-												{
-													label: "★ 5.0",
-													val: 5
-												}
-											].map((item) => {
-												return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-													type: "button",
-													onClick: () => setSelectedRating(item.val),
-													className: `px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all border ${selectedRating === item.val ? "bg-amber-500/20 border-amber-400 text-amber-300 shadow-md shadow-amber-500/10" : "bg-white/5 border-white/10 text-slate-400 hover:text-slate-200"}`,
-													children: item.label
-												}, item.label);
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+												className: "flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5 flex-1",
+												children: [
+													{
+														label: "Все",
+														val: 0
+													},
+													{
+														label: "★ 4.0+",
+														val: 4
+													},
+													{
+														label: "★ 4.5+",
+														val: 4.5
+													},
+													{
+														label: "★ 4.8+",
+														val: 4.8
+													},
+													{
+														label: "★ 5.0",
+														val: 5
+													}
+												].map((item) => {
+													return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+														type: "button",
+														onClick: () => setSelectedRating(item.val),
+														className: `px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all border ${selectedRating === item.val ? "bg-amber-500/20 border-amber-400 text-amber-300 shadow-md shadow-amber-500/10" : "bg-white/5 border-white/10 text-slate-400 hover:text-slate-200"}`,
+														children: item.label
+													}, item.label);
+												})
 											})]
 										}),
 										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-											className: "flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5",
+											className: "flex items-center gap-2",
 											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-												className: "text-[10px] uppercase font-black text-slate-400 mr-1 shrink-0 tracking-wider",
+												className: "text-[10px] uppercase font-black text-slate-400 shrink-0 min-w-18.75 tracking-wider",
 												children: "Инструмент:"
-											}), [
-												"Все",
-												"Вокал",
-												"Акустическая гитара",
-												"Электрогитара",
-												"Бас-гитара",
-												"Саксофон",
-												"DJ-пульт",
-												"Клавишные / Пианино",
-												"Ударные",
-												"Кахон",
-												"Скрипка",
-												"Труба",
-												"Аккордеон",
-												"Битбокс"
-											].map((inst) => {
-												return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-													type: "button",
-													onClick: () => setSelectedInstrument(inst === "Все" ? "" : inst),
-													className: `px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all border ${selectedInstrument === inst || inst === "Все" && !selectedInstrument ? "bg-pink-500 border-pink-400 text-white shadow-lg shadow-pink-500/25" : "bg-white/5 border-white/10 text-slate-400 hover:text-slate-200"}`,
-													children: inst
-												}, inst);
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+												className: "flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5 flex-1",
+												children: [
+													"Все",
+													"Вокал",
+													"Акустическая гитара",
+													"Электрогитара",
+													"Бас-гитара",
+													"Саксофон",
+													"DJ-пульт",
+													"Клавишные / Пианино",
+													"Ударные",
+													"Кахон",
+													"Скрипка",
+													"Труба",
+													"Аккордеон",
+													"Битбокс"
+												].map((inst) => {
+													const isAll = inst === "Все";
+													const active = isAll ? selectedInstruments.length === 0 : selectedInstruments.includes(inst);
+													return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+														type: "button",
+														onClick: () => toggleInstrumentTABMusicians(inst),
+														className: `px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all border ${active ? "bg-pink-500 border-pink-400 text-white shadow-lg shadow-pink-500/25" : "bg-white/5 border-white/10 text-slate-400 hover:text-slate-200"}`,
+														children: [
+															inst,
+															" ",
+															active && !isAll && "✓"
+														]
+													}, inst);
+												})
 											})]
 										}),
 										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-											className: "flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5",
+											className: "flex items-center gap-2",
 											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-												className: "text-[10px] uppercase font-black text-slate-400 mr-1 shrink-0 tracking-wider",
+												className: "text-[10px] uppercase font-black text-slate-400 shrink-0 min-w-18.75 tracking-wider",
 												children: "Жанр:"
-											}), [
-												"Все",
-												"Поп",
-												"Рок",
-												"Джаз / Блюз",
-												"Лаундж",
-												"Электроника",
-												"Каверы",
-												"Реп / Хип-хоп",
-												"Классика",
-												"Инди",
-												"Фолк"
-											].map((genre) => {
-												return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-													type: "button",
-													onClick: () => setSelectedGenre(genre === "Все" ? "" : genre),
-													className: `px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all border ${selectedGenre === genre || genre === "Все" && !selectedGenre ? "bg-purple-600 border-purple-400 text-white shadow-lg shadow-purple-600/25" : "bg-white/5 border-white/10 text-slate-400 hover:text-slate-200"}`,
-													children: genre
-												}, genre);
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+												className: "flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5 flex-1",
+												children: [
+													"Все",
+													"Поп",
+													"Рок",
+													"Джаз / Блюз",
+													"Лаундж",
+													"Электроника",
+													"Каверы",
+													"Реп / Хип-хоп",
+													"Классика",
+													"Инди",
+													"Фолк"
+												].map((genre) => {
+													const isAll = genre === "Все";
+													const active = isAll ? selectedGenres.length === 0 : selectedGenres.includes(genre);
+													return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+														type: "button",
+														onClick: () => toggleGenre(genre),
+														className: `px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all border ${active ? "bg-purple-600 border-purple-400 text-white shadow-lg shadow-purple-600/25" : "bg-white/5 border-white/10 text-slate-400 hover:text-slate-200"}`,
+														children: [
+															genre,
+															" ",
+															active && !isAll && "✓"
+														]
+													}, genre);
+												})
 											})]
 										})
 									]
@@ -44316,36 +44656,45 @@ function App() {
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 								className: "flex flex-col gap-3",
-								children: [
-									1,
-									2,
-									3
-								].map((id) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								children: filteredMusicians.length > 0 ? filteredMusicians.map((m) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 									className: "p-4 bg-slate-800/50 border border-slate-700/60 rounded-2xl flex items-center justify-between",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 										className: "flex items-center gap-3",
 										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-											className: "w-12 h-12 bg-pink-500/20 rounded-full flex items-center justify-center text-xl",
-											children: "🎸"
+											className: "w-12 h-12 bg-pink-500/20 rounded-full flex items-center justify-center text-xl shrink-0",
+											children: m.icon
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
 											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
 												className: "font-bold text-sm text-white",
-												children: "Алексей Гитарист"
+												children: m.name
 											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 												className: "text-xs text-slate-400",
-												children: "Акустика • Джаз / Блюз"
+												children: [
+													m.instruments.join(", "),
+													" • ",
+													m.genres.join(", ")
+												]
 											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 												className: "text-[10px] text-pink-400 font-bold",
-												children: "⭐️ 4.9 (18 отзывов)"
+												children: [
+													"⭐️ ",
+													m.rating,
+													" (",
+													m.reviews,
+													" отзывов)"
+												]
 											})
 										] })]
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-										className: "px-3 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-xl text-xs font-bold transition-all",
+										className: "px-3 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-xl text-xs font-bold transition-all shrink-0",
 										children: "Пригласить"
 									})]
-								}, id))
+								}, m.id)) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									className: "p-6 bg-slate-800/30 border border-slate-700/40 rounded-2xl text-center text-slate-400 text-sm",
+									children: "Ничего не найдено. Попробуйте сбросить фильтры."
+								})
 							})
 						]
 					})
@@ -44353,7 +44702,7 @@ function App() {
 			}),
 			" ",
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("footer", {
-				className: "glass-footer px-4 py-3 flex justify-around items-center z-50 shrink-0",
+				className: "glass-footer px-4 py-3 flex justify-around items-center z-50 shrink-0 w-full overflow-x-hidden",
 				children: role === "cafe" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 						onClick: () => setActiveTab("gigs"),
@@ -44390,17 +44739,6 @@ function App() {
 					})
 				] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						onClick: () => setActiveTab("map"),
-						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "map" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-xl",
-							children: "🗺️"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-[10px] mt-1 font-bold tracking-wide",
-							children: "Карта"
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 						onClick: () => setActiveTab("requests"),
 						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "requests" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
@@ -44409,6 +44747,17 @@ function App() {
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 							className: "text-[10px] mt-1 font-bold tracking-wide",
 							children: "Заявки"
+						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+						onClick: () => setActiveTab("map"),
+						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "map" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "text-xl",
+							children: "🗺️"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "text-[10px] mt-1 font-bold tracking-wide",
+							children: "Карта"
 						})]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
@@ -44427,6 +44776,168 @@ function App() {
 			showVerificationModal && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(VerificationModal, {
 				venueName: onboardingData.name || user?.first_name || window.Telegram?.WebApp.initDataUnsafe?.user.first_name || "Заведение",
 				onClose: () => setShowVerificationModal(false)
+			}),
+			showCreateGigModal && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-md p-0 sm:p-4 animate-fadeIn",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "w-full max-w-lg bg-[#0f172a] border border-slate-700/80 rounded-t-4xl sm:rounded-3xl p-6 shadow-2xl flex flex-col gap-5 max-h-[90vh] overflow-y-auto relative",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+							onClick: () => setShowCreateGigModal(false),
+							className: "absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center font-bold",
+							children: "✕"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+							className: "text-xl font-black text-white uppercase tracking-wide border-b border-slate-800 pb-3",
+							children: "Новое выступление"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
+							onSubmit: handleCreateGigSubmit,
+							className: "flex flex-col gap-4",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "flex flex-col gap-2",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+										className: "text-xs font-black uppercase text-pink-400 tracking-wider flex items-center gap-1.5",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "🔊" }), " 1. Укажите жанры"]
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "flex flex-wrap gap-1.5",
+										children: [
+											"Ро克",
+											"Поп",
+											"Джаз / Блюз",
+											"Каверы",
+											"Лаундж",
+											"Электроника",
+											"Акустика"
+										].map((genre) => {
+											const active = gigForm.genres.includes(genre);
+											return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+												type: "button",
+												onClick: () => {
+													setGigForm((p) => ({
+														...p,
+														genres: active ? p.genres.filter((g) => g !== genre) : [...p.genres, genre]
+													}));
+												},
+												className: `px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${active ? "bg-pink-500 border-pink-400 text-white shadow-lg shadow-pink-500/30 scale-105" : "bg-slate-800/80 border-slate-700 text-slate-300"}`,
+												children: [
+													genre,
+													" ",
+													active && "✓"
+												]
+											}, genre);
+										})
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "flex flex-col gap-2",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+										className: "text-xs font-black uppercase text-purple-400 tracking-wider flex items-center gap-1.5",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "🥁" }), " 2. Укажите инструменты"]
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "flex flex-wrap gap-1.5",
+										children: [
+											"Вокал",
+											"Акустическая гитара",
+											"Электрогитара",
+											"Саксофон",
+											"DJ-пульт",
+											"Ударные",
+											"Клавишные"
+										].map((inst) => {
+											const active = gigForm.instruments.includes(inst);
+											return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+												type: "button",
+												onClick: () => {
+													setGigForm((p) => ({
+														...p,
+														instruments: active ? p.instruments.filter((i) => i !== inst) : [...p.instruments, inst]
+													}));
+												},
+												className: `px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${active ? "bg-purple-600 border-purple-400 text-white shadow-lg shadow-purple-600/30 scale-105" : "bg-slate-800/80 border-slate-700 text-slate-300"}`,
+												children: [
+													inst,
+													" ",
+													active && "✓"
+												]
+											}, inst);
+										})
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "flex flex-col gap-2",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+										className: "text-xs font-black uppercase text-amber-400 tracking-wider flex items-center gap-1.5",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "⏰" }), " 3 и 4. Время и дата выступления"]
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "grid grid-cols-2 gap-3",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "bg-slate-800/90 border border-slate-700 rounded-2xl p-3 flex flex-col items-center",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "text-[10px] uppercase font-bold text-slate-400",
+												children: "Время начала"
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+												type: "time",
+												value: gigForm.time,
+												onChange: (e) => setGigForm({
+													...gigForm,
+													time: e.target.value
+												}),
+												className: "bg-transparent text-2xl font-black text-white outline-none text-center w-full mt-1"
+											})]
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "bg-slate-800/90 border border-slate-700 rounded-2xl p-3 flex flex-col items-center",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "text-[10px] uppercase font-bold text-slate-400",
+												children: "Дата"
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+												type: "date",
+												value: gigForm.date,
+												onChange: (e) => setGigForm({
+													...gigForm,
+													date: e.target.value
+												}),
+												className: "bg-transparent text-sm font-bold text-white outline-none text-center w-full mt-2"
+											})]
+										})]
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "flex flex-col gap-2",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+										className: "text-xs font-black uppercase text-emerald-400 tracking-wider flex items-center gap-1.5",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "💰" }), " 5. Гонорар"]
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "bg-slate-800/90 border border-slate-700 rounded-2xl p-3 flex items-center justify-between",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+											type: "number",
+											value: gigForm.price,
+											onChange: (e) => setGigForm({
+												...gigForm,
+												price: e.target.value
+											}),
+											placeholder: "350",
+											className: "bg-transparent text-2xl font-black text-white outline-none w-full"
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "text-lg font-black text-emerald-400 shrink-0",
+											children: "BYN"
+										})]
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									type: "submit",
+									disabled: isSubmittingGig,
+									className: "w-full py-4 mt-2 bg-linear-to-r from-pink-500 via-purple-600 to-pink-500 hover:opacity-95 active:scale-98 text-white font-black text-base uppercase tracking-widest rounded-2xl shadow-xl shadow-pink-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50",
+									children: isSubmittingGig ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "animate-pulse",
+										children: "Запуск..."
+									}) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "🚀" }), " ЗАПУСТИТЬ ПОИСК!"] })
+								})
+							]
+						})
+					]
+				})
 			})
 		]
 	});
