@@ -1226,6 +1226,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
     z-index: 1000;
   }
 
+  .z-9999 {
+    z-index: 9999;
+  }
+
   .z-10000 {
     z-index: 10000;
   }
@@ -3730,6 +3734,55 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #ec4899cc;
+}
+
+.custom-pin-wrapper {
+  background: none !important;
+  border: none !important;
+}
+
+.marker-pin {
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 46px;
+  display: flex;
+  position: relative;
+}
+
+.pin-body {
+  color: #fff;
+  background: linear-gradient(135deg, #ec4899 0%, #7c3aed 100%);
+  border: 2px solid #fff;
+  border-radius: 50% 50% 50% 0;
+  justify-content: center;
+  align-items: center;
+  width: 34px;
+  height: 34px;
+  transition: transform .2s cubic-bezier(.175, .885, .32, 1.275);
+  display: flex;
+  transform: rotate(-45deg);
+  box-shadow: 0 6px 16px #ec489980;
+}
+
+.pin-body svg {
+  transform: rotate(45deg);
+}
+
+.marker-pin:hover .pin-body {
+  transform: rotate(-45deg) scale(1.15);
+  box-shadow: 0 8px 20px #ec4899cc;
+}
+
+.pin-shadow {
+  filter: blur(1.5px);
+  background: #00000059;
+  border-radius: 50%;
+  width: 12px;
+  height: 5px;
+  position: absolute;
+  bottom: 0;
 }
 
 @property --tw-translate-x {

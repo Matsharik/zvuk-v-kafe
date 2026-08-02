@@ -18755,15 +18755,24 @@ var updateMarkerCluster = (instance, props, prevProps) => {
 var index_default = createPathComponent(createMarkerClusterGroup, updateMarkerCluster);
 //#endregion
 //#region src/components/MapView.tsx
-var createCustomMarkerIcon = (emoji = "☕️") => {
-	return import_leaflet_src.default.divIcon({
-		html: `<div class="custom-neon-marker">${emoji}</div>`,
-		className: "custom-marker-wrapper",
-		iconSize: [42, 42],
-		iconAnchor: [21, 42],
-		popupAnchor: [0, -40]
-	});
-};
+var customPinIcon = import_leaflet_src.default.divIcon({
+	className: "custom-pin-wrapper",
+	html: `
+    <div class="marker-pin">
+      <div class="pin-shadow"></div>
+      <div class="pin-body">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18V5l12-2v13"></path>
+          <circle cx="6" cy="18" r="3"></circle>
+          <circle cx="18" cy="16" r="3"></circle>
+        </svg>
+      </div>
+    </div>
+  `,
+	iconSize: [36, 46],
+	iconAnchor: [18, 46],
+	popupAnchor: [0, -44]
+});
 var createClusterCustomIcon = (cluster) => {
 	const count = cluster.getChildCount();
 	return import_leaflet_src.default.divIcon({
@@ -18864,15 +18873,15 @@ function MapView({ cafes = [], onSelectCafe }) {
 			zoomControl: false,
 			attributionControl: false,
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TileLayer, {
-				url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-				subdomains: "abcd",
-				maxZoom: 19
+				url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+				maxZoom: 19,
+				attribution: "© <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>"
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(index_default, {
 				showCoverageOnHover: false,
 				iconCreateFunction: createClusterCustomIcon,
 				children: pointsToRender.map((point) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Marker, {
 					position: [point.lat, point.lng],
-					icon: createCustomMarkerIcon(point.image || "☕️"),
+					icon: customPinIcon,
 					eventHandlers: { click: (e) => {
 						import_leaflet_src.default.DomEvent.stopPropagation(e.originalEvent);
 						if (onSelectCafe) onSelectCafe(point);
@@ -43108,7 +43117,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.1.32";
+	const appVersion = "v0.1.33";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -44159,7 +44168,7 @@ function App() {
 						style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 36px)" },
 						className: "w-full h-full relative overflow-hidden bg-[#070a13]",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapView, { onSelectCafe: (cafe) => setSelectedCafe(cafe) }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							className: `fixed bottom-0 left-0 right-0 z-50 bg-[#0f172a] border-t border-slate-700/60 rounded-t-4xl shadow-[0_-10px_40px_rgba(0,0,0,0.8)] transition-transform duration-300 ease-out flex flex-col max-h-[85vh] ${selectedCafe ? "translate-y-0" : "translate-y-full"}`,
+							className: `fixed bottom-0 left-0 right-0 z-9999 bg-[#0f172a] border-t border-slate-700/60 rounded-t-4xl shadow-[0_-10px_40px_rgba(0,0,0,0.8)] transition-transform duration-300 ease-out flex flex-col max-h-[85vh] ${selectedCafe ? "translate-y-0" : "translate-y-full"}`,
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								className: "w-full flex items-center justify-between px-6 pt-3 pb-2 relative",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "w-12 h-1.5 bg-slate-600/60 rounded-full mx-auto" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
@@ -44856,4 +44865,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-BZuhP9cH.js.map
+//# sourceMappingURL=index-COj1mJqO.js.map
