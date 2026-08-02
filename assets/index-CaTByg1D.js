@@ -43137,7 +43137,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.0.19";
+	const appVersion = "v0.0.20";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43187,7 +43187,7 @@ function App() {
 		const telegramInitData = window.Telegram?.WebApp?.initData || "";
 		const payload = {
 			name: onboardingData.name,
-			first_name: user.first_name,
+			first_name: window.Telegram?.WebApp.user.first_name,
 			has_seen_onboarding: 6,
 			instruments: onboardingData.instruments,
 			genres: onboardingData.genres,
@@ -44085,7 +44085,7 @@ function App() {
 											children: "Имя:"
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 											className: "text-slate-200 font-bold",
-											children: onboardingData.name || user?.first_name || "Не указано"
+											children: onboardingData.name || user?.first_name || window.Telegram?.WebApp.user.first_name || "Не указано"
 										})]
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -44428,7 +44428,7 @@ function App() {
 				] })
 			}),
 			showVerificationModal && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(VerificationModal, {
-				venueName: onboardingData.name || user?.first_name || "Заведение",
+				venueName: onboardingData.name || user?.first_name || window.Telegram?.WebApp.user.first_name || "Заведение",
 				onClose: () => setShowVerificationModal(false)
 			})
 		]
