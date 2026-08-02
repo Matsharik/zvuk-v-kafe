@@ -26254,6 +26254,7 @@ var import_dist = /* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((expor
 })))(), 1);
 //#endregion
 //#region src/components/MapView.tsx
+var MarkerClusterGroup = import_dist.default.default || import_dist.default;
 var createCustomMarkerIcon = (emoji = "☕️") => {
 	return import_leaflet_src$2.default.divIcon({
 		html: `<div class="custom-neon-marker">${emoji}</div>`,
@@ -26366,7 +26367,7 @@ function MapView({ cafes = [], onSelectCafe }) {
 				url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
 				subdomains: "abcd",
 				maxZoom: 19
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_dist.default, {
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MarkerClusterGroup, {
 				showCoverageOnHover: false,
 				iconCreateFunction: createClusterCustomIcon,
 				children: pointsToRender.map((point) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Marker, {
@@ -50607,7 +50608,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.0.30";
+	const appVersion = "v0.1.31";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react$8.useState)(true);
 	const [user, setUser] = (0, import_react$8.useState)(null);
