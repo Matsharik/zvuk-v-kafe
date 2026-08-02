@@ -43137,7 +43137,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.0.17";
+	const appVersion = "v0.0.18";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43182,7 +43182,8 @@ function App() {
 		if (!result.success) throw new Error(result.error || "Ошибка создания профиля");
 		return result;
 	};
-	const saveMusicianBeforeVideo = async () => {
+	const saveOnboardDataToServer = async () => {
+		console.log("saveOnboardDataToServer() called");
 		const telegramInitData = window.Telegram?.WebApp?.initData || "";
 		const payload = {
 			name: onboardingData.name,
@@ -43342,13 +43343,10 @@ function App() {
 	]);
 	const handleNextOnboardingStep = async () => {
 		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred("medium");
-		if (role === "musician" && currentStepOnboarding === 6) try {
-			setLoading(true);
-			await saveMusicianBeforeVideo();
+		if (currentStepOnboarding != 0) try {
+			await saveOnboardDataToServer();
 		} catch (err) {
 			console.error("Ошибка сохранения данных музыканта перед видео:", err);
-		} finally {
-			setLoading(false);
 		}
 		if (currentStepOnboarding === getMaxSteps() - 1) {
 			console.log("Финальное завершение онбординга");
@@ -43462,9 +43460,9 @@ function App() {
 									className: "flex flex-col gap-4 w-full",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 										onClick: async () => {
+											setCurrentStepOnboarding(1);
 											setRole("musician");
 											await initUserRole("musician");
-											setCurrentStepOnboarding(2);
 										},
 										className: `liquid-card p-5 rounded-3xl text-left transition-all ${role === "musician" ? "border-pink-500 bg-pink-500/10" : ""}`,
 										children: [
@@ -43483,9 +43481,9 @@ function App() {
 										]
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 										onClick: async () => {
+											setCurrentStepOnboarding(1);
 											setRole("cafe");
 											await initUserRole("cafe");
-											setCurrentStepOnboarding(2);
 										},
 										className: `liquid-card p-5 rounded-3xl text-left transition-all ${role === "cafe" ? "border-indigo-500 bg-indigo-500/10" : ""}`,
 										children: [
@@ -44035,9 +44033,9 @@ function App() {
 				className: "glass-header px-4 py-3 flex justify-between items-center z-50",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 					className: "flex items-center gap-2",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 						className: "text-[11px] font-extrabold uppercase tracking-wider text-slate-200 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "w-2 h-2 rounded-full bg-pink-500 animate-pulse" }), role === "cafe" ? "☕ Заведение" : "🎸 Музыкант"]
+						children: role === "cafe" ? "☕ Заведение" : "🎸 Музыкант"
 					})
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 					onClick: () => setHasSeenOnboarding(1),
@@ -44052,7 +44050,7 @@ function App() {
 					activeTab === "requests" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "p-4 relative z-20 h-full overflow-y-auto bg-[#070a13]",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
-							className: "text-lg font-bold mb-3",
+							className: "text-lg font-bold text-white mb-3",
 							children: "Активные события"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 							style: {
@@ -44070,7 +44068,7 @@ function App() {
 						className: "p-4 pb-28 relative z-20 h-full overflow-y-auto bg-[#070a13] text-white",
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
-								className: "text-lg font-bold mb-4 tracking-tight",
+								className: "text-lg font-bold text-white mb-4 tracking-tight",
 								children: "Мой аккаунт"
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
