@@ -43117,7 +43117,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.1.33";
+	const appVersion = "v0.1.34";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -44315,7 +44315,7 @@ function App() {
 											children: "Имя:"
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 											className: "text-slate-200 font-bold",
-											children: onboardingData.name || user?.first_name || window.Telegram?.WebApp.initDataUnsafe?.user.first_name || "Не указано"
+											children: onboardingData.name || user?.name || user?.first_name || window.Telegram?.WebApp.initDataUnsafe?.user.first_name || "Не указано"
 										})]
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -44345,7 +44345,7 @@ function App() {
 											children: role === "cafe" ? "Адрес:" : "Жанры:"
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 											className: "text-slate-200 font-semibold text-right max-w-[60%] wrap-break-word",
-											children: role === "cafe" ? onboardingData.address || "—" : Array.isArray(onboardingData.genres) && onboardingData.genres.length > 0 ? onboardingData.genres.join(", ") : "—"
+											children: role === "cafe" ? onboardingData?.address || user?.address || "—" : Array.isArray(onboardingData?.genres) && onboardingData.genres.length > 0 ? onboardingData.genres.join(", ") : Array.isArray(user?.genres) && user.genres.length > 0 ? user.genres.join(", ") : "—"
 										})]
 									})
 								]
@@ -44865,4 +44865,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-COj1mJqO.js.map
+//# sourceMappingURL=index-C8l-vitH.js.map
