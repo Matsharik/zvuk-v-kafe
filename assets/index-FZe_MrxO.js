@@ -43121,7 +43121,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.1.40";
+	const appVersion = "v0.1.41";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -44781,17 +44781,18 @@ function App() {
 											"Каверы",
 											"Классика",
 											"Фолк"
-										].map((inst) => {
-											const active = inst === "Все" ? gigForm.genres.length === 0 : gigForm.genres.includes(inst);
+										].map((genre) => {
+											const isAll = genre === "Все";
+											const active = isAll ? gigForm.genres.length === 0 : gigForm.genres.includes(genre);
 											return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 												type: "button",
 												onClick: () => {
 													setGigForm((p) => ({
 														...p,
-														genres: active ? p.genres.filter((g) => g !== genre) : [...p.genres, genre]
+														genres: isAll ? [] : active ? p.genres.filter((g) => g !== genre) : [...p.genres, genre]
 													}));
 												},
-												className: `px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${active ? "bg-pink-500 border-pink-400 text-white shadow-lg shadow-pink-500/30 scale-105" : "bg-slate-800/80 border-slate-700 text-slate-300"}`,
+												className: `px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${active ? "bg-pink-500 border-pink-400 text-white shadow-lg shadow-pink-500/30 scale-105" : "bg-slate-800/80 border-slate-700 text-slate-300 hover:border-pink-500/50"}`,
 												children: [
 													genre,
 													" ",
@@ -44840,16 +44841,17 @@ function App() {
 											"Сэмплер / Drum Machine",
 											"Другое"
 										].map((inst) => {
-											const active = inst === "Все" ? gigForm.instruments.length === 0 : gigForm.instruments.includes(inst);
+											const isAll = inst === "Все";
+											const active = isAll ? gigForm.instruments.length === 0 : gigForm.instruments.includes(inst);
 											return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 												type: "button",
 												onClick: () => {
 													setGigForm((p) => ({
 														...p,
-														instruments: active ? p.instruments.filter((i) => i !== inst) : [...p.instruments, inst]
+														instruments: isAll ? [] : active ? p.instruments.filter((i) => i !== inst) : [...p.instruments, inst]
 													}));
 												},
-												className: `px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${active ? "bg-purple-600 border-purple-400 text-white shadow-lg shadow-purple-600/30 scale-105" : "bg-slate-800/80 border-slate-700 text-slate-300"}`,
+												className: `px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${active ? "bg-purple-600 border-purple-400 text-white shadow-lg shadow-purple-600/30 scale-105" : "bg-slate-800/80 border-slate-700 text-slate-300 hover:border-purple-500/50"}`,
 												children: [
 													inst,
 													" ",
@@ -44941,4 +44943,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-DT829mHN.js.map
+//# sourceMappingURL=index-FZe_MrxO.js.map

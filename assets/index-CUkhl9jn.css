@@ -3170,6 +3170,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
       }
     }
 
+    .hover\:border-purple-500\/50:hover {
+      border-color: #ac4bff80;
+    }
+
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:border-purple-500\/50:hover {
+        border-color: color-mix(in oklab, var(--color-purple-500) 50%, transparent);
+      }
+    }
+
     .hover\:bg-emerald-700:hover {
       background-color: var(--color-emerald-700);
     }
