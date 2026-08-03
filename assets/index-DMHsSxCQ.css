@@ -1533,6 +1533,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
     max-width: var(--container-xs);
   }
 
+  .min-w-0 {
+    min-width: 0;
+  }
+
   .min-w-18\.75 {
     min-width: calc(var(--spacing) * 18.75);
   }
@@ -2037,6 +2041,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
   .border-slate-800 {
     border-color: var(--color-slate-800);
+  }
+
+  .border-slate-800\/80 {
+    border-color: #1d293dcc;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .border-slate-800\/80 {
+      border-color: color-mix(in oklab, var(--color-slate-800) 80%, transparent);
+    }
   }
 
   .border-white {
@@ -2591,10 +2605,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
   .pb-12 {
     padding-bottom: calc(var(--spacing) * 12);
-  }
-
-  .pb-28 {
-    padding-bottom: calc(var(--spacing) * 28);
   }
 
   .text-center {
@@ -3713,11 +3723,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
   display: none;
 }
 
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
 .custom-scrollbar::-webkit-scrollbar {
   height: 4px;
 }
@@ -3783,6 +3788,17 @@ svg.leaflet-image-layer.leaflet-interactive path {
   height: 5px;
   position: absolute;
   bottom: 0;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
 }
 
 @property --tw-translate-x {

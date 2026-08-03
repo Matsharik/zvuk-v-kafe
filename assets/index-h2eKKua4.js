@@ -43117,7 +43117,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.1.37";
+	const appVersion = "v0.1.38";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43574,8 +43574,8 @@ function App() {
 					className: "absolute w-80 h-80 opacity-[0.16] blur-3xl pointer-events-none"
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 16px)" },
-					className: "w-full flex flex-col items-start shrink-0 animate-text-step z-10 overflow-y-auto max-h-[82vh] pr-1",
+					style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 18px)" },
+					className: "w-full flex flex-col items-start shrink-0 animate-text-step z-10 overflow-y-auto no-scrollbar max-h-[82vh] pr-1",
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 							className: "flex gap-1.5 justify-start items-center w-full mb-5",
@@ -43691,7 +43691,7 @@ function App() {
 										})
 									]
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-									className: "flex-1 overflow-y-auto min-h-0 pr-1 my-scrollbar",
+									className: "flex-1 overflow-y-auto my-scrollbar min-h-0 pr-1",
 									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 										className: "flex flex-wrap gap-2 pb-2",
 										children: [
@@ -43880,7 +43880,7 @@ function App() {
 										})
 									]
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-									className: "flex-1 overflow-y-auto min-h-0 pr-1 my-scrollbar",
+									className: "flex-1 overflow-y-auto my-scrollbar min-h-0 pr-1",
 									children: onboardingData.instruments.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 										className: "text-xs text-amber-400 font-semibold",
 										children: "Вы не выбрали ни одного инструмента на шаге 2."
@@ -44129,7 +44129,6 @@ function App() {
 					]
 				}, `${role}-${currentStepOnboarding}`),
 				currentStepOnboarding > 0 && currentStepOnboarding <= getMaxSteps() - 1 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					style: { paddingBottom: "calc(var(--tg-safe-area-inset-bottom, 0px) + 16px)" },
 					className: "w-full shrink-0 z-10 flex gap-3 pt-3",
 					children: [currentStepOnboarding > 1 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 						onClick: handlePrevOnboardingStep,
@@ -44172,6 +44171,7 @@ function App() {
       }
     ` }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
+				style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 36px)" },
 				className: "glass-header px-4 py-3 flex justify-between items-center z-50 shrink-0 w-full overflow-x-hidden",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 					className: "flex items-center gap-2",
@@ -44179,7 +44179,7 @@ function App() {
 						className: "text-[11px] font-extrabold uppercase tracking-wider text-slate-200 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm",
 						children: role === "cafe" ? "☕ Заведение" : "🎸 Музыкант"
 					})
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+				}), (role === "musician" || role === "cafe" && !user.is_verified) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 					onClick: () => setCurrentStepOnboarding(1),
 					className: "text-[11px] bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-xl font-bold text-slate-300 active:scale-95 transition-all border border-white/10",
 					children: "Настройки"
@@ -44189,8 +44189,7 @@ function App() {
 				className: "flex-1 relative w-full h-full bg-[#070a13]",
 				children: [
 					activeTab === "map" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 36px)" },
-						className: "w-full h-full relative overflow-hidden bg-[#070a13]",
+						className: "w-full flex-1 min-h-0 relative overflow-hidden bg-[#070a13]",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapView, { onSelectCafe: (cafe) => setSelectedCafe(cafe) }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: `fixed bottom-0 left-0 right-0 z-9999 bg-[#0f172a] border-t border-slate-700/60 rounded-t-4xl shadow-[0_-10px_40px_rgba(0,0,0,0.8)] transition-transform duration-300 ease-out flex flex-col max-h-[85vh] ${selectedCafe ? "translate-y-0" : "translate-y-full"}`,
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -44202,7 +44201,7 @@ function App() {
 									children: "✕"
 								})]
 							}), selectedCafe && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								className: "p-4 pt-1 flex flex-col gap-4 overflow-y-auto pb-8",
+								className: "p-4 pt-1 flex flex-col gap-4 overflow-y-auto no-scrollbar pb-8",
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 										className: "flex items-center justify-between gap-3",
@@ -44300,8 +44299,7 @@ function App() {
 						})]
 					}),
 					activeTab === "requests" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 36px)" },
-						className: "p-4 relative z-20 h-full overflow-y-auto bg-[#070a13] w-full overflow-x-hidden",
+						className: "p-4 relative z-20 flex-1 min-h-0 overflow-y-auto no-scrollbar bg-[#070a13] w-full overflow-x-hidden",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 							className: "text-lg font-bold text-white mb-3",
 							children: "Активные события"
@@ -44318,8 +44316,7 @@ function App() {
 						})]
 					}),
 					activeTab === "profile" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 36px)" },
-						className: "p-4 pb-28 relative z-20 h-full overflow-y-auto bg-[#070a13] text-white w-full overflow-x-hidden",
+						className: "p-4 pb-6 relative z-20 flex-1 min-h-0 overflow-y-auto no-scrollbar bg-[#070a13] text-white w-full overflow-x-hidden",
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 								className: "text-lg font-bold text-white mb-4 tracking-tight",
@@ -44415,10 +44412,9 @@ function App() {
 						]
 					}),
 					activeTab === "gigs" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 36px)" },
-						className: "flex flex-col h-full p-4 gap-4",
+						className: "flex flex-col flex-1 min-h-0 p-4 gap-4",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							className: "flex items-center gap-2 overflow-x-hidden pb-2 custom-scrollbar w-full",
+							className: "flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar w-full min-w-0",
 							children: [[
 								{
 									date: "Сегодня",
@@ -44467,8 +44463,7 @@ function App() {
 						})]
 					}),
 					activeTab === "musicians" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 36px)" },
-						className: "p-4 flex flex-col gap-4 pb-28 h-full overflow-y-auto relative z-20 w-full overflow-x-hidden",
+						className: "p-4 flex flex-col gap-4 pb-6 flex-1 min-h-0 overflow-y-auto no-scrollbar relative z-20 w-full overflow-x-hidden",
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 								className: "text-xl font-black text-white uppercase tracking-wide",
@@ -44647,7 +44642,7 @@ function App() {
 			}),
 			" ",
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("footer", {
-				className: "glass-footer px-4 py-3 flex justify-around items-center z-50 shrink-0 w-full overflow-x-hidden",
+				className: "bg-slate-900 border-t border-slate-800/80 px-4 py-3 flex justify-around items-center z-50 shrink-0 w-full overflow-x-hidden",
 				children: role === "cafe" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 						onClick: () => setActiveTab("gigs"),
@@ -44725,7 +44720,7 @@ function App() {
 			showCreateGigModal && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				className: "fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-md p-0 sm:p-4 animate-fadeIn",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "w-full max-w-lg bg-[#0f172a] border border-slate-700/80 rounded-t-4xl sm:rounded-3xl p-6 shadow-2xl flex flex-col gap-5 max-h-[90vh] overflow-y-auto relative",
+					className: "w-full max-w-lg bg-[#0f172a] border border-slate-700/80 rounded-t-4xl sm:rounded-3xl p-6 shadow-2xl flex flex-col gap-5 max-h-[90vh] overflow-y-auto no-scrollbar relative",
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 							onClick: () => setShowCreateGigModal(false),
@@ -44892,4 +44887,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-BoWuOK50.js.map
+//# sourceMappingURL=index-h2eKKua4.js.map
