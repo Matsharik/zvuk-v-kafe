@@ -42953,14 +42953,18 @@ var VideoUploader = ({ onUploadSuccess, hrefWebSite }) => {
 var GENRES = [
 	"Рок",
 	"Поп",
-	"Джаз",
-	"Хип-Хоп",
+	"Джаз / Блюз",
+	"Реп / Хип-Хоп",
 	"Инди",
+	"Лаундж",
 	"Электроника",
 	"Акустика",
 	"Фанк",
 	"Метал",
-	"Блюз"
+	"Блюз",
+	"Каверы",
+	"Классика",
+	"Фолк"
 ];
 var GenreSelector = ({ selectedGenres = [], onChange }) => {
 	const toggleGenre = (genre) => {
@@ -43117,7 +43121,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.1.39";
+	const appVersion = "v0.1.40";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43250,7 +43254,7 @@ function App() {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-					"Authorization": `Bearer ${telegramInitData}`
+					"Authorization": `Bearer ${window.Telegram?.WebApp?.initData}`
 				},
 				body: JSON.stringify(payload)
 			})).json();
@@ -44528,18 +44532,34 @@ function App() {
 												children: [
 													"Все",
 													"Вокал",
+													"Бэк-вокал",
+													"Экстрим-вокал",
+													"Битбокс",
 													"Акустическая гитара",
 													"Электрогитара",
 													"Бас-гитара",
-													"Саксофон",
-													"DJ-пульт",
 													"Клавишные / Пианино",
+													"Синтезатор",
 													"Ударные",
 													"Кахон",
+													"Перкуссия",
+													"Саксофон",
 													"Скрипка",
+													"DJ-пульт",
+													"Укулеле",
+													"Виолончель",
+													"Контрабас",
 													"Труба",
+													"Тромбон",
+													"Флейта",
+													"Губная гармошка",
 													"Аккордеон",
-													"Битбокс"
+													"Баян",
+													"Джембе / Дарбука",
+													"Ханг / Глюкофон",
+													"Live Looping",
+													"Сэмплер / Drum Machine",
+													"Другое"
 												].map((inst) => {
 													const isAll = inst === "Все";
 													const active = isAll ? selectedInstruments.length === 0 : selectedInstruments.includes(inst);
@@ -44565,15 +44585,19 @@ function App() {
 												className: "flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5 flex-1",
 												children: [
 													"Все",
-													"Поп",
 													"Рок",
+													"Поп",
 													"Джаз / Блюз",
+													"Реп / Хип-Хоп",
+													"Инди",
 													"Лаундж",
 													"Электроника",
+													"Акустика",
+													"Фанк",
+													"Метал",
+													"Блюз",
 													"Каверы",
-													"Реп / Хип-хоп",
 													"Классика",
-													"Инди",
 													"Фолк"
 												].map((genre) => {
 													const isAll = genre === "Все";
@@ -44742,15 +44766,23 @@ function App() {
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 										className: "flex flex-wrap gap-1.5",
 										children: [
-											"Ро克",
+											"Все",
+											"Рок",
 											"Поп",
 											"Джаз / Блюз",
-											"Каверы",
+											"Реп / Хип-Хоп",
+											"Инди",
 											"Лаундж",
 											"Электроника",
-											"Акустика"
-										].map((genre) => {
-											const active = gigForm.genres.includes(genre);
+											"Акустика",
+											"Фанк",
+											"Метал",
+											"Блюз",
+											"Каверы",
+											"Классика",
+											"Фолк"
+										].map((inst) => {
+											const active = inst === "Все" ? gigForm.genres.length === 0 : gigForm.genres.includes(inst);
 											return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 												type: "button",
 												onClick: () => {
@@ -44777,15 +44809,38 @@ function App() {
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 										className: "flex flex-wrap gap-1.5",
 										children: [
+											"Все",
 											"Вокал",
+											"Бэк-вокал",
+											"Экстрим-вокал",
+											"Битбокс",
 											"Акустическая гитара",
 											"Электрогитара",
-											"Саксофон",
-											"DJ-пульт",
+											"Бас-гитара",
+											"Клавишные / Пианино",
+											"Синтезатор",
 											"Ударные",
-											"Клавишные"
+											"Кахон",
+											"Перкуссия",
+											"Саксофон",
+											"Скрипка",
+											"DJ-пульт",
+											"Укулеле",
+											"Виолончель",
+											"Контрабас",
+											"Труба",
+											"Тромбон",
+											"Флейта",
+											"Губная гармошка",
+											"Аккордеон",
+											"Баян",
+											"Джембе / Дарбука",
+											"Ханг / Глюкофон",
+											"Live Looping",
+											"Сэмплер / Drum Machine",
+											"Другое"
 										].map((inst) => {
-											const active = gigForm.instruments.includes(inst);
+											const active = inst === "Все" ? gigForm.instruments.length === 0 : gigForm.instruments.includes(inst);
 											return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 												type: "button",
 												onClick: () => {
@@ -44886,4 +44941,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-BgvuuH8Z.js.map
+//# sourceMappingURL=index-DT829mHN.js.map
