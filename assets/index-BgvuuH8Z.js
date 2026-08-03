@@ -43117,7 +43117,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.1.38";
+	const appVersion = "v0.1.39";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43225,7 +43225,7 @@ function App() {
 		price: 350
 	});
 	const handleAddGigClick = () => {
-		if (!onboardingData.isVerified) setShowVerificationModal(true);
+		if (!user.is_verified) setShowVerificationModal(true);
 		else setShowCreateGigModal(true);
 	};
 	const handleCreateGigSubmit = async (e) => {
@@ -44189,7 +44189,7 @@ function App() {
 				className: "flex-1 relative w-full h-full bg-[#070a13]",
 				children: [
 					activeTab === "map" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "w-full flex-1 min-h-0 relative overflow-hidden bg-[#070a13]",
+						className: "w-full h-full relative overflow-hidden bg-[#070a13]",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapView, { onSelectCafe: (cafe) => setSelectedCafe(cafe) }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: `fixed bottom-0 left-0 right-0 z-9999 bg-[#0f172a] border-t border-slate-700/60 rounded-t-4xl shadow-[0_-10px_40px_rgba(0,0,0,0.8)] transition-transform duration-300 ease-out flex flex-col max-h-[85vh] ${selectedCafe ? "translate-y-0" : "translate-y-full"}`,
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -44379,14 +44379,14 @@ function App() {
 								className: "p-4 rounded-2xl flex items-center justify-between mb-4 shadow-xl",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 									className: "text-sm font-bold flex items-center gap-1.5",
-									children: ["Верификация:", onboardingData.isVerified ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									children: ["Верификация:", user.is_verified ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "text-emerald-400 font-extrabold flex items-center gap-1",
 										children: " Да ✅"
 									}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "text-amber-400 font-extrabold flex items-center gap-1",
 										children: " Нет ⏳"
 									})]
-								}) }), !onboardingData.isVerified && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+								}) }), !user.is_verified && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 									onClick: () => {
 										verifyCafe();
 										alert("Запрос на верификацию отправлен");
@@ -44406,7 +44406,7 @@ function App() {
 										border: "1px solid rgba(255,255,255,0.05)"
 									},
 									className: "p-4 rounded-2xl text-sm text-slate-200 leading-relaxed whitespace-pre-wrap wrap-break-word",
-									children: onboardingData.description || "Описание не заполнено"
+									children: user.description || "Описание не заполнено"
 								})]
 							})
 						]
@@ -44463,13 +44463,13 @@ function App() {
 						})]
 					}),
 					activeTab === "musicians" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "p-4 flex flex-col gap-4 pb-6 flex-1 min-h-0 overflow-y-auto no-scrollbar relative z-20 w-full overflow-x-hidden",
-						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+						className: "flex flex-col h-full min-h-0 w-full overflow-hidden relative z-20",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "shrink-0 p-4 pb-3 flex flex-col gap-3 border-b border-slate-800/80 bg-[#0f172a]",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 								className: "text-xl font-black text-white uppercase tracking-wide",
 								children: "Каталог музыкантов"
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								className: "flex flex-col gap-3",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
 									type: "text",
@@ -44593,50 +44593,49 @@ function App() {
 										})
 									]
 								})]
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								className: "flex flex-col gap-3",
-								children: filteredMusicians.length > 0 ? filteredMusicians.map((m) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									className: "p-4 bg-slate-800/50 border border-slate-700/60 rounded-2xl flex items-center justify-between",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										className: "flex items-center gap-3",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-											className: "w-12 h-12 bg-pink-500/20 rounded-full flex items-center justify-center text-xl shrink-0",
-											children: m.icon
-										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
-												className: "font-bold text-sm text-white",
-												children: m.name
-											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-												className: "text-xs text-slate-400",
-												children: [
-													m.instruments.join(", "),
-													" • ",
-													m.genres.join(", ")
-												]
-											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-												className: "text-[10px] text-pink-400 font-bold",
-												children: [
-													"⭐️ ",
-													m.rating,
-													" (",
-													m.reviews,
-													" отзывов)"
-												]
-											})
-										] })]
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-										className: "px-3 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-xl text-xs font-bold transition-all shrink-0",
-										children: "Пригласить"
-									})]
-								}, m.id)) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-									className: "p-6 bg-slate-800/30 border border-slate-700/40 rounded-2xl text-center text-slate-400 text-sm",
-									children: "Ничего не найдено. Попробуйте сбросить фильтры."
-								})
+							})]
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "flex-1 min-h-0 overflow-y-auto no-scrollbar p-4 flex flex-col gap-3 pb-8",
+							children: filteredMusicians.length > 0 ? filteredMusicians.map((m) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "p-4 bg-slate-800/50 border border-slate-700/60 rounded-2xl flex items-center justify-between shrink-0",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "flex items-center gap-3",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "w-12 h-12 bg-pink-500/20 rounded-full flex items-center justify-center text-xl shrink-0",
+										children: m.icon
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
+											className: "font-bold text-sm text-white",
+											children: m.name
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+											className: "text-xs text-slate-400",
+											children: [
+												m.instruments.join(", "),
+												" • ",
+												m.genres.join(", ")
+											]
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+											className: "text-[10px] text-pink-400 font-bold",
+											children: [
+												"⭐️ ",
+												m.rating,
+												" (",
+												m.reviews,
+												" отзывов)"
+											]
+										})
+									] })]
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									className: "px-3 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-xl text-xs font-bold transition-all shrink-0",
+									children: "Пригласить"
+								})]
+							}, m.id)) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "p-6 bg-slate-800/30 border border-slate-700/40 rounded-2xl text-center text-slate-400 text-sm",
+								children: "Ничего не найдено. Попробуйте сбросить фильтры."
 							})
-						]
+						})]
 					})
 				]
 			}),
@@ -44714,7 +44713,7 @@ function App() {
 				] })
 			}),
 			showVerificationModal && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(VerificationModal, {
-				venueName: onboardingData.name || user?.first_name || window.Telegram?.WebApp.initDataUnsafe?.user.first_name || "Заведение",
+				venueName: user.name || "вашего заведения",
 				onClose: () => setShowVerificationModal(false)
 			}),
 			showCreateGigModal && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
@@ -44887,4 +44886,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-h2eKKua4.js.map
+//# sourceMappingURL=index-BgvuuH8Z.js.map
