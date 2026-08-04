@@ -18864,7 +18864,7 @@ function MapView({ cafes = [], onSelectCafe }) {
         }
       ` }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(MapContainer, {
 			center: [53.9006, 27.559],
-			zoom: 13,
+			zoom: 10,
 			style: {
 				height: "100%",
 				width: "100%",
@@ -18937,7 +18937,7 @@ function LocationPickerMap({ initialLat = 53.9006, initialLng = 27.559, onLocati
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(MapContainer, {
 				center: [initialLat, initialLng],
-				zoom: 15,
+				zoom: 10,
 				style: {
 					width: "100%",
 					height: "100%"
@@ -43121,20 +43121,69 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.1.41";
+	const appVersion = "v0.1.45";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
+	const [gigs, setGigs] = (0, import_react.useState)(null);
+	const [musiciansList, setMusiciansList] = (0, import_react.useState)(null);
+	const [cafes, setCafes] = (0, import_react.useState)(null);
+	const [musicianApplications, setMusicianApplications] = (0, import_react.useState)([]);
+	const [selectedAppId, setSelectedAppId] = (0, import_react.useState)(null);
+	const [isLoadingApps, setIsLoadingApps] = (0, import_react.useState)(false);
+	const [ratingValue, setRatingValue] = (0, import_react.useState)(5);
+	const [isSubmittingRating, setIsSubmittingRating] = (0, import_react.useState)(false);
 	const [activeTab, setActiveTab] = (0, import_react.useState)(null);
 	const [role, setRole] = (0, import_react.useState)(null);
 	const [errorStatus, setErrorStatus] = (0, import_react.useState)(null);
 	const [currentStepOnboarding, setCurrentStepOnboarding] = (0, import_react.useState)(0);
 	const [selectedGenre, setSelectedGenre] = (0, import_react.useState)("");
+	const [activeVideoUrl, setActiveVideoUrl] = (0, import_react.useState)(null);
 	const [showVerificationModal, setShowVerificationModal] = (0, import_react.useState)(false);
 	const [searchQuery, setSearchQuery] = (0, import_react.useState)("");
 	const [selectedRating, setSelectedRating] = (0, import_react.useState)(0);
 	const [selectedInstruments, setSelectedInstruments] = (0, import_react.useState)([]);
 	const [selectedGenres, setSelectedGenres] = (0, import_react.useState)([]);
+	const [applyingOrderId, setApplyingOrderId] = (0, import_react.useState)(null);
+	const handleApplyToOrder = async (orderId) => {
+		if (applyingOrderId) return;
+		setApplyingOrderId(orderId);
+		try {
+			const data = await (await fetch(`${hrefWebSite}api-zvuk/apply-to-order`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${telegramInitData}`
+				},
+				body: JSON.stringify({ orderId })
+			})).json();
+			if (data.success) {
+				setLoading(true);
+				setIsLoadingApps(true);
+				const response2 = await fetch(`${hrefWebSite}api-zvuk/musician-applications`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"Authorization": `Bearer ${telegramInitData}`
+					}
+				});
+				if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
+				const data = await response2.json();
+				console.log("data?.cafes" + data?.applications);
+				if (data.success) {
+					setMusicianApplications(data.applications || []);
+					if (data.applications?.length > 0) setSelectedAppId((prev) => prev ?? data.applications[0].id);
+				}
+				setIsLoadingApps(false);
+				setActiveTab("requests");
+				setLoading(false);
+			} else alert(data.error || "Не удалось отправить отклик");
+		} catch (err) {
+			console.error("Ошибка отклика:", err);
+		} finally {
+			setApplyingOrderId(null);
+		}
+	};
 	const toggleInstrumentTABMusicians = (inst) => {
 		if (inst === "Все") {
 			setSelectedInstruments([]);
@@ -43149,44 +43198,6 @@ function App() {
 		}
 		setSelectedGenres((prev) => prev.includes(genre) ? prev.filter((item) => item !== genre) : [...prev, genre]);
 	};
-	const musiciansList = [
-		{
-			id: 1,
-			name: "Алексей Гитарист",
-			rating: 4.9,
-			reviews: 18,
-			instruments: ["Акустическая гитара", "Вокал"],
-			genres: ["Джаз / Блюз", "Каверы"],
-			icon: "🎸"
-		},
-		{
-			id: 2,
-			name: "Мария Сакс",
-			rating: 4.6,
-			reviews: 9,
-			instruments: ["Саксофон"],
-			genres: ["Джаз / Блюз", "Лаундж"],
-			icon: "🎷"
-		},
-		{
-			id: 3,
-			name: "DJ Pulse",
-			rating: 5,
-			reviews: 32,
-			instruments: ["DJ-пульт"],
-			genres: ["Электроника", "Поп"],
-			icon: "🎧"
-		},
-		{
-			id: 4,
-			name: "Иван Барабанщик",
-			rating: 4.2,
-			reviews: 5,
-			instruments: ["Ударные", "Кахон"],
-			genres: ["Рок", "Каверы"],
-			icon: "🥁"
-		}
-	];
 	const verifyCafe = async () => {
 		const telegramInitData = window.Telegram?.WebApp?.initData || "";
 		const result = await (await fetch(`${hrefWebSite}api-zvuk/cafes/verify-request`, {
@@ -43225,7 +43236,7 @@ function App() {
 		instruments: [],
 		date: "2026-06-21",
 		time: "17:37",
-		durationHours: 2,
+		durationMinutes: 60,
 		price: 350
 	});
 	const handleAddGigClick = () => {
@@ -43234,21 +43245,18 @@ function App() {
 	};
 	const handleCreateGigSubmit = async (e) => {
 		if (e) e.preventDefault();
-		if (!gigForm.genres.length || !gigForm.instruments.length) {
-			alert("Выберите хотя бы один жанр и инструмент!");
-			return;
-		}
 		setIsSubmittingGig(true);
 		try {
 			const beginAtTimestamp = (/* @__PURE__ */ new Date(`${gigForm.date}T${gigForm.time}:00`)).getTime();
-			const endAtTimestamp = beginAtTimestamp + (Number(gigForm.durationHours) || 2) * 60 * 60 * 1e3;
+			const endAtTimestamp = beginAtTimestamp + (Number(gigForm.durationMinutes) || 120) * 60 * 1e3;
 			const payload = {
 				genres: gigForm.genres,
 				instruments: gigForm.instruments,
 				begin_at: beginAtTimestamp,
 				end_at: endAtTimestamp,
 				price: Number(gigForm.price),
-				status: "search"
+				status: "search",
+				title: gigForm.title
 			};
 			const result = await (await fetch(`${hrefWebSite}api-zvuk/orders/create`, {
 				method: "POST",
@@ -43266,7 +43274,7 @@ function App() {
 				instruments: [],
 				date: "2026-06-21",
 				time: "17:37",
-				durationHours: 2,
+				durationMinutes: 60,
 				price: 350
 			});
 		} catch (err) {
@@ -43401,7 +43409,6 @@ function App() {
 			const tg = window.Telegram?.WebApp;
 			if (!tg) {
 				console.error("❌ [App] Telegram WebApp API не найдено в window. Локальный режим.");
-				setLoading(false);
 				return;
 			}
 			const telegramInitData = tg.initData || "";
@@ -43434,8 +43441,52 @@ function App() {
 					if (savedRole) {
 						setRole(savedRole);
 						console.log(`savedRole: ${data?.role}`);
-						if (savedRole == "cafe") setActiveTab("gigs");
-						if (savedRole == "musician") setActiveTab("requests");
+						if (savedRole == "cafe") {
+							const response2 = await fetch(`${hrefWebSite}api-zvuk/my-gigs`, {
+								method: "POST",
+								headers: {
+									"Content-Type": "application/json",
+									"Authorization": `Bearer ${telegramInitData}`
+								}
+							});
+							if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
+							const data2 = await response2.json();
+							console.log("data2?.gigs" + data2?.gigs);
+							setGigs(data2?.gigs);
+							setActiveTab("gigs");
+							setLoading(false);
+						}
+						if (savedRole == "musician") {
+							const response2 = await fetch(`${hrefWebSite}api-zvuk/cafes`, {
+								method: "POST",
+								headers: {
+									"Content-Type": "application/json",
+									"Authorization": `Bearer ${telegramInitData}`
+								}
+							});
+							if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
+							const data2 = await response2.json();
+							console.log("data2?.cafes" + data2?.cafes);
+							setCafes(data2?.cafes);
+							setIsLoadingApps(true);
+							const response3 = await fetch(`${hrefWebSite}api-zvuk/musician-applications`, {
+								method: "POST",
+								headers: {
+									"Content-Type": "application/json",
+									"Authorization": `Bearer ${telegramInitData}`
+								}
+							});
+							if (!response3.ok) throw new Error(`HTTP error! status: ${response3.status}`);
+							const data3 = await response3.json();
+							console.log("data3?.cafes" + data3?.applications);
+							if (data3.success) {
+								setMusicianApplications(data3.applications || []);
+								if (data3.applications?.length > 0) setSelectedAppId((prev) => prev ?? data3.applications[0].id);
+							}
+							setIsLoadingApps(false);
+							setActiveTab("requests");
+							setLoading(false);
+						}
 					}
 					setCurrentStepOnboarding(userData?.has_seen_onboarding);
 					console.log("✅ Пользователь авторизован:", userData);
@@ -43443,6 +43494,7 @@ function App() {
 				} else {
 					console.warn("⚠️ [App] Новые данные пользователя не найдены. Направляем на онбординг.");
 					setCurrentStepOnboarding(0);
+					setLoading(false);
 				}
 				else setErrorStatus(`Ошибка бэкенда при авторизации`);
 			} catch (err) {
@@ -44194,7 +44246,10 @@ function App() {
 				children: [
 					activeTab === "map" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "w-full h-full relative overflow-hidden bg-[#070a13]",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapView, { onSelectCafe: (cafe) => setSelectedCafe(cafe) }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapView, {
+							cafes,
+							onSelectCafe: (cafe) => setSelectedCafe(cafe)
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: `fixed bottom-0 left-0 right-0 z-9999 bg-[#0f172a] border-t border-slate-700/60 rounded-t-4xl shadow-[0_-10px_40px_rgba(0,0,0,0.8)] transition-transform duration-300 ease-out flex flex-col max-h-[85vh] ${selectedCafe ? "translate-y-0" : "translate-y-full"}`,
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								className: "w-full flex items-center justify-between px-6 pt-3 pb-2 relative",
@@ -44207,9 +44262,9 @@ function App() {
 							}), selectedCafe && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								className: "p-4 pt-1 flex flex-col gap-4 overflow-y-auto no-scrollbar pb-8",
 								children: [
-									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 										className: "flex items-center justify-between gap-3",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 											className: "flex items-center gap-3",
 											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 												className: "w-14 h-14 bg-pink-500/20 border border-pink-500/30 rounded-2xl flex items-center justify-center text-2xl shrink-0",
@@ -44238,11 +44293,7 @@ function App() {
 													})]
 												})
 											] })]
-										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-											type: "button",
-											className: "px-4 py-2.5 bg-pink-500 hover:bg-pink-600 active:scale-95 text-white font-bold text-xs rounded-xl shadow-lg shadow-pink-500/25 transition-all shrink-0",
-											children: "Заявка"
-										})]
+										})
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("hr", { className: "border-slate-800" }),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -44270,29 +44321,33 @@ function App() {
 											ref: carouselRef,
 											className: "flex items-center gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar py-1 scroll-smooth",
 											children: selectedCafe.events.map((evt) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-												className: "snap-center shrink-0 w-60 p-3.5 bg-slate-800/70 border border-slate-700/60 rounded-2xl flex flex-col gap-2 transition-all hover:border-pink-500/50",
+												className: "snap-center shrink-0 w-[82vw] max-w-85 p-4 bg-slate-800/80 border border-slate-700/70 rounded-2xl flex flex-col gap-3 transition-all hover:border-pink-500/50 shadow-lg",
 												children: [
-													/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-														className: "flex justify-between items-start",
-														children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-															className: "text-[10px] font-bold text-pink-400 bg-pink-500/10 px-2 py-0.5 rounded-md",
+													/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+														className: "flex justify-between items-center",
+														children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+															className: "text-[11px] font-bold text-pink-400 bg-pink-500/10 border border-pink-500/20 px-2.5 py-1 rounded-lg",
 															children: evt.date
-														})
+														}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+															className: "text-xs font-black text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20",
+															children: [evt.price, " BYN"]
+														})]
 													}),
 													/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
-														className: "text-sm font-bold text-white line-clamp-1",
+														className: "text-sm font-black text-white line-clamp-2 leading-snug",
 														children: evt.title
 													}),
-													/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-														className: "flex justify-between items-center mt-1",
-														children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-															className: "text-xs font-black text-slate-200",
-															children: evt.price
-														}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-															type: "button",
-															className: "text-[11px] font-bold text-purple-400 hover:text-purple-300",
-															children: "Откликнуться →"
-														})]
+													/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+														type: "button",
+														disabled: applyingOrderId === evt.id,
+														onClick: async () => {
+															await handleApplyToOrder(evt.id);
+														},
+														className: "w-full mt-1 py-2.5 bg-linear-to-r from-pink-500 to-purple-600 hover:opacity-95 active:scale-98 text-white font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50",
+														children: applyingOrderId === evt.id ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+															className: "animate-pulse",
+															children: "Отправка..."
+														}) : "Откликнуться →"
 													})
 												]
 											}, evt.id))
@@ -44303,21 +44358,186 @@ function App() {
 						})]
 					}),
 					activeTab === "requests" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "p-4 relative z-20 flex-1 min-h-0 overflow-y-auto no-scrollbar bg-[#070a13] w-full overflow-x-hidden",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
-							className: "text-lg font-bold text-white mb-3",
-							children: "Активные события"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "p-4 relative z-20 flex-1 min-h-0 overflow-y-auto no-scrollbar bg-[#070a13] w-full overflow-x-hidden flex flex-col gap-4",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex items-center justify-between",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+								className: "text-lg font-extrabold text-white flex items-center gap-2",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Мои активные отклики" })
+							}), musicianApplications.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-xs font-bold text-pink-400 bg-pink-500/10 border border-pink-500/20 px-3 py-1 rounded-full",
+								children: musicianApplications.length
+							})]
+						}), isLoadingApps ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "p-12 text-center flex flex-col items-center justify-center gap-3",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "w-8 h-8 border-3 border-pink-500 border-t-transparent rounded-full animate-spin" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-xs font-semibold text-slate-400",
+								children: "Загрузка ваших заявок..."
+							})]
+						}) : musicianApplications.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							style: {
-								background: "rgba(255,255,255,0.02)",
-								border: "1px solid rgba(255,255,255,0.05)"
+								background: "rgba(255, 255, 255, 0.02)",
+								border: "1px solid rgba(255, 255, 255, 0.06)"
 							},
-							className: "p-6 rounded-2xl text-center",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-								className: "text-sm text-slate-400",
-								children: "Список пуст. Подайте первую заявку, найдя заведение в разделе Карта!"
+							className: "p-8 rounded-3xl text-center flex flex-col items-center justify-center gap-3 my-auto",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "w-14 h-14 bg-slate-800/80 rounded-2xl flex items-center justify-center text-2xl border border-slate-700/50 shadow-inner",
+								children: "🎷"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "flex flex-col gap-1",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+									className: "text-sm font-bold text-white",
+									children: "У вас нет активных откликов"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+									className: "text-xs text-slate-400 max-w-xs leading-relaxed",
+									children: "Найдите подходящую площадку на Карте или в Списке и подайте свою первую заявку!"
+								})]
+							})]
+						}) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "flex items-center gap-2.5 overflow-x-auto pb-2 no-scrollbar w-full min-w-0",
+							children: musicianApplications.map((item) => {
+								const isSelected = (selectedAppId ?? musicianApplications[0]?.id) === item.id;
+								return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+									type: "button",
+									onClick: () => setSelectedAppId(item.id),
+									className: `shrink-0 flex flex-col items-center justify-center px-4 py-2.5 rounded-2xl min-w-25 transition-all border relative ${isSelected ? "bg-slate-800 border-pink-500 shadow-lg shadow-pink-500/10 scale-[1.02]" : "bg-slate-900/60 border-slate-800 hover:bg-slate-800/60 text-slate-400"}`,
+									children: [
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+											className: "absolute top-2 right-2 flex h-2 w-2",
+											children: [item.status === "selected" && !item.isFinishedByTime && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: `relative inline-flex rounded-full h-2 w-2 ${item.status === "selected" ? item.isFinishedByTime ? "bg-purple-400" : "bg-emerald-500" : "bg-amber-400"}` })]
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: `text-xs font-extrabold ${isSelected ? "text-white" : "text-slate-300"}`,
+											children: item.date
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "text-[10px] text-pink-400 font-semibold mt-0.5",
+											children: item.time
+										})
+									]
+								}, item.id);
 							})
-						})]
+						}), (() => {
+							const activeApp = musicianApplications.find((a) => a.id === (selectedAppId ?? musicianApplications[0]?.id)) || musicianApplications[0];
+							if (!activeApp) return null;
+							return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "bg-slate-900/90 border border-slate-800 rounded-3xl p-5 flex flex-col gap-4 shadow-xl relative backdrop-blur-md",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "flex items-start justify-between gap-3",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "flex flex-col gap-1",
+											children: [
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+													className: "text-[11px] font-bold text-slate-400 uppercase tracking-wider",
+													children: activeApp.cafeName
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+													className: "text-base font-black text-white leading-snug",
+													children: activeApp.title
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+													className: "text-xs text-slate-400 flex items-center gap-1 mt-0.5",
+													children: ["📍 ", activeApp.address]
+												})
+											]
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "text-right shrink-0",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "text-xs text-slate-400 block font-medium",
+												children: "Гонорар"
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+												className: "text-sm font-black text-emerald-400",
+												children: [activeApp.price, " BYN"]
+											})]
+										})]
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "flex items-center justify-between pt-3 border-t border-slate-800/80",
+										children: [
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "text-xs text-slate-400 font-medium",
+												children: "Статус отклика:"
+											}),
+											activeApp.status === "search" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[11px] font-extrabold px-3 py-1 rounded-xl flex items-center gap-1.5",
+												children: "⏳ На рассмотрении"
+											}),
+											activeApp.status === "selected" && !activeApp.isFinishedByTime && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[11px] font-extrabold px-3 py-1 rounded-xl flex items-center gap-1.5",
+												children: "🔥 Вы утверждены!"
+											}),
+											activeApp.status === "selected" && activeApp.isFinishedByTime && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "bg-purple-500/10 text-purple-300 border border-purple-500/20 text-[11px] font-extrabold px-3 py-1 rounded-xl flex items-center gap-1.5",
+												children: "⭐ Завершено (требует оценки)"
+											})
+										]
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "mt-1",
+										children: [
+											activeApp.status === "search" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+												className: "bg-slate-800/50 border border-slate-700/50 rounded-2xl p-3.5 text-center",
+												children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+													className: "text-xs text-slate-300 leading-relaxed",
+													children: "Организатор рассматривает вашу кандидатуру. Как только вас утвердят, статус автоматически обновится."
+												})
+											}),
+											activeApp.status === "selected" && !activeApp.isFinishedByTime && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+												className: "bg-emerald-950/30 border border-emerald-500/30 rounded-2xl p-4 flex flex-col gap-2",
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+													className: "text-xs font-bold text-emerald-300 text-center",
+													children: "🎉 Организатор выбрали именно вас!"
+												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+													className: "text-[11px] text-slate-300 text-center leading-normal",
+													children: "Пожалуйста, прибудьте на площадку за 15-20 минут до начала для настройки оборудования."
+												})]
+											}),
+											activeApp.status === "selected" && activeApp.isFinishedByTime && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+												className: "bg-linear-to-b from-purple-950/40 to-slate-900 border border-purple-500/30 rounded-2xl p-4 flex flex-col items-center gap-3",
+												children: [
+													/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+														className: "text-center",
+														children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
+															className: "text-xs font-black uppercase tracking-wider text-purple-300",
+															children: "Выступление завершено"
+														}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+															className: "text-xs text-slate-400 mt-1",
+															children: "Оцените сотрудничество с заведением:"
+														})]
+													}),
+													/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+														className: "flex items-center gap-3 my-1",
+														children: [
+															1,
+															2,
+															3,
+															4,
+															5
+														].map((star) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+															type: "button",
+															onClick: () => setRatingValue(star),
+															className: "text-2xl transition-transform active:scale-125 hover:scale-110 focus:outline-none",
+															children: star <= ratingValue ? "⭐️" : "🔘"
+														}, star))
+													}),
+													/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+														type: "button",
+														disabled: isSubmittingRating,
+														onClick: () => handleRatingSubmit(activeApp.id),
+														className: "w-full py-3 bg-linear-to-r from-purple-600 to-pink-600 hover:opacity-95 active:scale-98 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-purple-900/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50",
+														children: isSubmittingRating ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+															className: "animate-pulse",
+															children: "Отправка..."
+														}) : `Подтвердить оценку (${ratingValue}/5)`
+													})
+												]
+											})
+										]
+									})
+								]
+							});
+						})()] })]
 					}),
 					activeTab === "profile" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "p-4 pb-6 relative z-20 flex-1 min-h-0 overflow-y-auto no-scrollbar bg-[#070a13] text-white w-full overflow-x-hidden",
@@ -44419,37 +44639,24 @@ function App() {
 						className: "flex flex-col flex-1 min-h-0 p-4 gap-4",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar w-full min-w-0",
-							children: [[
-								{
-									date: "Сегодня",
-									time: "20:00"
-								},
-								{
-									date: "Завтра",
-									time: "19:30"
-								},
-								{
-									date: "Пт, 15 авг",
-									time: "21:00"
-								},
-								{
-									date: "Сб, 16 авг",
-									time: "20:00"
-								},
-								{
-									date: "Вс, 17 авг",
-									time: "18:00"
-								}
-							].map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-								className: "shrink-0 flex flex-col items-center justify-center px-4 py-2 bg-slate-800 border border-slate-700 rounded-2xl min-w-22.5",
+							children: [gigs.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "shrink-0 flex items-center justify-center px-4 h-11 bg-slate-800 border border-slate-700 rounded-2xl select-none",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "text-xs font-bold text-slate-300",
+									children: "Нет активных/запланированных выступлений"
+								})
+							}) : gigs.map((item) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+								type: "button",
+								className: "shrink-0 flex flex-col items-center justify-center px-4 h-11 bg-slate-800 border border-slate-700 rounded-2xl min-w-22.5 hover:bg-slate-750 transition-colors",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									className: "text-xs font-bold text-white",
+									className: "text-xs font-bold text-white leading-tight",
 									children: item.date
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									className: "text-[10px] text-pink-400 font-semibold",
+									className: "text-[10px] text-pink-400 font-semibold leading-tight",
 									children: item.time
 								})]
-							}, index)), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+							}, item.id)), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+								type: "button",
 								onClick: handleAddGigClick,
 								className: "shrink-0 w-11 h-11 bg-pink-500 hover:bg-pink-600 text-white rounded-2xl flex items-center justify-center text-2xl font-black shadow-lg shadow-pink-500/30 transition-all active:scale-95",
 								title: "Создать поиск артиста",
@@ -44623,36 +44830,51 @@ function App() {
 							children: filteredMusicians.length > 0 ? filteredMusicians.map((m) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								className: "p-4 bg-slate-800/50 border border-slate-700/60 rounded-2xl flex items-center justify-between shrink-0",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									className: "flex items-center gap-3",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-										className: "w-12 h-12 bg-pink-500/20 rounded-full flex items-center justify-center text-xl shrink-0",
-										children: m.icon
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
-										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
-											className: "font-bold text-sm text-white",
-											children: m.name
-										}),
-										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-											className: "text-xs text-slate-400",
-											children: [
-												m.instruments.join(", "),
-												" • ",
-												m.genres.join(", ")
-											]
-										}),
-										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-											className: "text-[10px] text-pink-400 font-bold",
-											children: [
-												"⭐️ ",
-												m.rating,
-												" (",
-												m.reviews,
-												" отзывов)"
-											]
+									className: "flex items-center gap-3 min-w-0",
+									children: [m.videoUrl ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+										type: "button",
+										onClick: () => setActiveVideoUrl(m.videoUrl),
+										className: "relative w-12 h-12 bg-linear-to-tr from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center shrink-0 shadow-md shadow-pink-500/20 hover:scale-105 active:scale-95 transition-all group overflow-hidden",
+										title: "Смотреть видео",
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+											className: "w-full h-full bg-black/30 backdrop-blur-[1px] flex items-center justify-center group-hover:bg-black/10 transition-colors",
+											children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "text-white text-xs font-black bg-pink-500/80 px-1.5 py-0.5 rounded-md shadow",
+												children: "▶"
+											})
 										})
-									] })]
+									}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "w-12 h-12 bg-slate-700/60 border border-slate-600/50 rounded-2xl flex items-center justify-center text-white font-bold text-sm shrink-0",
+										children: m.name ? m.name[0].toUpperCase() : "🎵"
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "min-w-0",
+										children: [
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
+												className: "font-bold text-sm text-white truncate",
+												children: m.name
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+												className: "text-xs text-slate-400 truncate",
+												children: [
+													m.instruments.join(", "),
+													" • ",
+													m.genres.join(", ")
+												]
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+												className: "text-[10px] text-pink-400 font-bold",
+												children: [
+													"⭐️ ",
+													m.rating,
+													" (",
+													m.reviews,
+													" отзывов)"
+												]
+											})
+										]
+									})]
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-									className: "px-3 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-xl text-xs font-bold transition-all shrink-0",
+									className: "px-3 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-xl text-xs font-bold transition-all shrink-0 ml-2",
 									children: "Пригласить"
 								})]
 							}, m.id)) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
@@ -44679,7 +44901,22 @@ function App() {
 						})]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						onClick: () => setActiveTab("musicians"),
+						onClick: async () => {
+							setLoading(true);
+							const response2 = await fetch(`${hrefWebSite}api-zvuk/musicians`, {
+								method: "POST",
+								headers: {
+									"Content-Type": "application/json",
+									"Authorization": `Bearer ${telegramInitData}`
+								}
+							});
+							if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
+							const data2 = await response2.json();
+							console.log("data2?.musicians" + data2?.musicians);
+							setMusiciansList(data2?.musicians);
+							setActiveTab("musicians");
+							setLoading(false);
+						},
 						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "musicians" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 							className: "text-xl",
@@ -44702,7 +44939,27 @@ function App() {
 					})
 				] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						onClick: () => setActiveTab("requests"),
+						onClick: async () => {
+							setLoading(true);
+							setIsLoadingApps(true);
+							const response2 = await fetch(`${hrefWebSite}api-zvuk/musician-applications`, {
+								method: "POST",
+								headers: {
+									"Content-Type": "application/json",
+									"Authorization": `Bearer ${telegramInitData}`
+								}
+							});
+							if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
+							const data = await response2.json();
+							console.log("data?.cafes" + data?.applications);
+							if (data.success) {
+								setMusicianApplications(data.applications || []);
+								if (data.applications?.length > 0) setSelectedAppId((prev) => prev ?? data.applications[0].id);
+							}
+							setIsLoadingApps(false);
+							setActiveTab("requests");
+							setLoading(false);
+						},
 						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "requests" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 							className: "text-xl",
@@ -44865,38 +45122,112 @@ function App() {
 									className: "flex flex-col gap-2",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
 										className: "text-xs font-black uppercase text-amber-400 tracking-wider flex items-center gap-1.5",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "⏰" }), " 3 и 4. Время и дата выступления"]
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "⏰" }), " 3. Время, длительность и дата"]
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										className: "grid grid-cols-2 gap-3",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-											className: "bg-slate-800/90 border border-slate-700 rounded-2xl p-3 flex flex-col items-center",
-											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-												className: "text-[10px] uppercase font-bold text-slate-400",
-												children: "Время начала"
-											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-												type: "time",
-												value: gigForm.time,
-												onChange: (e) => setGigForm({
-													...gigForm,
-													time: e.target.value
-												}),
-												className: "bg-transparent text-2xl font-black text-white outline-none text-center w-full mt-1"
-											})]
-										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-											className: "bg-slate-800/90 border border-slate-700 rounded-2xl p-3 flex flex-col items-center",
-											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-												className: "text-[10px] uppercase font-bold text-slate-400",
-												children: "Дата"
-											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-												type: "date",
-												value: gigForm.date,
-												onChange: (e) => setGigForm({
-													...gigForm,
-													date: e.target.value
-												}),
-												className: "bg-transparent text-sm font-bold text-white outline-none text-center w-full mt-2"
-											})]
+										className: "grid grid-cols-3 gap-2",
+										children: [
+											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+												className: "bg-slate-800/90 border border-slate-700 rounded-2xl p-2.5 flex flex-col items-center justify-between",
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+													className: "text-[9px] uppercase font-bold text-slate-400 text-center",
+													children: "Время"
+												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+													type: "time",
+													value: gigForm.time || "",
+													onChange: (e) => setGigForm({
+														...gigForm,
+														time: e.target.value
+													}),
+													className: "bg-transparent text-base font-black text-white outline-none text-center w-full mt-1"
+												})]
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+												className: "bg-slate-800/90 border border-slate-700 rounded-2xl p-2.5 flex flex-col items-center justify-between",
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+													className: "text-[9px] uppercase font-bold text-slate-400 text-center",
+													children: "Длительность"
+												}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+													className: "flex items-center justify-between w-full mt-1",
+													children: [
+														/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+															type: "button",
+															onClick: () => {
+																const current = gigForm.durationMinutes ?? 60;
+																if (current > 15) setGigForm({
+																	...gigForm,
+																	durationMinutes: current - 15
+																});
+															},
+															disabled: (gigForm.durationMinutes ?? 60) <= 15,
+															className: "text-slate-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none active:scale-90 transition-all font-black text-xs p-1",
+															children: "◀"
+														}),
+														/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+															className: "text-sm font-black text-white",
+															children: (() => {
+																const mins = gigForm.durationMinutes ?? 60;
+																const h = Math.floor(mins / 60);
+																const m = mins % 60;
+																return `${h}:${m === 0 ? "00" : m}`;
+															})()
+														}),
+														/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+															type: "button",
+															onClick: () => {
+																const current = gigForm.durationMinutes ?? 60;
+																setGigForm({
+																	...gigForm,
+																	durationMinutes: current + 15
+																});
+															},
+															className: "text-slate-400 hover:text-white active:scale-90 transition-all font-black text-xs p-1",
+															children: "▶"
+														})
+													]
+												})]
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+												className: "bg-slate-800/90 border border-slate-700 rounded-2xl p-2.5 flex flex-col items-center justify-between",
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+													className: "text-[9px] uppercase font-bold text-slate-400 text-center",
+													children: "Дата"
+												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+													type: "date",
+													value: gigForm.date || "",
+													onChange: (e) => setGigForm({
+														...gigForm,
+														date: e.target.value
+													}),
+													className: "bg-transparent text-[11px] font-bold text-white outline-none text-center w-full mt-1"
+												})]
+											})
+										]
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "flex flex-col gap-2",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "flex items-center justify-between",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+											className: "text-xs font-black uppercase text-purple-400 tracking-wider flex items-center gap-1.5",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "📝" }), " 4. Описание для артистов"]
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+											className: `text-[10px] font-bold ${(gigForm.title || "").length >= 40 ? "text-pink-400" : "text-slate-400"}`,
+											children: [(gigForm.title || "").length, "/40"]
 										})]
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "bg-slate-800/90 border border-slate-700 rounded-2xl p-3",
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", {
+											value: gigForm.title || "",
+											onChange: (e) => setGigForm({
+												...gigForm,
+												title: e.target.value
+											}),
+											placeholder: "Коротко: формат, репертуар, время",
+											maxLength: 40,
+											rows: 2,
+											className: "bg-transparent text-sm font-medium text-white placeholder-slate-500 outline-none w-full resize-none no-scrollbar"
+										})
 									})]
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -44923,8 +45254,8 @@ function App() {
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 									type: "submit",
-									disabled: isSubmittingGig,
-									className: "w-full py-4 mt-2 bg-linear-to-r from-pink-500 via-purple-600 to-pink-500 hover:opacity-95 active:scale-98 text-white font-black text-base uppercase tracking-widest rounded-2xl shadow-xl shadow-pink-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50",
+									disabled: isSubmittingGig || !gigForm.title?.trim() || gigForm.title.trim().length > 40,
+									className: "w-full py-4 mt-2 bg-linear-to-r from-pink-500 via-purple-600 to-pink-500 hover:opacity-95 active:scale-98 text-white font-black text-base uppercase tracking-widest rounded-2xl shadow-xl shadow-pink-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none disabled:shadow-none",
 									children: isSubmittingGig ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "animate-pulse",
 										children: "Запуск..."
@@ -44934,6 +45265,29 @@ function App() {
 						})
 					]
 				})
+			}),
+			activeVideoUrl && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center p-4 transition-all",
+				onClick: () => setActiveVideoUrl(null),
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+					type: "button",
+					onClick: (e) => {
+						e.stopPropagation();
+						setActiveVideoUrl(null);
+					},
+					className: "absolute top-4 right-4 w-10 h-10 bg-white/10 hover:bg-white/20 active:bg-white/30 text-white rounded-full flex items-center justify-center text-lg font-bold z-10 transition-colors",
+					children: "✕"
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "relative max-w-full max-h-[85vh] flex items-center justify-center overflow-hidden rounded-2xl bg-black border border-slate-800 shadow-2xl",
+					onClick: (e) => e.stopPropagation(),
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("video", {
+						src: activeVideoUrl,
+						controls: true,
+						autoPlay: true,
+						playsInline: true,
+						className: "max-w-full max-h-[85vh] w-auto h-auto object-contain rounded-2xl"
+					})
+				})]
 			})
 		]
 	});
@@ -44943,4 +45297,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-FZe_MrxO.js.map
+//# sourceMappingURL=index-CPCTAeBI.js.map
