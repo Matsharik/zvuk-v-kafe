@@ -43090,7 +43090,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.1.51";
+	const appVersion = "";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43139,7 +43139,7 @@ function App() {
 				});
 				if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
 				const data = await response2.json();
-				console.log(`data?.cafes: ${data?.applications}`);
+				console.log(`data?.applications: ${data?.applications}`);
 				if (data.success) {
 					setMusicianApplications(data.applications || []);
 					if (data.applications?.length > 0) setSelectedAppId((prev) => prev ?? data.applications[0].id);
@@ -44923,7 +44923,7 @@ function App() {
 							});
 							if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
 							const data = await response2.json();
-							console.log("data?.cafes", data?.applications);
+							console.log("data?.applications", data?.applications);
 							if (data.success) {
 								setMusicianApplications(data.applications || []);
 								if (data.applications?.length > 0) setSelectedAppId((prev) => prev ?? data.applications[0].id);
@@ -45269,4 +45269,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-CydXESlf.js.map
+//# sourceMappingURL=index-C8_d8EOY.js.map
