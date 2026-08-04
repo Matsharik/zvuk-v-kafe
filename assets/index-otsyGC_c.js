@@ -43121,7 +43121,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.1.45";
+	const appVersion = "v0.1.46";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43221,12 +43221,12 @@ function App() {
 			});
 		}
 	};
-	const filteredMusicians = musiciansList.filter((m) => {
+	const filteredMusicians = (Array.isArray(musiciansList) ? musiciansList : []).filter((m) => {
 		const query = searchQuery.toLowerCase().trim();
-		const matchesSearch = !query || m.name.toLowerCase().includes(query) || m.instruments.some((i) => i.toLowerCase().includes(query)) || m.genres.some((g) => g.toLowerCase().includes(query));
-		const matchesRating = m.rating >= selectedRating;
-		const matchesInst = selectedInstruments.length === 0 || m.instruments.some((i) => selectedInstruments.includes(i));
-		const matchesGenre = selectedGenres.length === 0 || m.genres.some((g) => selectedGenres.includes(g));
+		const matchesSearch = !query || m.name?.toLowerCase().includes(query) || m.instruments?.some((i) => i?.toLowerCase().includes(query)) || m.genres?.some((g) => g?.toLowerCase().includes(query));
+		const matchesRating = (m.rating ?? 0) >= selectedRating;
+		const matchesInst = selectedInstruments.length === 0 || m.instruments?.some((i) => selectedInstruments.includes(i));
+		const matchesGenre = selectedGenres.length === 0 || m.genres?.some((g) => selectedGenres.includes(g));
 		return matchesSearch && matchesRating && matchesInst && matchesGenre;
 	});
 	const [showCreateGigModal, setShowCreateGigModal] = (0, import_react.useState)(false);
@@ -45297,4 +45297,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-CPCTAeBI.js.map
+//# sourceMappingURL=index-otsyGC_c.js.map
