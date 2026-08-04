@@ -43474,7 +43474,7 @@ function App() {
 				setLoading(false);
 			}
 		}
-		initTelegramAuth();
+		if (user == null) initTelegramAuth();
 	}, []);
 	(0, import_react.useEffect)(() => {
 		const tg = window.Telegram?.WebApp;
@@ -44920,21 +44920,23 @@ function App() {
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 						onClick: async () => {
-							setLoading(true);
-							const telegramInitData = window.Telegram?.WebApp?.initData || "";
-							const response2 = await fetch(`${hrefWebSite}api-zvuk/musicians`, {
-								method: "POST",
-								headers: {
-									"Content-Type": "application/json",
-									"Authorization": `Bearer ${telegramInitData}`
-								}
-							});
-							if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
-							const data2 = await response2.json();
-							console.log("data2?.musicians", data2?.musicians);
-							setMusiciansList(data2?.musicians);
-							setActiveTab("musicians");
-							setLoading(false);
+							if (musiciansList == null) {
+								setLoading(true);
+								const telegramInitData = window.Telegram?.WebApp?.initData || "";
+								const response2 = await fetch(`${hrefWebSite}api-zvuk/musicians`, {
+									method: "POST",
+									headers: {
+										"Content-Type": "application/json",
+										"Authorization": `Bearer ${telegramInitData}`
+									}
+								});
+								if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
+								const data2 = await response2.json();
+								console.log("data2?.musicians", data2?.musicians);
+								setMusiciansList(data2?.musicians);
+								setActiveTab("musicians");
+								setLoading(false);
+							} else setActiveTab("musicians");
 						},
 						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "musicians" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
@@ -45317,4 +45319,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-DMtwcilc.js.map
+//# sourceMappingURL=index-BR9ZEqAC.js.map
