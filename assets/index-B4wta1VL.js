@@ -18871,27 +18871,33 @@ function MapView({ cafes = [], onSelectCafe }) {
 //#region src/components/LocationPickerMap.jsx
 function MapController({ onLocationSelect }) {
 	const map = useMap();
+	const onSelectRef = (0, import_react.useRef)(onLocationSelect);
+	(0, import_react.useEffect)(() => {
+		onSelectRef.current = onLocationSelect;
+	}, [onLocationSelect]);
 	(0, import_react.useEffect)(() => {
 		const timer = setTimeout(() => {
 			map.invalidateSize();
 		}, 250);
+		const center = map.getCenter();
+		const initialCoords = [Number(center.lat.toFixed(6)), Number(center.lng.toFixed(6))];
+		if (onSelectRef.current) onSelectRef.current(initialCoords, false);
 		return () => clearTimeout(timer);
 	}, [map]);
 	useMapEvents({ moveend: () => {
 		const center = map.getCenter();
-		onLocationSelect({
-			lat: Number(center.lat.toFixed(6)),
-			lng: Number(center.lng.toFixed(6))
-		});
+		const newCoords = [Number(center.lat.toFixed(6)), Number(center.lng.toFixed(6))];
+		if (onSelectRef.current) onSelectRef.current(newCoords, true);
 	} });
 	return null;
 }
-function LocationPickerMap({ initialLat = 53.9006, initialLng = 27.559, onLocationSelect }) {
+function LocationPickerMap({ initialCoordinates = [53.9006, 27.559], onLocationSelect }) {
+	const [lat, lng] = initialCoordinates && initialCoordinates.length === 2 ? initialCoordinates : [53.9006, 27.559];
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "relative w-full h-full rounded-2xl overflow-hidden border border-white/10 shadow-xl bg-slate-900",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				className: "absolute inset-0 z-1000 pointer-events-none flex items-center justify-center pb-6",
+				className: "absolute inset-0 z-[1000] pointer-events-none flex items-center justify-center pb-6",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 					className: "flex flex-col items-center animate-pulse",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
@@ -18901,12 +18907,12 @@ function LocationPickerMap({ initialLat = 53.9006, initialLng = 27.559, onLocati
 				})
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				className: "absolute bottom-2 left-1/2 -translate-x-1/2 z-1000 pointer-events-none bg-slate-900/90 backdrop-blur px-3 py-1 rounded-full border border-white/10 text-[10px] text-slate-300 font-semibold shadow-md whitespace-nowrap",
+				className: "absolute bottom-2 left-1/2 -translate-x-1/2 z-[1000] pointer-events-none bg-slate-900/90 backdrop-blur px-3 py-1 rounded-full border border-white/10 text-[10px] text-slate-300 font-semibold shadow-md whitespace-nowrap",
 				children: "Сдвиньте карту под прицел"
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(MapContainer, {
-				center: [initialLat, initialLng],
-				zoom: 10,
+				center: [lat, lng],
+				zoom: 12,
 				style: {
 					width: "100%",
 					height: "100%"
@@ -43090,11 +43096,32 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = " ";
+	const appVersion = "";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
 	const [gigs, setGigs] = (0, import_react.useState)(null);
+	const [selectedGigId, setSelectedGigId] = (0, import_react.useState)(null);
+	const fetchMyGigs = async (selectNewest = false) => {
+		try {
+			const response = await fetch(`${hrefWebSite}api-zvuk/my-gigs`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${telegramInitData}`
+				}
+			});
+			if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+			const fetchedGigs = (await response.json())?.gigs || [];
+			setGigs(fetchedGigs);
+			if (fetchedGigs.length > 0) {
+				if (selectNewest) setSelectedGigId(fetchedGigs[0].id);
+				else if (!selectedGigId) setSelectedGigId(fetchedGigs[0].id);
+			} else setSelectedGigId(null);
+		} catch (err) {
+			console.error("Ошибка загрузки гигов:", err);
+		}
+	};
 	const [musiciansList, setMusiciansList] = (0, import_react.useState)(null);
 	const [cafes, setCafes] = (0, import_react.useState)(null);
 	const [musicianApplications, setMusicianApplications] = (0, import_react.useState)([]);
@@ -43106,7 +43133,6 @@ function App() {
 	const [role, setRole] = (0, import_react.useState)(null);
 	const [errorStatus, setErrorStatus] = (0, import_react.useState)(null);
 	const [currentStepOnboarding, setCurrentStepOnboarding] = (0, import_react.useState)(0);
-	const [selectedGenre, setSelectedGenre] = (0, import_react.useState)("");
 	const [activeVideoUrl, setActiveVideoUrl] = (0, import_react.useState)(null);
 	const [showVerificationModal, setShowVerificationModal] = (0, import_react.useState)(false);
 	const [searchQuery, setSearchQuery] = (0, import_react.useState)("");
@@ -43114,6 +43140,34 @@ function App() {
 	const [selectedInstruments, setSelectedInstruments] = (0, import_react.useState)([]);
 	const [selectedGenres, setSelectedGenres] = (0, import_react.useState)([]);
 	const [applyingOrderId, setApplyingOrderId] = (0, import_react.useState)(null);
+	const [isMapMoved, setIsMapMoved] = (0, import_react.useState)(false);
+	const handleAcceptApplication = async (orderId, musicianId) => {
+		if (!window.confirm("Вы уверены, что хотите утвердить этого артиста на выступление?")) return;
+		try {
+			setLoading(true);
+			const response = await fetch(`${hrefWebSite}api-zvuk/accept-application`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${telegramInitData}`
+				},
+				body: JSON.stringify({
+					orderId,
+					musicianId
+				})
+			});
+			const data = await response.json();
+			if (!response.ok || !data.success) throw new Error(data.error || "Не удалось утвердить артиста");
+			if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert("🎉 Артист успешно выбран!");
+			else alert("🎉 Артист успешно выбран!");
+			await fetchMyGigs(false);
+		} catch (err) {
+			console.error("Ошибка выбора артиста:", err);
+			alert(err.message || "Произошла ошибка при выборе артиста");
+		} finally {
+			setLoading(false);
+		}
+	};
 	const handleApplyToOrder = async (orderId) => {
 		if (applyingOrderId) return;
 		setApplyingOrderId(orderId);
@@ -43145,8 +43199,8 @@ function App() {
 					if (data.applications?.length > 0) setSelectedAppId((prev) => prev ?? data.applications[0].id);
 				}
 				setIsLoadingApps(false);
-				setActiveTab("requests");
 				setLoading(false);
+				setActiveTab("requests");
 			} else alert(data.error || "Не удалось отправить отклик");
 		} catch (err) {
 			console.error("Ошибка отклика:", err);
@@ -43238,6 +43292,7 @@ function App() {
 			})).json();
 			if (!result.success) throw new Error(result.error || "Не удалось создать выступление");
 			setShowCreateGigModal(false);
+			await fetchMyGigs(true);
 			alert("Выступление создано и запущено в поиск! 🚀");
 			setGigForm({
 				genres: [],
@@ -43412,17 +43467,7 @@ function App() {
 						setRole(savedRole);
 						console.log(`savedRole: ${data?.role}`);
 						if (savedRole == "cafe") {
-							const response2 = await fetch(`${hrefWebSite}api-zvuk/my-gigs`, {
-								method: "POST",
-								headers: {
-									"Content-Type": "application/json",
-									"Authorization": `Bearer ${telegramInitData}`
-								}
-							});
-							if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
-							const data2 = await response2.json();
-							console.log("data2?.gigs", data2?.gigs);
-							setGigs(data2?.gigs);
+							await fetchMyGigs();
 							setActiveTab("gigs");
 							setLoading(false);
 						}
@@ -43517,7 +43562,6 @@ function App() {
 		if (currentStepOnboarding != 0) try {
 			await saveOnboardDataToServer(currentStepOnboarding + 1);
 			if (currentStepOnboarding + 1 == getMaxSteps()) {
-				setLoading(true);
 				try {
 					const response = await fetch(`${hrefWebSite}api-zvuk/auth-telegram`, {
 						method: "POST",
@@ -43536,19 +43580,8 @@ function App() {
 					setErrorStatus("Не удалось связаться с сервером авторизации.");
 				}
 				if (role == "cafe") {
-					const response2 = await fetch(`${hrefWebSite}api-zvuk/my-gigs`, {
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-							"Authorization": `Bearer ${telegramInitData}`
-						}
-					});
-					if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
-					const data2 = await response2.json();
-					console.log("data2?.gigs", data2?.gigs);
-					setGigs(data2?.gigs);
+					await fetchMyGigs();
 					setActiveTab("gigs");
-					setLoading(false);
 				}
 				if (role == "musician") {
 					const response2 = await fetch(`${hrefWebSite}api-zvuk/map-cafes`, {
@@ -43564,7 +43597,6 @@ function App() {
 					setCafes(data2?.cafes);
 					setMusicianApplications([]);
 					setActiveTab("map");
-					setLoading(false);
 				}
 			}
 		} catch (err) {
@@ -44091,19 +44123,15 @@ function App() {
 											className: "w-full px-4 py-3 rounded-2xl liquid-input text-sm font-semibold"
 										})]
 									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-										className: "w-full h-84",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LocationPickerMap, {
-											initialLat: onboardingData.lat || 53.9006,
-											initialLng: onboardingData.lng || 27.559,
-											onLocationSelect: ({ lat, lng }) => {
-												setOnboardingData((prev) => ({
-													...prev,
-													lat,
-													lng
-												}));
-											}
-										})
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(LocationPickerMap, {
+										initialCoordinates: onboardingData.coordinates,
+										onLocationSelect: (newCoords, isUserInteraction) => {
+											setOnboardingData((prev) => ({
+												...prev,
+												coordinates: newCoords
+											}));
+											if (isUserInteraction) setIsMapMoved(true);
+										}
 									})
 								]
 							}),
@@ -44212,8 +44240,9 @@ function App() {
 						const expStr = String(onboardingData.experienceYears ?? "");
 						const isExperienceValid = expStr !== "" && /^(0|[1-9]\d*)$/.test(expStr) && Number(expStr) <= 120;
 						const isMusicianDisabled = role === "musician" && currentStepOnboarding == 4 && !isExperienceValid;
+						const isCafeStep1Invalid = role === "cafe" && currentStepOnboarding === 1 && (!onboardingData.name?.trim() || !onboardingData.address?.trim() || !isMapMoved);
 						const isDescriptionValid = Boolean(onboardingData.description?.trim());
-						const isDisabled = isMusicianDisabled || role === "cafe" && currentStepOnboarding == 3 && !isDescriptionValid;
+						const isDisabled = isMusicianDisabled || isCafeStep1Invalid || role === "cafe" && currentStepOnboarding === 3 && !isDescriptionValid;
 						return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 							type: "button",
 							onClick: handleNextOnboardingStep,
@@ -44346,9 +44375,9 @@ function App() {
 														children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 															className: "text-[11px] font-bold text-pink-400 bg-pink-500/10 border border-pink-500/20 px-2.5 py-1 rounded-lg",
 															children: evt.date
-														}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+														}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 															className: "text-xs font-black text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20",
-															children: [evt.price, " BYN"]
+															children: evt.price
 														})]
 													}),
 													/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
@@ -44408,7 +44437,7 @@ function App() {
 									children: "У вас нет активных откликов"
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 									className: "text-xs text-slate-400 max-w-xs leading-relaxed",
-									children: "Найдите подходящую площадку на Карте или в Списке и подайте свою первую заявку!"
+									children: "Найдите подходящую площадку на Карте и подайте свою первую заявку!"
 								})]
 							})]
 						}) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
@@ -44464,9 +44493,9 @@ function App() {
 											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 												className: "text-xs text-slate-400 block font-medium",
 												children: "Гонорар"
-											}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 												className: "text-sm font-black text-emerald-400",
-												children: [activeApp.price, " BYN"]
+												children: activeApp.price
 											})]
 										})]
 									}),
@@ -44653,44 +44682,146 @@ function App() {
 							})
 						]
 					}),
-					activeTab === "gigs" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "flex flex-col flex-1 min-h-0 p-4 gap-4",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							className: "flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar w-full min-w-0",
-							children: [gigs.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								className: "shrink-0 flex items-center justify-center px-4 h-11 bg-slate-800 border border-slate-700 rounded-2xl select-none",
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									className: "text-xs font-bold text-slate-300",
-									children: "Нет активных/запланированных выступлений"
-								})
-							}) : gigs.map((item) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-								type: "button",
-								className: "shrink-0 flex flex-col items-center justify-center px-4 h-11 bg-slate-800 border border-slate-700 rounded-2xl min-w-22.5 hover:bg-slate-750 transition-colors",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									className: "text-xs font-bold text-white leading-tight",
-									children: item.date
-								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									className: "text-[10px] text-pink-400 font-semibold leading-tight",
-									children: item.time
+					activeTab === "gigs" && (() => {
+						const activeGig = gigs.find((g) => g.id === selectedGigId);
+						return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex flex-col flex-1 min-h-0 p-4 gap-4",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar w-full min-w-0",
+								children: [gigs.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									className: "shrink-0 flex items-center justify-center px-4 h-11 bg-slate-800 border border-slate-700 rounded-2xl select-none",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "text-xs font-bold text-slate-300",
+										children: "Нет активных/запланированных выступлений"
+									})
+								}) : gigs.map((item) => {
+									const isActive = item.id === selectedGigId;
+									const displayDate = item.date || (item.begin_at ? (/* @__PURE__ */ new Date(item.begin_at * 1e3)).toLocaleDateString("ru-RU", {
+										day: "numeric",
+										month: "short"
+									}) : "Даты нет");
+									const displayTime = item.time || (item.begin_at ? (/* @__PURE__ */ new Date(item.begin_at * 1e3)).toLocaleTimeString("ru-RU", {
+										hour: "2-digit",
+										minute: "2-digit"
+									}) : "19:00");
+									return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+										type: "button",
+										onClick: () => setSelectedGigId(item.id),
+										className: `shrink-0 flex flex-col items-center justify-center px-4 h-11 border rounded-2xl min-w-22.5 transition-all ${isActive ? "bg-pink-600/20 border-pink-500 text-white shadow-lg shadow-pink-500/20 scale-102" : "bg-slate-800 border-slate-700 hover:bg-slate-750 text-slate-300"}`,
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: `text-xs font-bold leading-tight ${isActive ? "text-pink-400" : "text-white"}`,
+											children: displayDate
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "text-[10px] text-pink-400 font-semibold leading-tight",
+											children: displayTime
+										})]
+									}, item.id);
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									type: "button",
+									onClick: handleAddGigClick,
+									className: "shrink-0 w-11 h-11 bg-pink-500 hover:bg-pink-600 text-white rounded-2xl flex items-center justify-center text-2xl font-black shadow-lg shadow-pink-500/30 transition-all active:scale-95",
+									title: "Создать поиск артиста",
+									children: "+"
 								})]
-							}, item.id)), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-								type: "button",
-								onClick: handleAddGigClick,
-								className: "shrink-0 w-11 h-11 bg-pink-500 hover:bg-pink-600 text-white rounded-2xl flex items-center justify-center text-2xl font-black shadow-lg shadow-pink-500/30 transition-all active:scale-95",
-								title: "Создать поиск артиста",
-								children: "+"
+							}), activeGig ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "flex-1 bg-slate-900/60 border border-slate-800 rounded-3xl p-4 flex flex-col gap-4 overflow-y-auto",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "flex items-start justify-between border-b border-slate-800/80 pb-3",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "text-[10px] font-black uppercase text-pink-400 tracking-wider",
+											children: activeGig.status === "search" || activeGig.status === "active" ? "🔍 Поиск артиста" : "✅ Артист найден"
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+											className: "text-lg font-black text-white mt-0.5",
+											children: activeGig.title || `Запрос #${activeGig.id}`
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+											className: "flex flex-wrap gap-1 mt-1.5",
+											children: activeGig.genres?.map((g, idx) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "px-2 py-0.5 bg-purple-900/40 border border-purple-500/30 text-purple-300 text-[10px] font-semibold rounded-md",
+												children: g
+											}, idx))
+										})
+									] }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "text-right shrink-0",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "text-[10px] text-slate-400 block uppercase font-bold",
+											children: "Гонорар"
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+											className: "text-xl font-black text-emerald-400",
+											children: [activeGig.price, " BYN"]
+										})]
+									})]
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "flex-1 flex flex-col gap-3",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h4", {
+										className: "text-xs font-black text-slate-400 uppercase tracking-wider flex items-center justify-between",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Отклики артистов" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "bg-slate-800 text-pink-400 px-2 py-0.5 rounded-full text-[10px]",
+											children: activeGig.applications?.length || 0
+										})]
+									}), activeGig.applications && activeGig.applications.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "flex flex-col gap-3",
+										children: activeGig.applications.map((app) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "bg-slate-800/90 border border-slate-700/80 p-3.5 rounded-2xl flex flex-col gap-3 shadow-md",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+												className: "flex items-center justify-between",
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+													className: "flex items-center gap-2.5",
+													children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+														className: "w-9 h-9 rounded-full bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow",
+														children: app.musicianName ? app.musicianName[0].toUpperCase() : "🎵"
+													}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+														className: "text-sm font-bold text-white leading-tight",
+														children: app.musicianName || `Артист ID: ${app.musician_id}`
+													}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+														className: "text-[11px] text-slate-400 font-medium leading-tight mt-0.5",
+														children: app.genres?.length ? app.genres.join(", ") : "Жанры не указаны"
+													})] })]
+												}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+													type: "button",
+													onClick: () => handleAcceptApplication && handleAcceptApplication(activeGig.id, app.musician_id),
+													className: "px-3.5 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 active:scale-95 text-white text-xs font-black rounded-xl shadow-md transition-all flex items-center gap-1",
+													children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "✓" }), " Принять"]
+												})]
+											}), app.video_url ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+												className: "w-full bg-black/60 rounded-xl overflow-hidden border border-slate-700/60 relative",
+												children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("video", {
+													src: app.video_url,
+													controls: true,
+													playsInline: true,
+													preload: "metadata",
+													className: "w-full max-h-52 object-contain bg-black"
+												})
+											}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+												className: "w-full py-3 bg-slate-900/50 border border-dashed border-slate-700/60 rounded-xl flex items-center justify-center text-slate-500 text-xs",
+												children: "🎬 Видео-демо отсутствует"
+											})]
+										}, app.id))
+									}) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "flex-1 flex flex-col items-center justify-center py-10 text-slate-500 bg-slate-900/30 border border-dashed border-slate-800 rounded-2xl",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "text-2xl mb-1",
+											children: "⏳"
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+											className: "text-xs font-medium",
+											children: "Пока нет откликов от музыкантов"
+										})]
+									})]
+								})]
+							}) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "flex-1 bg-slate-900/50 border border-slate-800 rounded-3xl p-4 flex flex-col items-center justify-center text-slate-400",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "text-3xl mb-2",
+									children: "🎭"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+									className: "text-sm font-semibold text-center",
+									children: "Выберите дату сверху или нажмите «+», чтобы создать вызов музыканта"
+								})]
 							})]
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							className: "flex-1 bg-slate-900/50 border border-slate-800 rounded-3xl p-4 flex flex-col items-center justify-center text-slate-400",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								className: "text-3xl mb-2",
-								children: "🎭"
-							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-								className: "text-sm font-semibold text-center",
-								children: "Выберите дату сверху или нажмите «+», чтобы создать вызов музыканта"
-							})]
-						})]
-					}),
+						});
+					})(),
 					activeTab === "musicians" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "flex flex-col h-full min-h-0 w-full overflow-hidden relative z-20",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -44961,26 +45092,7 @@ function App() {
 				] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 						onClick: async () => {
-							setLoading(true);
-							setIsLoadingApps(true);
-							const telegramInitData = window.Telegram?.WebApp?.initData || "";
-							const response2 = await fetch(`${hrefWebSite}api-zvuk/musician-applications`, {
-								method: "POST",
-								headers: {
-									"Content-Type": "application/json",
-									"Authorization": `Bearer ${telegramInitData}`
-								}
-							});
-							if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
-							const data = await response2.json();
-							console.log("data?.applications", data?.applications);
-							if (data.success) {
-								setMusicianApplications(data.applications || []);
-								if (data.applications?.length > 0) setSelectedAppId((prev) => prev ?? data.applications[0].id);
-							}
-							setIsLoadingApps(false);
 							setActiveTab("requests");
-							setLoading(false);
 						},
 						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "requests" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
@@ -45260,12 +45372,16 @@ function App() {
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 										className: "bg-slate-800/90 border border-slate-700 rounded-2xl p-3 flex items-center justify-between",
 										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-											type: "number",
-											value: gigForm.price,
-											onChange: (e) => setGigForm({
-												...gigForm,
-												price: e.target.value
-											}),
+											type: "text",
+											inputMode: "numeric",
+											value: gigForm.price || "",
+											onChange: (e) => {
+												const cleanValue = e.target.value.replace(/\D/g, "").replace(/^0+/, "");
+												if (cleanValue.length <= 6) setGigForm({
+													...gigForm,
+													price: cleanValue
+												});
+											},
 											placeholder: "350",
 											className: "bg-transparent text-2xl font-black text-white outline-none w-full"
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
@@ -45276,7 +45392,7 @@ function App() {
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 									type: "submit",
-									disabled: isSubmittingGig || !gigForm.title?.trim() || gigForm.title.trim().length > 40,
+									disabled: isSubmittingGig || !gigForm.title?.trim() || gigForm.title.trim().length > 40 || !gigForm.price || Number(gigForm.price) <= 0,
 									className: "w-full py-4 mt-2 bg-linear-to-r from-pink-500 via-purple-600 to-pink-500 hover:opacity-95 active:scale-98 text-white font-black text-base uppercase tracking-widest rounded-2xl shadow-xl shadow-pink-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none disabled:shadow-none",
 									children: isSubmittingGig ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "animate-pulse",
@@ -45319,4 +45435,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-Br0UvzUl.js.map
+//# sourceMappingURL=index-B4wta1VL.js.map
