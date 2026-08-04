@@ -43090,7 +43090,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.1.50";
+	const appVersion = "v0.1.51";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43139,7 +43139,7 @@ function App() {
 				});
 				if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
 				const data = await response2.json();
-				console.log("data?.cafes" + data?.applications);
+				console.log(`data?.cafes: ${data?.applications}`);
 				if (data.success) {
 					setMusicianApplications(data.applications || []);
 					if (data.applications?.length > 0) setSelectedAppId((prev) => prev ?? data.applications[0].id);
@@ -43421,7 +43421,7 @@ function App() {
 							});
 							if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
 							const data2 = await response2.json();
-							console.log("data2?.gigs" + data2?.gigs);
+							console.log("data2?.gigs", data2?.gigs);
 							setGigs(data2?.gigs);
 							setActiveTab("gigs");
 							setLoading(false);
@@ -43436,7 +43436,7 @@ function App() {
 							});
 							if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
 							const data2 = await response2.json();
-							console.log("data2?.cafes" + data2?.cafes);
+							console.log("data2?.cafes", data2?.cafes);
 							setCafes(data2?.cafes);
 							setIsLoadingApps(true);
 							const response3 = await fetch(`${hrefWebSite}api-zvuk/musician-applications`, {
@@ -43448,7 +43448,7 @@ function App() {
 							});
 							if (!response3.ok) throw new Error(`HTTP error! status: ${response3.status}`);
 							const data3 = await response3.json();
-							console.log("data3?.cafes" + data3?.applications);
+							console.log("data3?.cafes", data3?.applications);
 							if (data3.success) {
 								setMusicianApplications(data3.applications || []);
 								if (data3.applications?.length > 0) setSelectedAppId((prev) => prev ?? data3.applications[0].id);
@@ -44883,7 +44883,7 @@ function App() {
 							});
 							if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
 							const data2 = await response2.json();
-							console.log("data2?.musicians" + data2?.musicians);
+							console.log("data2?.musicians", data2?.musicians);
 							setMusiciansList(data2?.musicians);
 							setActiveTab("musicians");
 							setLoading(false);
@@ -44923,7 +44923,7 @@ function App() {
 							});
 							if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
 							const data = await response2.json();
-							console.log("data?.cafes" + data?.applications);
+							console.log("data?.cafes", data?.applications);
 							if (data.success) {
 								setMusicianApplications(data.applications || []);
 								if (data.applications?.length > 0) setSelectedAppId((prev) => prev ?? data.applications[0].id);
@@ -45269,4 +45269,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-Bai2r09d.js.map
+//# sourceMappingURL=index-CydXESlf.js.map
