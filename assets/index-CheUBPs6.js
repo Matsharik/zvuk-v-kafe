@@ -43210,7 +43210,7 @@ function App() {
 		price: 350
 	});
 	const handleAddGigClick = () => {
-		if (!user.is_verified) setShowVerificationModal(true);
+		if (!user?.is_verified) setShowVerificationModal(true);
 		else setShowCreateGigModal(true);
 	};
 	const handleCreateGigSubmit = async (e) => {
@@ -44237,7 +44237,7 @@ function App() {
 						className: "text-[11px] font-extrabold uppercase tracking-wider text-slate-200 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm",
 						children: role === "cafe" ? "☕ Заведение" : "🎸 Музыкант"
 					})
-				}), (role === "musician" || role === "cafe" && !user.is_verified) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+				}), (role === "musician" || role === "cafe" && !user?.is_verified) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 					onClick: () => setCurrentStepOnboarding(1),
 					className: "text-[11px] bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-xl font-bold text-slate-300 active:scale-95 transition-all border border-white/10",
 					children: "Настройки"
@@ -44605,14 +44605,14 @@ function App() {
 								className: "p-4 rounded-2xl flex items-center justify-between mb-4 shadow-xl",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 									className: "text-sm font-bold flex items-center gap-1.5",
-									children: ["Верификация:", user.is_verified ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									children: ["Верификация:", user?.is_verified ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "text-emerald-400 font-extrabold flex items-center gap-1",
 										children: " Да ✅"
 									}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "text-amber-400 font-extrabold flex items-center gap-1",
 										children: " Нет ⏳"
 									})]
-								}) }), !user.is_verified && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+								}) }), !user?.is_verified && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 									onClick: () => {
 										verifyCafe();
 										alert("Запрос на верификацию отправлен");
@@ -45301,4 +45301,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-BjSkLZeb.js.map
+//# sourceMappingURL=index-CheUBPs6.js.map
