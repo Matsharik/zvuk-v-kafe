@@ -43090,7 +43090,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "  ";
+	const appVersion = " ";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43374,7 +43374,7 @@ function App() {
 			return prev - 1;
 		});
 	};
-	(0, import_react.useEffect)(() => {
+	(0, import_react.useEffect)(async () => {
 		async function initTelegramAuth() {
 			const tg = window.Telegram?.WebApp;
 			if (!tg) {
@@ -43474,7 +43474,7 @@ function App() {
 				setLoading(false);
 			}
 		}
-		if (user == null) initTelegramAuth();
+		if (user == null) await initTelegramAuth();
 	}, []);
 	(0, import_react.useEffect)(() => {
 		const tg = window.Telegram?.WebApp;
@@ -45319,4 +45319,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-BR9ZEqAC.js.map
+//# sourceMappingURL=index-Br0UvzUl.js.map
