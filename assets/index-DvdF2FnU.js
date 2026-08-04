@@ -43090,7 +43090,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.1.48";
+	const appVersion = "v0.1.49";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -44913,6 +44913,7 @@ function App() {
 						onClick: async () => {
 							setLoading(true);
 							setIsLoadingApps(true);
+							const telegramInitData = window.Telegram?.WebApp?.initData || "";
 							const response2 = await fetch(`${hrefWebSite}api-zvuk/musician-applications`, {
 								method: "POST",
 								headers: {
@@ -45268,4 +45269,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-CghAw3b5.js.map
+//# sourceMappingURL=index-DvdF2FnU.js.map
