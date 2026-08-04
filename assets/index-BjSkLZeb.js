@@ -43090,7 +43090,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "";
+	const appVersion = " ";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43511,14 +43511,46 @@ function App() {
 	]);
 	const handleNextOnboardingStep = async () => {
 		window.Telegram?.WebApp?.HapticFeedback?.impactOccurred("medium");
+		const telegramInitData = window.Telegram?.WebApp?.initData || "";
 		console.log(`handleNextOnboardingStep() called, currentStepOnboarding: ${currentStepOnboarding}`);
 		setCurrentStepOnboarding(currentStepOnboarding + 1);
-		if (currentStepOnboarding + 1 == getMaxSteps()) {
-			if (role == "cafe") setActiveTab("gigs");
-			if (role == "musician") setActiveTab("map");
-		}
 		if (currentStepOnboarding != 0) try {
 			await saveOnboardDataToServer(currentStepOnboarding + 1);
+			if (currentStepOnboarding + 1 == getMaxSteps()) {
+				if (role == "cafe") {
+					setLoading(true);
+					const response2 = await fetch(`${hrefWebSite}api-zvuk/my-gigs`, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							"Authorization": `Bearer ${telegramInitData}`
+						}
+					});
+					if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
+					const data2 = await response2.json();
+					console.log("data2?.gigs", data2?.gigs);
+					setGigs(data2?.gigs);
+					setActiveTab("gigs");
+					setLoading(false);
+				}
+				if (role == "musician") {
+					setLoading(true);
+					const response2 = await fetch(`${hrefWebSite}api-zvuk/map-cafes`, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							"Authorization": `Bearer ${telegramInitData}`
+						}
+					});
+					if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
+					const data2 = await response2.json();
+					console.log("data2?.cafes", data2?.cafes);
+					setCafes(data2?.cafes);
+					setMusicianApplications([]);
+					setActiveTab("map");
+					setLoading(false);
+				}
+			}
 		} catch (err) {
 			console.error("Ошибка сохранения данных музыканта перед видео:", err);
 		}
@@ -45269,4 +45301,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-C8_d8EOY.js.map
+//# sourceMappingURL=index-BjSkLZeb.js.map
