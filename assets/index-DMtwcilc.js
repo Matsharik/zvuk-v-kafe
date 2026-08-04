@@ -43090,7 +43090,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = " ";
+	const appVersion = "  ";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43210,7 +43210,7 @@ function App() {
 		price: 350
 	});
 	const handleAddGigClick = () => {
-		if (!user?.is_verified) setShowVerificationModal(true);
+		if (!user.is_verified) setShowVerificationModal(true);
 		else setShowCreateGigModal(true);
 	};
 	const handleCreateGigSubmit = async (e) => {
@@ -43517,8 +43517,25 @@ function App() {
 		if (currentStepOnboarding != 0) try {
 			await saveOnboardDataToServer(currentStepOnboarding + 1);
 			if (currentStepOnboarding + 1 == getMaxSteps()) {
+				setLoading(true);
+				try {
+					const response = await fetch(`${hrefWebSite}api-zvuk/auth-telegram`, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							"Authorization": `Bearer ${telegramInitData}`
+						}
+					});
+					if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+					const data = await response.json();
+					if (data.success) {
+						if (data?.user || data?.session) setUser(data.user || data.session.user);
+					}
+				} catch (err) {
+					console.error("💥 [App] Запрос к авторизации упал:", err);
+					setErrorStatus("Не удалось связаться с сервером авторизации.");
+				}
 				if (role == "cafe") {
-					setLoading(true);
 					const response2 = await fetch(`${hrefWebSite}api-zvuk/my-gigs`, {
 						method: "POST",
 						headers: {
@@ -43534,7 +43551,6 @@ function App() {
 					setLoading(false);
 				}
 				if (role == "musician") {
-					setLoading(true);
 					const response2 = await fetch(`${hrefWebSite}api-zvuk/map-cafes`, {
 						method: "POST",
 						headers: {
@@ -45301,4 +45317,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-CheUBPs6.js.map
+//# sourceMappingURL=index-DMtwcilc.js.map
