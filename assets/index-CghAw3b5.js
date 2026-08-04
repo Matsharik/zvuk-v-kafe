@@ -18782,37 +18782,6 @@ var createClusterCustomIcon = (cluster) => {
 	});
 };
 function MapView({ cafes = [], onSelectCafe }) {
-	const pointsToRender = cafes.length > 0 ? cafes : [{
-		id: 1,
-		lat: 53.9006,
-		lng: 27.559,
-		title: "Кафе Звук 1",
-		address: "ул. Арбат, 15",
-		rating: 4.9,
-		reviewsCount: 24,
-		image: "☕️",
-		events: [{
-			id: 101,
-			title: "Акустический вечер",
-			date: "Сегодня, 20:00",
-			price: "от 1 500 ₽"
-		}]
-	}, {
-		id: 2,
-		lat: 53.901,
-		lng: 27.56,
-		title: "Lounge Bar & Jam",
-		address: "Тверская, 8",
-		rating: 4.7,
-		reviewsCount: 12,
-		image: "🎷",
-		events: [{
-			id: 201,
-			title: "Саксофон соло",
-			date: "Сегодня, 21:30",
-			price: "от 3 000 ₽"
-		}]
-	}];
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "w-full h-full relative",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("style", { children: `
@@ -18879,7 +18848,7 @@ function MapView({ cafes = [], onSelectCafe }) {
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(index_default, {
 				showCoverageOnHover: false,
 				iconCreateFunction: createClusterCustomIcon,
-				children: pointsToRender.map((point) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Marker, {
+				children: cafes.map((point) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Marker, {
 					position: [point.lat, point.lng],
 					icon: customPinIcon,
 					eventHandlers: { click: (e) => {
@@ -43121,7 +43090,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.1.47";
+	const appVersion = "v0.1.48";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -43149,6 +43118,7 @@ function App() {
 		if (applyingOrderId) return;
 		setApplyingOrderId(orderId);
 		try {
+			const telegramInitData = window.Telegram?.WebApp?.initData || "";
 			const data = await (await fetch(`${hrefWebSite}api-zvuk/apply-to-order`, {
 				method: "POST",
 				headers: {
@@ -44903,6 +44873,7 @@ function App() {
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 						onClick: async () => {
 							setLoading(true);
+							const telegramInitData = window.Telegram?.WebApp?.initData || "";
 							const response2 = await fetch(`${hrefWebSite}api-zvuk/musicians`, {
 								method: "POST",
 								headers: {
@@ -45297,4 +45268,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-CDEuFIJB.js.map
+//# sourceMappingURL=index-CghAw3b5.js.map
