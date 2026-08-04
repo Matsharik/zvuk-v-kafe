@@ -43090,7 +43090,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.1.49";
+	const appVersion = "v0.1.50";
 	console.log(appVersion);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [user, setUser] = (0, import_react.useState)(null);
@@ -44252,7 +44252,7 @@ function App() {
 													className: "flex items-center gap-2 mt-1",
 													children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 														className: "text-xs text-amber-400 font-bold",
-														children: ["⭐️ ", selectedCafe.rating]
+														children: ["⭐️ ", selectedCafe.rating > 0 ? selectedCafe.rating : "-"]
 													}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 														className: "text-[10px] text-slate-500",
 														children: [
@@ -44835,9 +44835,9 @@ function App() {
 												className: "text-[10px] text-pink-400 font-bold",
 												children: [
 													"⭐️ ",
-													m.rating,
+													m.rating > 0 ? m.rating : "-",
 													" (",
-													m.reviews,
+													m.reviews || 0,
 													" отзывов)"
 												]
 											})
@@ -45269,4 +45269,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-DvdF2FnU.js.map
+//# sourceMappingURL=index-Bai2r09d.js.map
