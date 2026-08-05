@@ -44774,7 +44774,7 @@ function App() {
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
 										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 											className: "text-[10px] font-black uppercase text-pink-400 tracking-wider",
-											children: activeGig.status === "search" || activeGig.status === "active" ? "🔍 Поиск артиста" : "✅ Артист найден"
+											children: activeGig.status === "search" ? "🔍 Поиск артиста" : "✅ Артист найден"
 										}),
 										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
 											className: "text-lg font-black text-white mt-0.5",
@@ -44784,6 +44784,13 @@ function App() {
 											className: "flex flex-wrap gap-1 mt-1.5",
 											children: activeGig.genres?.map((g, idx) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 												className: "px-2 py-0.5 bg-purple-900/40 border border-purple-500/30 text-purple-300 text-[10px] font-semibold rounded-md",
+												children: g
+											}, idx))
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+											className: "flex flex-wrap gap-1 mt-1.5",
+											children: activeGig.instruments?.map((g, idx) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "px-2 py-0.5 bg-purple-600/40 border border-purple-400/30 text-purple-100 text-[10px] font-semibold rounded-md",
 												children: g
 											}, idx))
 										})
@@ -44814,15 +44821,22 @@ function App() {
 												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 													className: "flex items-center gap-2.5",
 													children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-														className: "w-9 h-9 rounded-full bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow",
+														className: "w-9 h-9 rounded-full bg-linear-to-tr from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow",
 														children: app.musicianName ? app.musicianName[0].toUpperCase() : "🎵"
-													}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-														className: "text-sm font-bold text-white leading-tight",
-														children: app.musicianName || `Артист ID: ${app.musician_id}`
-													}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-														className: "text-[11px] text-slate-400 font-medium leading-tight mt-0.5",
-														children: app.genres?.length ? app.genres.join(", ") : "Жанры не указаны"
-													})] })]
+													}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+														/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+															className: "text-sm font-bold text-white leading-tight",
+															children: app.musicianName || `Артист`
+														}),
+														/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+															className: "text-[11px] text-slate-400 font-medium leading-tight mt-0.5",
+															children: app.genres?.length ? app.genres.join(", ") : "Жанры не указаны"
+														}),
+														/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+															className: "text-[11px] text-slate-400 font-medium leading-tight mt-0.5",
+															children: app.instruments?.length ? app.genres.join(", ") : "Инструменты не указаны"
+														})
+													] })]
 												}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 													type: "button",
 													onClick: () => handleAcceptApplication && handleAcceptApplication(activeGig.id, app.musician_id),
@@ -45479,4 +45493,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-D4YJsqqz.js.map
+//# sourceMappingURL=index-4sJ8e5qE.js.map
