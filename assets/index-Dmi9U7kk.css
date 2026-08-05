@@ -1455,6 +1455,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
     min-height: 0;
   }
 
+  .min-h-\[250px\] {
+    min-height: 250px;
+  }
+
   .min-h-\[300px\] {
     min-height: 300px;
   }

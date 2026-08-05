@@ -18869,22 +18869,37 @@ function MapView({ cafes = [], onSelectCafe }) {
 }
 //#endregion
 //#region src/components/LocationPickerMap.jsx
-function MapController({ onLocationSelect }) {
+function MapController({ initialCoordinates, onLocationSelect }) {
 	const map = useMap();
 	const onSelectRef = (0, import_react.useRef)(onLocationSelect);
+	const isInitializingRef = (0, import_react.useRef)(true);
 	(0, import_react.useEffect)(() => {
 		onSelectRef.current = onLocationSelect;
 	}, [onLocationSelect]);
 	(0, import_react.useEffect)(() => {
+		if (Array.isArray(initialCoordinates) && initialCoordinates.length === 2) {
+			const [lat, lng] = initialCoordinates;
+			if (lat && lng) map.setView([lat, lng], map.getZoom(), { animate: false });
+		}
+	}, [
+		map,
+		initialCoordinates?.[0],
+		initialCoordinates?.[1]
+	]);
+	(0, import_react.useEffect)(() => {
 		const timer = setTimeout(() => {
 			map.invalidateSize();
+			const center = map.getCenter();
+			const initialCoords = [Number(center.lat.toFixed(6)), Number(center.lng.toFixed(6))];
+			if (onSelectRef.current) onSelectRef.current(initialCoords, false);
+			setTimeout(() => {
+				isInitializingRef.current = false;
+			}, 150);
 		}, 250);
-		const center = map.getCenter();
-		const initialCoords = [Number(center.lat.toFixed(6)), Number(center.lng.toFixed(6))];
-		if (onSelectRef.current) onSelectRef.current(initialCoords, false);
 		return () => clearTimeout(timer);
 	}, [map]);
 	useMapEvents({ moveend: () => {
+		if (isInitializingRef.current) return;
 		const center = map.getCenter();
 		const newCoords = [Number(center.lat.toFixed(6)), Number(center.lng.toFixed(6))];
 		if (onSelectRef.current) onSelectRef.current(newCoords, true);
@@ -18892,9 +18907,9 @@ function MapController({ onLocationSelect }) {
 	return null;
 }
 function LocationPickerMap({ initialCoordinates = [53.9006, 27.559], onLocationSelect }) {
-	const [lat, lng] = initialCoordinates && initialCoordinates.length === 2 ? initialCoordinates : [53.9006, 27.559];
+	const validCoords = Array.isArray(initialCoordinates) && initialCoordinates.length === 2 ? initialCoordinates : [53.9006, 27.559];
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "relative w-full h-full rounded-2xl overflow-hidden border border-white/10 shadow-xl bg-slate-900",
+		className: "relative w-full h-full min-h-[250px] rounded-2xl overflow-hidden border border-white/10 shadow-xl bg-slate-900",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				className: "absolute inset-0 z-[1000] pointer-events-none flex items-center justify-center pb-6",
@@ -18911,7 +18926,7 @@ function LocationPickerMap({ initialCoordinates = [53.9006, 27.559], onLocationS
 				children: "Сдвиньте карту под прицел"
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(MapContainer, {
-				center: [lat, lng],
+				center: validCoords,
 				zoom: 12,
 				style: {
 					width: "100%",
@@ -18919,7 +18934,10 @@ function LocationPickerMap({ initialCoordinates = [53.9006, 27.559], onLocationS
 				},
 				zoomControl: false,
 				attributionControl: false,
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TileLayer, { url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapController, { onLocationSelect })]
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TileLayer, { url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapController, {
+					initialCoordinates: validCoords,
+					onLocationSelect
+				})]
 			})
 		]
 	});
@@ -42945,22 +42963,16 @@ var GenreSelector = ({ selectedGenres = [], onChange }) => {
 	const toggleGenre = (genre) => {
 		window.Telegram?.WebApp?.HapticFeedback?.selectionChanged();
 		if (selectedGenres.includes(genre)) onChange(selectedGenres.filter((g) => g !== genre));
-		else {
-			if (selectedGenres.length >= 5) return;
-			onChange([...selectedGenres, genre]);
-		}
+		else onChange([...selectedGenres, genre]);
 	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "w-full space-y-3",
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 			className: "flex justify-between items-center px-1",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
 				className: "text-sm font-semibold text-gray-200",
 				children: "Выберите жанры"
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-				className: "text-xs text-gray-400 font-medium",
-				children: [selectedGenres.length, "/5"]
-			})]
+			})
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 			className: "flex flex-wrap gap-2.5",
 			children: GENRES.map((genre) => {
@@ -45493,4 +45505,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-4sJ8e5qE.js.map
+//# sourceMappingURL=index-BUYQ6Y6F.js.map
