@@ -18873,13 +18873,21 @@ function MapController({ initialCoordinates, onLocationSelect }) {
 	const map = useMap();
 	const onSelectRef = (0, import_react.useRef)(onLocationSelect);
 	const isInitializingRef = (0, import_react.useRef)(true);
+	const isSelfTriggeredRef = (0, import_react.useRef)(false);
 	(0, import_react.useEffect)(() => {
 		onSelectRef.current = onLocationSelect;
 	}, [onLocationSelect]);
 	(0, import_react.useEffect)(() => {
 		if (Array.isArray(initialCoordinates) && initialCoordinates.length === 2) {
 			const [lat, lng] = initialCoordinates;
-			if (lat && lng) map.setView([lat, lng], map.getZoom(), { animate: false });
+			if (!lat || !lng) return;
+			const center = map.getCenter();
+			const distLat = Math.abs(center.lat - lat);
+			const distLng = Math.abs(center.lng - lng);
+			if (distLat > .001 || distLng > .001) {
+				isSelfTriggeredRef.current = true;
+				map.setView([lat, lng], map.getZoom(), { animate: false });
+			}
 		}
 	}, [
 		map,
@@ -18894,12 +18902,16 @@ function MapController({ initialCoordinates, onLocationSelect }) {
 			if (onSelectRef.current) onSelectRef.current(initialCoords, false);
 			setTimeout(() => {
 				isInitializingRef.current = false;
-			}, 150);
+			}, 200);
 		}, 250);
 		return () => clearTimeout(timer);
 	}, [map]);
 	useMapEvents({ moveend: () => {
 		if (isInitializingRef.current) return;
+		if (isSelfTriggeredRef.current) {
+			isSelfTriggeredRef.current = false;
+			return;
+		}
 		const center = map.getCenter();
 		const newCoords = [Number(center.lat.toFixed(6)), Number(center.lng.toFixed(6))];
 		if (onSelectRef.current) onSelectRef.current(newCoords, true);
@@ -18909,10 +18921,10 @@ function MapController({ initialCoordinates, onLocationSelect }) {
 function LocationPickerMap({ initialCoordinates = [53.9006, 27.559], onLocationSelect }) {
 	const validCoords = Array.isArray(initialCoordinates) && initialCoordinates.length === 2 ? initialCoordinates : [53.9006, 27.559];
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "relative w-full h-full min-h-[250px] rounded-2xl overflow-hidden border border-white/10 shadow-xl bg-slate-900",
+		className: "relative w-full h-56 rounded-2xl overflow-hidden border border-white/10 shadow-xl bg-slate-900",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				className: "absolute inset-0 z-[1000] pointer-events-none flex items-center justify-center pb-6",
+				className: "absolute inset-0 z-1000 pointer-events-none flex items-center justify-center pb-6",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 					className: "flex flex-col items-center animate-pulse",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
@@ -18922,19 +18934,22 @@ function LocationPickerMap({ initialCoordinates = [53.9006, 27.559], onLocationS
 				})
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				className: "absolute bottom-2 left-1/2 -translate-x-1/2 z-[1000] pointer-events-none bg-slate-900/90 backdrop-blur px-3 py-1 rounded-full border border-white/10 text-[10px] text-slate-300 font-semibold shadow-md whitespace-nowrap",
+				className: "absolute bottom-2 left-1/2 -translate-x-1/2 z-1000 pointer-events-none bg-slate-900/90 backdrop-blur px-3 py-1 rounded-full border border-white/10 text-[10px] text-slate-300 font-semibold shadow-md whitespace-nowrap",
 				children: "Сдвиньте карту под прицел"
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(MapContainer, {
 				center: validCoords,
-				zoom: 12,
+				zoom: 13,
 				style: {
 					width: "100%",
 					height: "100%"
 				},
 				zoomControl: false,
 				attributionControl: false,
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TileLayer, { url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapController, {
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TileLayer, {
+					url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+					maxZoom: 19
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapController, {
 					initialCoordinates: validCoords,
 					onLocationSelect
 				})]
@@ -44316,7 +44331,7 @@ function App() {
 						className: "text-[11px] font-extrabold uppercase tracking-wider text-slate-200 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm",
 						children: role === "cafe" ? "☕ Заведение" : "🎸 Музыкант"
 					})
-				}), (role === "musician" || role === "cafe" && !user?.is_verified) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+				}), (role === "musician" && musicianApplications.length == 0 || role === "cafe" && !user?.is_verified) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 					onClick: () => {
 						setOnboardingData({
 							name: user?.name,
@@ -44852,7 +44867,7 @@ function App() {
 												}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 													type: "button",
 													onClick: () => handleAcceptApplication && handleAcceptApplication(activeGig.id, app.musician_id),
-													className: "px-3.5 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 active:scale-95 text-white text-xs font-black rounded-xl shadow-md transition-all flex items-center gap-1",
+													className: "px-3.5 py-2 bg-linear-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 active:scale-95 text-white text-xs font-black rounded-xl shadow-md transition-all flex items-center gap-1",
 													children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "✓" }), " Принять"]
 												})]
 											}), app.video_url ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
@@ -45505,4 +45520,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-BUYQ6Y6F.js.map
+//# sourceMappingURL=index-DCoNUo9z.js.map
