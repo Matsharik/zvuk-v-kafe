@@ -43104,6 +43104,7 @@ function App() {
 	const [selectedGigId, setSelectedGigId] = (0, import_react.useState)(null);
 	const fetchMyGigs = async (selectNewest = false) => {
 		try {
+			const telegramInitData = window.Telegram?.WebApp?.initData || "";
 			const response = await fetch(`${hrefWebSite}api-zvuk/my-gigs`, {
 				method: "POST",
 				headers: {
@@ -43348,6 +43349,7 @@ function App() {
 		let payload = null;
 		if (role == "cafe") payload = {
 			name: onboardingData.name,
+			username: window.Telegram?.WebApp.initDataUnsafe?.user.username,
 			first_name: window.Telegram?.WebApp.initDataUnsafe?.user.first_name,
 			has_seen_onboarding: hackStep,
 			description: onboardingData.description,
@@ -43357,6 +43359,7 @@ function App() {
 		};
 		if (role == "musician") payload = {
 			name: onboardingData.name,
+			username: window.Telegram?.WebApp.initDataUnsafe?.user.username,
 			first_name: window.Telegram?.WebApp.initDataUnsafe?.user.first_name,
 			has_seen_onboarding: hackStep,
 			description: onboardingData.description,
@@ -43953,15 +43956,34 @@ function App() {
 												children: edu.label
 											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
 												type: "checkbox",
-												checked: onboardingData.education[edu.key],
-												onChange: (e) => setOnboardingData({
-													...onboardingData,
-													education: {
-														...onboardingData.education,
-														[edu.key]: e.target.checked
-													}
-												}),
-												className: "w-5 h-5 accent-pink-500 rounded"
+												checked: Boolean(onboardingData.education[edu.key]),
+												onChange: (e) => {
+													const isChecked = e.target.checked;
+													setOnboardingData((prev) => {
+														const currentEdu = prev.education || {};
+														if (edu.key === "no") return {
+															...prev,
+															education: isChecked ? {
+																school: false,
+																college: false,
+																academy: false,
+																no: true
+															} : {
+																...currentEdu,
+																no: false
+															}
+														};
+														return {
+															...prev,
+															education: {
+																...currentEdu,
+																[edu.key]: isChecked,
+																...isChecked ? { no: false } : {}
+															}
+														};
+													});
+												},
+												className: "w-5 h-5 accent-pink-500 rounded cursor-pointer"
 											})]
 										}, edu.key))
 									})
@@ -44283,7 +44305,23 @@ function App() {
 						children: role === "cafe" ? "☕ Заведение" : "🎸 Музыкант"
 					})
 				}), (role === "musician" || role === "cafe" && !user?.is_verified) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-					onClick: () => setCurrentStepOnboarding(1),
+					onClick: () => {
+						setOnboardingData({
+							name: user?.name,
+							instruments: user?.instruments,
+							genres: user?.genres,
+							experienceYears: user?.experienceYears,
+							education: user?.education,
+							equipment: user?.equipment,
+							videoUrl: user?.video_url,
+							currentStepOnboarding: 0,
+							address: user?.address,
+							description: user?.description,
+							coordinates: user?.coordinates,
+							cafeTypes: user?.cafe_types
+						});
+						setCurrentStepOnboarding(1);
+					},
 					className: "text-[11px] bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-xl font-bold text-slate-300 active:scale-95 transition-all border border-white/10",
 					children: "Настройки"
 				})]
@@ -44440,9 +44478,9 @@ function App() {
 									children: "Найдите подходящую площадку на Карте и подайте свою первую заявку!"
 								})]
 							})]
-						}) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						}) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "flex items-center gap-2.5 overflow-x-auto pb-2 no-scrollbar w-full min-w-0",
-							children: musicianApplications.map((item) => {
+							children: [musicianApplications.map((item) => {
 								const isSelected = (selectedAppId ?? musicianApplications[0]?.id) === item.id;
 								return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 									type: "button",
@@ -44463,7 +44501,13 @@ function App() {
 										})
 									]
 								}, item.id);
-							})
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+								type: "button",
+								onClick: () => setActiveTab("map"),
+								className: "shrink-0 w-11 h-11 bg-pink-500 hover:bg-pink-600 text-white rounded-2xl flex items-center justify-center text-2xl font-black shadow-lg shadow-pink-500/30 transition-all active:scale-95",
+								title: "Перейти к карте",
+								children: "+"
+							})]
 						}), (() => {
 							const activeApp = musicianApplications.find((a) => a.id === (selectedAppId ?? musicianApplications[0]?.id)) || musicianApplications[0];
 							if (!activeApp) return null;
@@ -44477,7 +44521,7 @@ function App() {
 											children: [
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 													className: "text-[11px] font-bold text-slate-400 uppercase tracking-wider",
-													children: activeApp.cafeName
+													children: activeApp.name
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
 													className: "text-base font-black text-white leading-snug",
@@ -44493,9 +44537,9 @@ function App() {
 											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 												className: "text-xs text-slate-400 block font-medium",
 												children: "Гонорар"
-											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 												className: "text-sm font-black text-emerald-400",
-												children: activeApp.price
+												children: [activeApp.price, " BYN"]
 											})]
 										})]
 									}),
@@ -44683,7 +44727,7 @@ function App() {
 						]
 					}),
 					activeTab === "gigs" && (() => {
-						const activeGig = gigs.find((g) => g.id === selectedGigId);
+						const activeGig = gigs?.find((g) => g.id === selectedGigId);
 						return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "flex flex-col flex-1 min-h-0 p-4 gap-4",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -45435,4 +45479,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-B4wta1VL.js.map
+//# sourceMappingURL=index-D4YJsqqz.js.map
