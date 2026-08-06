@@ -43243,6 +43243,7 @@ function App() {
 		if (!window.confirm("Вы уверены, что хотите утвердить этого артиста на выступление?")) return;
 		try {
 			setLoading(true);
+			const telegramInitData = window.Telegram?.WebApp?.initData || "";
 			const response = await fetch(`${hrefWebSite}api-zvuk/accept-application`, {
 				method: "POST",
 				headers: {
@@ -45779,4 +45780,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-BsG4na2K.js.map
+//# sourceMappingURL=index-D901wDcf.js.map
