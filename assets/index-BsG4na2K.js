@@ -43180,6 +43180,7 @@ function App() {
 			});
 			if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 			const fetchedGigs = (await response.json())?.gigs || [];
+			console.log("setGigs:", fetchedGigs);
 			setGigs(fetchedGigs);
 			if (fetchedGigs.length > 0) {
 				if (selectNewest) setSelectedGigId(fetchedGigs[0].id);
@@ -45778,4 +45779,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-LJ29o4tO.js.map
+//# sourceMappingURL=index-BsG4na2K.js.map
