@@ -842,6 +842,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     --animate-spin: spin 1s linear infinite;
     --animate-ping: ping 1s cubic-bezier(0, 0, .2, 1) infinite;
     --animate-pulse: pulse 2s cubic-bezier(.4, 0, .6, 1) infinite;
+    --blur-xs: 4px;
     --blur-sm: 8px;
     --blur-md: 12px;
     --blur-3xl: 64px;
@@ -1443,6 +1444,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
     max-height: calc(var(--spacing) * 52);
   }
 
+  .max-h-60 {
+    max-height: calc(var(--spacing) * 60);
+  }
+
   .max-h-\[45vh\] {
     max-height: 45vh;
   }
@@ -1569,6 +1574,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
   .max-w-\[60\%\] {
     max-width: 60%;
+  }
+
+  .max-w-\[70\%\] {
+    max-width: 70%;
   }
 
   .max-w-full {
@@ -2079,6 +2088,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
     }
   }
 
+  .border-purple-500\/40 {
+    border-color: #ac4bff66;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .border-purple-500\/40 {
+      border-color: color-mix(in oklab, var(--color-purple-500) 40%, transparent);
+    }
+  }
+
   .border-purple-500\/60 {
     border-color: #ac4bff99;
   }
@@ -2275,6 +2294,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
     }
   }
 
+  .bg-black\/75 {
+    background-color: #000000bf;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-black\/75 {
+      background-color: color-mix(in oklab, var(--color-black) 75%, transparent);
+    }
+  }
+
   .bg-black\/80 {
     background-color: #000c;
   }
@@ -2334,6 +2363,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
   @supports (color: color-mix(in lab, red, red)) {
     .bg-emerald-950\/30 {
       background-color: color-mix(in oklab, var(--color-emerald-950) 30%, transparent);
+    }
+  }
+
+  .bg-emerald-950\/40 {
+    background-color: #002c2266;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-emerald-950\/40 {
+      background-color: color-mix(in oklab, var(--color-emerald-950) 40%, transparent);
     }
   }
 
@@ -2484,6 +2523,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
   @supports (color: color-mix(in lab, red, red)) {
     .bg-purple-900\/40 {
       background-color: color-mix(in oklab, var(--color-purple-900) 40%, transparent);
+    }
+  }
+
+  .bg-purple-900\/50 {
+    background-color: #59168b80;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-purple-900\/50 {
+      background-color: color-mix(in oklab, var(--color-purple-900) 50%, transparent);
     }
   }
 
@@ -2729,6 +2778,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
   }
 
+  .from-purple-500 {
+    --tw-gradient-from: var(--color-purple-500);
+    --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
+  }
+
   .from-purple-600 {
     --tw-gradient-from: var(--color-purple-600);
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
@@ -2933,8 +2987,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
     padding-right: var(--spacing);
   }
 
+  .pr-2 {
+    padding-right: calc(var(--spacing) * 2);
+  }
+
   .pb-0\.5 {
     padding-bottom: calc(var(--spacing) * .5);
+  }
+
+  .pb-1 {
+    padding-bottom: var(--spacing);
   }
 
   .pb-2 {
@@ -3484,6 +3546,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
     backdrop-filter: var(--tw-backdrop-blur, ) var(--tw-backdrop-brightness, ) var(--tw-backdrop-contrast, ) var(--tw-backdrop-grayscale, ) var(--tw-backdrop-hue-rotate, ) var(--tw-backdrop-invert, ) var(--tw-backdrop-opacity, ) var(--tw-backdrop-saturate, ) var(--tw-backdrop-sepia, );
   }
 
+  .backdrop-blur-xs {
+    --tw-backdrop-blur: blur(var(--blur-xs));
+    -webkit-backdrop-filter: var(--tw-backdrop-blur, ) var(--tw-backdrop-brightness, ) var(--tw-backdrop-contrast, ) var(--tw-backdrop-grayscale, ) var(--tw-backdrop-hue-rotate, ) var(--tw-backdrop-invert, ) var(--tw-backdrop-opacity, ) var(--tw-backdrop-saturate, ) var(--tw-backdrop-sepia, );
+    backdrop-filter: var(--tw-backdrop-blur, ) var(--tw-backdrop-brightness, ) var(--tw-backdrop-contrast, ) var(--tw-backdrop-grayscale, ) var(--tw-backdrop-hue-rotate, ) var(--tw-backdrop-invert, ) var(--tw-backdrop-opacity, ) var(--tw-backdrop-saturate, ) var(--tw-backdrop-sepia, );
+  }
+
   .backdrop-filter {
     -webkit-backdrop-filter: var(--tw-backdrop-blur, ) var(--tw-backdrop-brightness, ) var(--tw-backdrop-contrast, ) var(--tw-backdrop-grayscale, ) var(--tw-backdrop-hue-rotate, ) var(--tw-backdrop-invert, ) var(--tw-backdrop-opacity, ) var(--tw-backdrop-saturate, ) var(--tw-backdrop-sepia, );
     backdrop-filter: var(--tw-backdrop-blur, ) var(--tw-backdrop-brightness, ) var(--tw-backdrop-contrast, ) var(--tw-backdrop-grayscale, ) var(--tw-backdrop-hue-rotate, ) var(--tw-backdrop-invert, ) var(--tw-backdrop-opacity, ) var(--tw-backdrop-saturate, ) var(--tw-backdrop-sepia, );
@@ -3846,6 +3914,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
     opacity: .5;
   }
 
+  .disabled\:opacity-60:disabled {
+    opacity: .6;
+  }
+
   .disabled\:shadow-none:disabled {
     --tw-shadow: 0 0 #0000;
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
@@ -3886,6 +3958,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
     .sm\:text-left {
       text-align: left;
+    }
+
+    .sm\:text-sm {
+      font-size: var(--text-sm);
+      line-height: var(--tw-leading, var(--text-sm--line-height));
     }
   }
 
