@@ -4094,11 +4094,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
 }
 
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
+  --text: #9ca3af;
+  --text-h: #f3f4f6;
+  --bg: #070a13;
+  --border: #2e303a;
+  --code-bg: #1f2028;
   --accent: #aa3bff;
   --accent-bg: #aa3bff1a;
   --accent-border: #aa3bff80;
@@ -4109,13 +4109,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
   --mono: ui-monospace, Consolas, monospace;
   font: 18px/145% var(--sans);
   letter-spacing: .18px;
-  color-scheme: light dark;
+  color-scheme: dark;
   color: var(--text);
-  background: var(--bg);
   font-synthesis: none;
   text-rendering: optimizelegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #070a13;
 }
 
 @media (max-width: 1024px) {
@@ -4156,10 +4156,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
 #root {
   text-align: center;
-  border-inline: 1px solid var(--border);
   box-sizing: border-box;
+  background-color: #070a13;
   flex-direction: column;
-  width: 1126px;
+  width: 100%;
   max-width: 100%;
   min-height: 100svh;
   margin: 0 auto;
@@ -4508,15 +4508,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
 .no-scrollbar {
   -ms-overflow-style: none !important;
   scrollbar-width: none !important;
-}
-
-html, body, #root {
-  width: 100%;
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  background-color: #070a13 !important;
 }
 
 @property --tw-translate-x {
