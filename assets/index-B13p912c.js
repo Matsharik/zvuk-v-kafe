@@ -44332,7 +44332,7 @@ function App() {
 						const isMusicianDisabled = role === "musician" && currentStepOnboarding == 4 && !isExperienceValid;
 						const isCafeStep1Invalid = role === "cafe" && currentStepOnboarding === 1 && (!onboardingData.name?.trim() || !onboardingData.address?.trim() || !isMapMoved);
 						const isDescriptionValid = Boolean(onboardingData.description?.trim());
-						const isDisabled = isMusicianDisabled || isCafeStep1Invalid || role === "cafe" && currentStepOnboarding === 3 && !isDescriptionValid;
+						const isDisabled = isMusicianDisabled || isCafeStep1Invalid || role === "cafe" && currentStepOnboarding === 3 && !isDescriptionValid || onboardingData.description == "" || onboardingData.description == null;
 						return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 							type: "button",
 							onClick: handleNextOnboardingStep,
@@ -45798,4 +45798,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-BV9iPz5U.js.map
+//# sourceMappingURL=index-B13p912c.js.map
