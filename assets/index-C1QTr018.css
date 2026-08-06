@@ -4510,6 +4510,15 @@ svg.leaflet-image-layer.leaflet-interactive path {
   scrollbar-width: none !important;
 }
 
+html, body, #root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: #070a13 !important;
+}
+
 @property --tw-translate-x {
   syntax: "*";
   inherits: false;

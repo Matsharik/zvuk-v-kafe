@@ -43135,6 +43135,7 @@ function App() {
 	const handleInviteClick = (musician) => {
 		if (gigs.filter((g) => g.status === "search").length === 0) {
 			setActiveTab("gigs");
+			tg.setBackgroundColor("#070a13");
 			handleAddGigClick();
 			return;
 		}
@@ -43300,6 +43301,7 @@ function App() {
 				setIsLoadingApps(false);
 				setLoading(false);
 				setActiveTab("requests");
+				tg.setBackgroundColor("#070a13");
 			} else alert(data.error || "Не удалось отправить отклик");
 		} catch (err) {
 			console.error("Ошибка отклика:", err);
@@ -43575,6 +43577,7 @@ function App() {
 						console.log(`savedRole: ${data?.role}`);
 						if (savedRole == "cafe") {
 							await fetchMyGigs();
+							tg.setBackgroundColor("#070a13");
 							setActiveTab("gigs");
 							setLoading(false);
 						}
@@ -43607,6 +43610,7 @@ function App() {
 							}
 							setIsLoadingApps(false);
 							setActiveTab("requests");
+							tg.setBackgroundColor("#070a13");
 							setLoading(false);
 						}
 					}
@@ -43647,7 +43651,10 @@ function App() {
 		const handleBack = () => {
 			if (showVerificationModal) setShowVerificationModal(false);
 			else if (currentStepOnboarding > 1) handlePrevOnboardingStep();
-			else setActiveTab("gigs");
+			else {
+				setActiveTab("gigs");
+				tg.setBackgroundColor("#070a13");
+			}
 		};
 		tg.BackButton.onClick(handleBack);
 		return () => {
@@ -43689,6 +43696,7 @@ function App() {
 				if (role == "cafe") {
 					await fetchMyGigs();
 					setActiveTab("gigs");
+					tg.setBackgroundColor("#070a13");
 				}
 				if (role == "musician") {
 					const response2 = await fetch(`${hrefWebSite}api-zvuk/map-cafes`, {
@@ -43704,6 +43712,7 @@ function App() {
 					setCafes(data2?.cafes);
 					setMusicianApplications([]);
 					setSelectedCafe(null);
+					tg.setBackgroundColor("#F2EFE9");
 					setActiveTab("map");
 				}
 			}
@@ -44610,6 +44619,7 @@ function App() {
 								type: "button",
 								onClick: () => {
 									setSelectedCafe(null);
+									tg.setBackgroundColor("#F2EFE9");
 									setActiveTab("map");
 								},
 								className: "shrink-0 w-11 h-11 bg-pink-500 hover:bg-pink-600 text-white rounded-2xl flex items-center justify-center text-2xl font-black shadow-lg shadow-pink-500/30 transition-all active:scale-95",
@@ -45364,7 +45374,10 @@ function App() {
 				className: "bg-slate-900 border-t border-slate-800/80 px-4 py-3 flex justify-around items-center z-50 shrink-0 w-full overflow-x-hidden",
 				children: role === "cafe" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						onClick: () => setActiveTab("gigs"),
+						onClick: () => {
+							setActiveTab("gigs");
+							tg.setBackgroundColor("#070a13");
+						},
 						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "gigs" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 							className: "text-xl",
@@ -45391,8 +45404,12 @@ function App() {
 								console.log("data2?.musicians", data2?.musicians);
 								setMusiciansList(data2?.musicians);
 								setActiveTab("musicians");
+								tg.setBackgroundColor("#070a13");
 								setLoading(false);
-							} else setActiveTab("musicians");
+							} else {
+								setActiveTab("musicians");
+								tg.setBackgroundColor("#070a13");
+							}
 						},
 						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "musicians" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
@@ -45404,7 +45421,10 @@ function App() {
 						})]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						onClick: () => setActiveTab("profile"),
+						onClick: () => {
+							setActiveTab("profile");
+							tg.setBackgroundColor("#070a13");
+						},
 						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "profile" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 							className: "text-xl",
@@ -45418,6 +45438,7 @@ function App() {
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 						onClick: async () => {
 							setActiveTab("requests");
+							tg.setBackgroundColor("#070a13");
 						},
 						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "requests" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
@@ -45431,6 +45452,7 @@ function App() {
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 						onClick: () => {
 							setSelectedCafe(null);
+							tg.setBackgroundColor("#F2EFE9");
 							setActiveTab("map");
 						},
 						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "map" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
@@ -45443,7 +45465,10 @@ function App() {
 						})]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						onClick: () => setActiveTab("profile"),
+						onClick: () => {
+							setActiveTab("profile");
+							tg.setBackgroundColor("#070a13");
+						},
 						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "profile" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 							className: "text-xl",
@@ -45843,4 +45868,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-Blw-uOT9.js.map
+//# sourceMappingURL=index-Cd1z6iQ9.js.map
