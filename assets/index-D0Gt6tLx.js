@@ -43082,7 +43082,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "1";
+	const appVersion = "2";
 	console.log(appVersion);
 	const [isInviteModalOpen, setIsInviteModalOpen] = (0, import_react.useState)(false);
 	const [selectedMusicianToInvite, setSelectedMusicianToInvite] = (0, import_react.useState)(null);
@@ -43189,7 +43189,7 @@ function App() {
 	const [activeTab, setActiveTab] = (0, import_react.useState)(null);
 	const [role, setRole] = (0, import_react.useState)(null);
 	const [errorStatus, setErrorStatus] = (0, import_react.useState)(null);
-	const [currentStepOnboarding, setCurrentStepOnboarding] = (0, import_react.useState)(0);
+	const [currentStepOnboarding, setCurrentStepOnboarding] = (0, import_react.useState)(null);
 	const [activeVideoUrl, setActiveVideoUrl] = (0, import_react.useState)(null);
 	const [showVerificationModal, setShowVerificationModal] = (0, import_react.useState)(false);
 	const [searchQuery, setSearchQuery] = (0, import_react.useState)("");
@@ -45812,4 +45812,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-DC8vEZvQ.js.map
+//# sourceMappingURL=index-D0Gt6tLx.js.map
