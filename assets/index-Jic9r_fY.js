@@ -43547,7 +43547,7 @@ function App() {
 			console.log("📦 [App] WebApp найден. initData:", telegramInitData);
 			if (!telegramInitData) console.warn("⚠️ [App] initData пустой! Запуск вне Telegram или передача данных не удалась.");
 			tg.ready();
-			tg.setbackgroundColor("#070a13");
+			tg.setBackgroundColor("#070a13");
 			if (tg.isVersionAtLeast("7.0") && typeof tg.requestFullscreen === "function") try {
 				tg.requestFullscreen();
 				console.log("Полноэкранный режим успешно запрошен");
@@ -45849,4 +45849,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-B9SWF3qa.js.map
+//# sourceMappingURL=index-Jic9r_fY.js.map
