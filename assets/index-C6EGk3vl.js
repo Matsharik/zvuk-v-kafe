@@ -43239,7 +43239,7 @@ function App() {
 	const [selectedGenres, setSelectedGenres] = (0, import_react.useState)([]);
 	const [applyingOrderId, setApplyingOrderId] = (0, import_react.useState)(null);
 	const [isMapMoved, setIsMapMoved] = (0, import_react.useState)(false);
-	const handleAcceptApplication = async (orderId, musicianId) => {
+	const handleAcceptApplication = async (orderId, musicianUUId) => {
 		if (!window.confirm("Вы уверены, что хотите утвердить этого артиста на выступление?")) return;
 		try {
 			setLoading(true);
@@ -43252,7 +43252,7 @@ function App() {
 				},
 				body: JSON.stringify({
 					orderId,
-					musicianId
+					musicianUUId
 				})
 			});
 			const data = await response.json();
@@ -45040,7 +45040,7 @@ function App() {
 														] })]
 													}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 														type: "button",
-														onClick: () => handleAcceptApplication && handleAcceptApplication(activeGig.id, app.musician_id),
+														onClick: () => handleAcceptApplication && handleAcceptApplication(activeGig.id, app.musicianId),
 														className: "px-3.5 py-2 bg-linear-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 active:scale-95 text-white text-xs font-black rounded-xl shadow-md transition-all flex items-center gap-1",
 														children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "✓" }), " Принять"]
 													})]
@@ -45780,4 +45780,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-D901wDcf.js.map
+//# sourceMappingURL=index-C6EGk3vl.js.map
