@@ -44687,11 +44687,11 @@ function App() {
 												children: [
 													/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 														className: "text-xs font-bold text-emerald-300",
-														children: "🎉 Организатор выбрал именно вас!"
+														children: "🎉 Организатор утвердил вас на выступление!"
 													}),
 													/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 														className: "text-[11px] text-slate-300 leading-normal",
-														children: "Пожалуйста, договоритесь с ними обо всем:"
+														children: "Пожалуйста, договоритесь с ним обо всем. За дальнейшее сотрудничество сторон проект \"Звук в Кафе\" не отвечает, но вы можете оставить отзыв по завершению выступления."
 													}),
 													activeApp.cafeUsername ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
 														href: `https://t.me/${activeApp.cafeUsername.replace("@", "")}`,
@@ -45812,4 +45812,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-gRkrymw6.js.map
+//# sourceMappingURL=index-DSI9Fl3W.js.map
