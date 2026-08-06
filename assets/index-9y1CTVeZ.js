@@ -42767,61 +42767,34 @@ function isEmbeddedActionOptions(options) {
 }
 //#endregion
 //#region src/components/onboarding/VideoUploader.jsx
-var VideoUploader = ({ onUploadSuccess, hrefWebSite }) => {
-	const [file, setFile] = (0, import_react.useState)(null);
+var VideoUploader = ({ onUploadSuccess, onError, hrefWebSite = "", currentUrl = "", maxSizeMb = 50, accept = "video/mp4,video/quicktime,video/mov,video/webm" }) => {
 	const [progress, setProgress] = (0, import_react.useState)(0);
 	const [isUploading, setIsUploading] = (0, import_react.useState)(false);
-	const [uploadedUrl, setUploadedUrl] = (0, import_react.useState)("");
+	const [uploadedUrl, setUploadedUrl] = (0, import_react.useState)(currentUrl);
 	const [error, setError] = (0, import_react.useState)("");
+	const [selectedFileName, setSelectedFileName] = (0, import_react.useState)("");
 	const fileInputRef = (0, import_react.useRef)(null);
-	const ALLOWED_TYPES = [
-		"video/mp4",
-		"video/quicktime",
-		"video/mov",
-		"video/webm"
-	];
-	const MAX_SIZE_MB = 50;
 	const MAX_DURATION_SEC = 180;
-	const handleFileChange = (e) => {
-		const selectedFile = e.target.files[0];
-		setError("");
-		setUploadedUrl("");
-		if (!selectedFile) return;
-		if (!ALLOWED_TYPES.includes(selectedFile.type)) {
-			setError("Неподдерживаемый формат. Загрузите .mp4 или .mov (iOS)");
-			return;
-		}
-		if (selectedFile.size > MAX_SIZE_MB * 1024 * 1024) {
-			setError(`Размер видео превышает ${MAX_SIZE_MB} МБ`);
-			return;
-		}
-		const videoElement = document.createElement("video");
-		videoElement.preload = "metadata";
-		videoElement.src = URL.createObjectURL(selectedFile);
-		videoElement.onloadedmetadata = () => {
-			URL.revokeObjectURL(videoElement.src);
-			if (videoElement.duration > MAX_DURATION_SEC) setError(`Длительность видео больше 3 минут (${Math.round(videoElement.duration)} сек)`);
-			else setFile(selectedFile);
-		};
-	};
-	const handleUpload = async () => {
-		if (!file) return;
+	const startUpload = async (fileToUpload) => {
 		setIsUploading(true);
 		setProgress(0);
 		setError("");
 		try {
 			const telegramInitData = window.Telegram?.WebApp?.initData || "";
-			const data = await (await fetch(`${hrefWebSite}api/upload/get-presigned-url`, {
+			const requestUrl = `${hrefWebSite ? hrefWebSite.replace(/\/+$/, "") : ""}/api/upload/get-presigned-url`;
+			const res = await fetch(requestUrl, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 					"Authorization": `Bearer ${telegramInitData}`
 				},
 				body: JSON.stringify({
-					fileName: file.name,
-					fileType: file.type
+					fileName: fileToUpload.name,
+					fileType: fileToUpload.type
 				})
-			})).json();
+			});
+			if (!res.ok) throw new Error(`Ошибка сервера: ${res.status}`);
+			const data = await res.json();
 			if (!data.success) throw new Error(data.error || "Ошибка получения ссылки");
 			const { uploadUrl, publicUrl } = data;
 			const xhr = new XMLHttpRequest();
@@ -42829,128 +42802,114 @@ var VideoUploader = ({ onUploadSuccess, hrefWebSite }) => {
 				if (event.lengthComputable) setProgress(Math.round(event.loaded / event.total * 100));
 			};
 			xhr.onload = () => {
+				setIsUploading(false);
 				if (xhr.status === 200 || xhr.status === 204) {
-					setIsUploading(false);
 					setUploadedUrl(publicUrl);
 					if (onUploadSuccess) onUploadSuccess(publicUrl);
 				} else {
-					setIsUploading(false);
-					setError("Не удалось загрузить видео на сервер хранилища");
+					const errMsg = "Не удалось загрузить видео на сервер хранилища";
+					setError(errMsg);
+					if (onError) onError(errMsg);
 				}
 			};
 			xhr.onerror = () => {
 				setIsUploading(false);
-				setError("Сбой сети при загрузке видео");
+				const errMsg = "Сбой сети при загрузке видео";
+				setError(errMsg);
+				if (onError) onError(errMsg);
 			};
 			xhr.open("PUT", uploadUrl, true);
-			xhr.setRequestHeader("Content-Type", file.type);
-			xhr.send(file);
+			xhr.setRequestHeader("Content-Type", fileToUpload.type);
+			xhr.send(fileToUpload);
 		} catch (err) {
 			setIsUploading(false);
-			setError(err.message || "Ошибка загрузки");
+			const errMsg = err.message || "Ошибка загрузки";
+			setError(errMsg);
+			if (onError) onError(errMsg);
 		}
 	};
+	const handleFileChange = (e) => {
+		const selectedFile = e.target.files[0];
+		setError("");
+		if (!selectedFile) return;
+		if (selectedFile.size > maxSizeMb * 1024 * 1024) {
+			const msg = `Размер видео превышает ${maxSizeMb} МБ`;
+			setError(msg);
+			if (onError) onError(msg);
+			return;
+		}
+		setSelectedFileName(selectedFile.name);
+		const videoElement = document.createElement("video");
+		videoElement.preload = "metadata";
+		videoElement.src = URL.createObjectURL(selectedFile);
+		videoElement.onloadedmetadata = () => {
+			URL.revokeObjectURL(videoElement.src);
+			if (videoElement.duration > MAX_DURATION_SEC) {
+				const msg = `Длительность видео больше 3 минут (${Math.round(videoElement.duration)} сек)`;
+				setError(msg);
+				if (onError) onError(msg);
+			} else startUpload(selectedFile);
+		};
+	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		style: {
-			padding: "16px",
-			border: "1px dashed #ccc",
-			borderRadius: "12px",
-			textAlign: "center"
-		},
+		className: "p-4 border border-dashed border-slate-700 rounded-2xl text-center bg-slate-900/50",
 		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", { children: "🎬 Ваше видеовыступление" }),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-				style: {
-					fontSize: "13px",
-					color: "#666"
-				},
-				children: "До 3 минут, до 50 МБ (.mp4, .mov)"
-			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
 				type: "file",
 				ref: fileInputRef,
-				accept: "video/mp4,video/quicktime,video/mov,video/webm",
+				accept,
 				onChange: handleFileChange,
 				style: { display: "none" },
 				disabled: isUploading
 			}),
-			!file && !uploadedUrl && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+			!uploadedUrl && !isUploading && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 				type: "button",
-				onClick: () => fileInputRef.current.click(),
-				style: {
-					padding: "10px 20px",
-					borderRadius: "8px",
-					cursor: "pointer"
-				},
+				onClick: () => fileInputRef.current?.click(),
+				className: "w-full py-3 px-4 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold transition-all",
 				children: "📁 Выбрать видео с телефона"
 			}),
-			file && !uploadedUrl && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				style: { marginTop: "12px" },
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { children: [
-					"📄 ",
-					file.name,
-					" (",
-					(file.size / (1024 * 1024)).toFixed(1),
-					" МБ)"
-				] }), !isUploading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-					type: "button",
-					onClick: handleUpload,
-					style: {
-						padding: "10px 20px",
-						backgroundColor: "#2481cc",
-						color: "#fff",
-						border: "none",
-						borderRadius: "8px"
-					},
-					children: "🚀 Загрузить видео"
-				}) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					style: { marginTop: "10px" },
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						style: {
-							width: "100%",
-							backgroundColor: "#eee",
-							height: "10px",
-							borderRadius: "5px"
-						},
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: {
-							width: `${progress}%`,
-							backgroundColor: "#2481cc",
-							height: "100%",
-							borderRadius: "5px",
-							transition: "width 0.2s"
-						} })
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-						style: { fontSize: "12px" },
-						children: [
-							"Загрузка: ",
-							progress,
-							"%"
-						]
-					})]
-				})]
+			isUploading && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "mt-2 text-left",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+						className: "text-xs text-slate-300 mb-2 truncate",
+						children: ["⏳ Загружаем: ", selectedFileName]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "w-full bg-slate-800 h-2.5 rounded-full overflow-hidden",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "bg-pink-500 h-full rounded-full transition-all duration-200",
+							style: { width: `${progress}%` }
+						})
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+						className: "text-[11px] text-pink-400 mt-1 block text-right font-bold",
+						children: [progress, "%"]
+					})
+				]
 			}),
-			uploadedUrl && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				style: {
-					marginTop: "12px",
-					color: "green"
-				},
-				children: ["✅ Видео успешно загружено!", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("video", {
-					src: uploadedUrl,
-					controls: true,
-					style: {
-						width: "100%",
-						maxHeight: "200px",
-						marginTop: "8px",
-						borderRadius: "8px"
-					}
-				})]
+			uploadedUrl && !isUploading && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "mt-2",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "text-xs text-emerald-400 font-bold mb-2",
+						children: "✅ Видео загружено!"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("video", {
+						src: uploadedUrl,
+						controls: true,
+						className: "w-full max-h-48 rounded-xl border border-slate-700 bg-black"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						type: "button",
+						onClick: () => fileInputRef.current?.click(),
+						className: "mt-3 text-xs text-slate-400 underline hover:text-white",
+						children: "Заменить видео"
+					})
+				]
 			}),
 			error && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-				style: {
-					color: "red",
-					fontSize: "13px",
-					marginTop: "8px"
-				},
+				className: "text-xs text-red-400 mt-2 font-medium",
 				children: ["⚠️ ", error]
 			})
 		]
@@ -44176,9 +44135,9 @@ function App() {
 										children: "Загрузите 1 любимое видео вашей игры/пения (до 3 мин., до 50 МБ):"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(VideoUploader, {
+										hrefWebSite,
 										maxSizeMb: 50,
 										accept: "video/mp4,video/quicktime,video/webm",
-										isMusicianVideo: true,
 										currentUrl: onboardingData.videoUrl,
 										onUploadSuccess: (publicUrl) => {
 											setOnboardingData((prev) => ({
@@ -45835,4 +45794,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-DlzKC7Fv.js.map
+//# sourceMappingURL=index-9y1CTVeZ.js.map
