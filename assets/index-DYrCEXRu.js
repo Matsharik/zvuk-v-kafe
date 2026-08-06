@@ -43082,7 +43082,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "";
+	const appVersion = "1";
 	console.log(appVersion);
 	const [isInviteModalOpen, setIsInviteModalOpen] = (0, import_react.useState)(false);
 	const [selectedMusicianToInvite, setSelectedMusicianToInvite] = (0, import_react.useState)(null);
@@ -43570,12 +43570,18 @@ function App() {
 						}
 					}
 					if (savedRole == "musician") if (userData.description != null) {
-						console.log("Скип страничек после захода");
+						console.log("Убор страничек");
 						setCurrentStepOnboarding(getMaxSteps());
-					} else setCurrentStepOnboarding(userData?.has_seen_onboarding);
+					} else {
+						console.log("userData.description", userData.description);
+						setCurrentStepOnboarding(userData?.has_seen_onboarding);
+					}
 					if (savedRole == "cafe") if (userData.description != null) setCurrentStepOnboarding(getMaxSteps());
 					else setCurrentStepOnboarding(userData?.has_seen_onboarding);
-					if (savedRole == null) setCurrentStepOnboarding(userData?.has_seen_onboarding);
+					if (savedRole == null) {
+						console.log("savedRole == null");
+						setCurrentStepOnboarding(userData?.has_seen_onboarding);
+					}
 					console.log("✅ Пользователь авторизован:", userData);
 					console.log("userData?.has_seen_onboarding:", userData?.has_seen_onboarding);
 				} else {
@@ -43602,17 +43608,21 @@ function App() {
 			"musicians",
 			"profile",
 			"requests"
-		].includes(activeTab) && !showVerificationModal && currentStepOnboarding == getMaxSteps()) {
+		].includes(activeTab) && !showVerificationModal && currentStepOnboarding == getMaxSteps() && !(selectedCafe != null && activeTab == "map") || currentStepOnboarding === 0 || currentStepOnboarding === 1) {
 			tg.BackButton.hide();
 			tg.enableClosingConfirmation();
-		} else {
+		} else if (currentStepOnboarding !== 0 && currentStepOnboarding !== 1) {
 			tg.BackButton.show();
 			tg.disableClosingConfirmation();
 		}
 		const handleBack = () => {
 			if (showVerificationModal) setShowVerificationModal(false);
 			else if (currentStepOnboarding > 1) handlePrevOnboardingStep();
-			else setActiveTab("gigs");
+			else if (selectedCafe != null && activeTab == "map") setSelectedCafe(null);
+			else {
+				if (savedRole == "musician") setActiveTab("requests");
+				if (savedRole == "cafe") setActiveTab("gigs");
+			}
 		};
 		tg.BackButton.onClick(handleBack);
 		return () => {
@@ -43705,6 +43715,7 @@ function App() {
 		]
 	});
 	if (currentStepOnboarding != getMaxSteps()) {
+		console.log("currentStepOnboarding in РАЗДЕЛЬНЫЙ ЭКРАН ОНБОРДИНГА", currentStepOnboarding);
 		const totalSteps = getMaxSteps();
 		return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 			style: globalStyle,
@@ -44258,6 +44269,7 @@ function App() {
 										className: "flex flex-wrap gap-1.5 mb-4",
 										children: [
 											"Ресторан",
+											"Кафе",
 											"Кофейня",
 											"Бар с коктейлями",
 											"Паб",
@@ -45800,4 +45812,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-Cl0AluAP.js.map
+//# sourceMappingURL=index-DYrCEXRu.js.map
