@@ -43495,7 +43495,7 @@ function App() {
 		const [hours, minutes] = gigForm.time.split(":").map(Number);
 		return new Date(year, month - 1, day, hours, minutes).getTime() >= Date.now() + 14400 * 1e3;
 	};
-	(0, import_react.useEffect)(async () => {
+	(0, import_react.useEffect)(() => {
 		async function initTelegramAuth() {
 			const tg = window.Telegram?.WebApp;
 			if (!tg) {
@@ -43597,7 +43597,7 @@ function App() {
 				setLoading(false);
 			}
 		}
-		if (user == null) await initTelegramAuth();
+		if (user == null) initTelegramAuth();
 	}, []);
 	(0, import_react.useEffect)(() => {
 		const tg = window.Telegram?.WebApp;
@@ -45812,4 +45812,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-DYrCEXRu.js.map
+//# sourceMappingURL=index-DC8vEZvQ.js.map
