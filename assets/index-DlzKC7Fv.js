@@ -44384,7 +44384,7 @@ function App() {
 	}
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		style: globalStyle,
-		className: "flex flex-col h-[100dvh] w-full overflow-hidden antialiased select-none bg-[#070a13]",
+		className: "flex flex-col h-dvh w-full overflow-hidden antialiased select-none bg-[#070a13]",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
 				style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 12px)" },
@@ -45347,7 +45347,7 @@ function App() {
 			}),
 			" ",
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("footer", {
-				className: "glass-footer shrink-0 z-50",
+				className: "bg-slate-900 border-t border-slate-800/80 px-4 py-3 flex justify-around items-center z-50 shrink-0 w-full overflow-x-hidden",
 				children: role === "cafe" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 						onClick: () => {
@@ -45835,4 +45835,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-CfK3EBr_.js.map
+//# sourceMappingURL=index-DlzKC7Fv.js.map

@@ -1442,6 +1442,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
     height: auto;
   }
 
+  .h-dvh {
+    height: 100dvh;
+  }
+
   .h-full {
     height: 100%;
   }
@@ -1745,6 +1749,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
   .items-start {
     align-items: flex-start;
+  }
+
+  .justify-around {
+    justify-content: space-around;
   }
 
   .justify-between {
