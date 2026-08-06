@@ -43569,7 +43569,11 @@ function App() {
 							setLoading(false);
 						}
 					}
-					setCurrentStepOnboarding(userData?.has_seen_onboarding);
+					if (savedRole == "musician") if (userData.description != null) setCurrentStepOnboarding(getMaxSteps());
+					else setCurrentStepOnboarding(userData?.has_seen_onboarding);
+					if (savedRole == "cafe") if (userData.description != null) setCurrentStepOnboarding(getMaxSteps());
+					else setCurrentStepOnboarding(userData?.has_seen_onboarding);
+					if (savedRole == null) setCurrentStepOnboarding(userData?.has_seen_onboarding);
 					console.log("✅ Пользователь авторизован:", userData);
 					console.log("userData?.has_seen_onboarding:", userData?.has_seen_onboarding);
 				} else {
@@ -43627,24 +43631,24 @@ function App() {
 		setCurrentStepOnboarding(currentStepOnboarding + 1);
 		if (currentStepOnboarding != 0) try {
 			await saveOnboardDataToServer(currentStepOnboarding + 1);
-			if (currentStepOnboarding + 1 == getMaxSteps()) {
-				try {
-					const response = await fetch(`${hrefWebSite}api-zvuk/auth-telegram`, {
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-							"Authorization": `Bearer ${telegramInitData}`
-						}
-					});
-					if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-					const data = await response.json();
-					if (data.success) {
-						if (data?.user || data?.session) setUser(data.user || data.session.user);
+			try {
+				const response = await fetch(`${hrefWebSite}api-zvuk/auth-telegram`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"Authorization": `Bearer ${telegramInitData}`
 					}
-				} catch (err) {
-					console.error("💥 [App] Запрос к авторизации упал:", err);
-					setErrorStatus("Не удалось связаться с сервером авторизации.");
+				});
+				if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+				const data = await response.json();
+				if (data.success) {
+					if (data?.user || data?.session) setUser(data.user || data.session.user);
 				}
+			} catch (err) {
+				console.error("💥 [App] Запрос к авторизации упал:", err);
+				setErrorStatus("Не удалось связаться с сервером авторизации.");
+			}
+			if (currentStepOnboarding + 1 == getMaxSteps()) {
 				if (role == "cafe") {
 					await fetchMyGigs();
 					setActiveTab("gigs");
@@ -44360,17 +44364,17 @@ function App() {
 							name: user?.name,
 							instruments: user?.instruments,
 							genres: user?.genres,
-							experienceYears: user?.experienceYears,
+							experienceYears: user?.experience_years,
 							education: user?.education,
 							equipment: user?.equipment,
 							videoUrl: user?.video_url,
-							currentStepOnboarding: 0,
+							currentStepOnboarding: getMaxSteps() - 1,
 							address: user?.address,
 							description: user?.description,
 							coordinates: user?.coordinates,
 							cafeTypes: user?.cafe_types
 						});
-						setCurrentStepOnboarding(1);
+						setCurrentStepOnboarding(getMaxSteps() - 1);
 					},
 					className: "text-[11px] bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-xl font-bold text-slate-300 active:scale-95 transition-all border border-white/10",
 					children: "Настройки"
@@ -45794,4 +45798,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-9y1CTVeZ.js.map
+//# sourceMappingURL=index-BV9iPz5U.js.map
