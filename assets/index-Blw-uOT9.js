@@ -44862,7 +44862,7 @@ function App() {
 										rel: "noopener noreferrer",
 										className: "block relative rounded-2xl overflow-hidden border border-purple-500/30 hover:border-purple-500/60 shadow-lg shadow-purple-950/20 active:scale-[0.98] transition-all duration-200 group cursor-pointer",
 										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-											src: "/banners/slovesny_banner.png",
+											src: "/zvuk-v-kafe/banners/slovesny_banner.png",
 											alt: "Игра в слова",
 											className: "w-full h-auto object-cover rounded-2xl group-hover:brightness-110 transition-all"
 										})
@@ -44873,7 +44873,7 @@ function App() {
 										rel: "noopener noreferrer",
 										className: "block relative rounded-2xl overflow-hidden border border-pink-500/30 hover:border-pink-500/60 shadow-lg shadow-pink-950/20 active:scale-[0.98] transition-all duration-200 group cursor-pointer",
 										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-											src: "/banners/tonnel_banner.png",
+											src: "/zvuk-v-kafe/banners/tonnel_banner.png",
 											alt: "Маркет ТГ подарков",
 											className: "w-full h-auto object-cover rounded-2xl group-hover:brightness-110 transition-all"
 										})
@@ -45843,4 +45843,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-DYLPA5sc.js.map
+//# sourceMappingURL=index-Blw-uOT9.js.map
