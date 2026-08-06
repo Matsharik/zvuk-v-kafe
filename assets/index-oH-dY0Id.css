@@ -1988,6 +1988,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
     }
   }
 
+  .border-emerald-500\/40 {
+    border-color: #00bb7f66;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .border-emerald-500\/40 {
+      border-color: color-mix(in oklab, var(--color-emerald-500) 40%, transparent);
+    }
+  }
+
   .border-gray-800 {
     border-color: var(--color-gray-800);
   }
@@ -2352,6 +2362,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
     }
   }
 
+  .bg-emerald-500\/20 {
+    background-color: #00bb7f33;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-emerald-500\/20 {
+      background-color: color-mix(in oklab, var(--color-emerald-500) 20%, transparent);
+    }
+  }
+
   .bg-emerald-600 {
     background-color: var(--color-emerald-600);
   }
@@ -2562,6 +2582,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
   .bg-slate-700 {
     background-color: var(--color-slate-700);
+  }
+
+  .bg-slate-700\/50 {
+    background-color: #31415880;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-slate-700\/50 {
+      background-color: color-mix(in oklab, var(--color-slate-700) 50%, transparent);
+    }
   }
 
   .bg-slate-700\/60 {
@@ -2800,6 +2830,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
   .from-purple-950\/40 {
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
+  }
+
+  .via-pink-600 {
+    --tw-gradient-via: var(--color-pink-600);
+    --tw-gradient-via-stops: var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-via) var(--tw-gradient-via-position), var(--tw-gradient-to) var(--tw-gradient-to-position);
+    --tw-gradient-stops: var(--tw-gradient-via-stops);
   }
 
   .via-purple-600 {
@@ -3230,6 +3266,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
     color: var(--color-pink-400);
   }
 
+  .text-pink-400\/90 {
+    color: #fb64b6e6;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .text-pink-400\/90 {
+      color: color-mix(in oklab, var(--color-pink-400) 90%, transparent);
+    }
+  }
+
   .text-pink-500 {
     color: var(--color-pink-500);
   }
@@ -3298,6 +3344,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
   .uppercase {
     text-transform: uppercase;
+  }
+
+  .italic {
+    font-style: italic;
   }
 
   .antialiased {
@@ -3450,6 +3500,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
   @supports (color: color-mix(in lab, red, red)) {
     .shadow-pink-500\/30 {
       --tw-shadow-color: color-mix(in oklab, color-mix(in oklab, var(--color-pink-500) 30%, transparent) var(--tw-shadow-alpha), transparent);
+    }
+  }
+
+  .shadow-purple-500\/20 {
+    --tw-shadow-color: #ac4bff33;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .shadow-purple-500\/20 {
+      --tw-shadow-color: color-mix(in oklab, color-mix(in oklab, var(--color-purple-500) 20%, transparent) var(--tw-shadow-alpha), transparent);
     }
   }
 
@@ -3690,6 +3750,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
     @supports (color: color-mix(in lab, red, red)) {
       .hover\:border-purple-500\/50:hover {
         border-color: color-mix(in oklab, var(--color-purple-500) 50%, transparent);
+      }
+    }
+
+    .hover\:bg-emerald-500\/30:hover {
+      background-color: #00bb7f4d;
+    }
+
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:bg-emerald-500\/30:hover {
+        background-color: color-mix(in oklab, var(--color-emerald-500) 30%, transparent);
       }
     }
 

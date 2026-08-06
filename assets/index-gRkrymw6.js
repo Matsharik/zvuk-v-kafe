@@ -44683,14 +44683,31 @@ function App() {
 												})
 											}),
 											activeApp.status === "selected" && !activeApp.isFinishedByTime && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-												className: "bg-emerald-950/30 border border-emerald-500/30 rounded-2xl p-4 flex flex-col gap-2",
-												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-													className: "text-xs font-bold text-emerald-300 text-center",
-													children: "🎉 Организатор выбрали именно вас!"
-												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-													className: "text-[11px] text-slate-300 text-center leading-normal",
-													children: "Пожалуйста, прибудьте на площадку за 15-20 минут до начала для настройки оборудования."
-												})]
+												className: "bg-emerald-950/30 border border-emerald-500/30 rounded-2xl p-4 flex flex-col gap-2.5 items-center text-center",
+												children: [
+													/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+														className: "text-xs font-bold text-emerald-300",
+														children: "🎉 Организатор выбрал именно вас!"
+													}),
+													/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+														className: "text-[11px] text-slate-300 leading-normal",
+														children: "Пожалуйста, договоритесь с ними обо всем:"
+													}),
+													activeApp.cafeUsername ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
+														href: `https://t.me/${activeApp.cafeUsername.replace("@", "")}`,
+														target: "_blank",
+														rel: "noopener noreferrer",
+														className: "inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold rounded-xl transition-all active:scale-95",
+														children: [
+															/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "💬" }),
+															" @",
+															activeApp.cafeUsername.replace("@", "")
+														]
+													}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+														className: "text-[11px] text-slate-400 italic",
+														children: "(Юзернейм организатора не указан)"
+													})
+												]
 											}),
 											activeApp.status === "selected" && activeApp.isFinishedByTime && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 												className: "bg-linear-to-b from-purple-950/40 to-slate-900 border border-purple-500/30 rounded-2xl p-4 flex flex-col items-center gap-3",
@@ -44984,27 +45001,42 @@ function App() {
 											]
 										})]
 									}) : activeGig.status === "selected" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										className: "bg-slate-800/80 border border-purple-500/30 p-4 rounded-2xl flex items-center justify-between shadow-md",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-											className: "flex items-center gap-3",
-											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-												href: `https://t.me/${activeGig.selectedMusicianUsername?.replace("@", "")}`,
+										className: "bg-slate-800/80 border border-purple-500/30 p-4 rounded-2xl flex flex-col gap-3 shadow-md",
+										children: [
+											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+												className: "flex items-center justify-between",
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+													className: "flex items-center gap-3",
+													children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+														className: "w-10 h-10 rounded-full bg-linear-to-tr from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-base shadow shrink-0",
+														children: activeGig.selectedMusicianUsername ? activeGig.selectedMusicianUsername.replace("@", "")[0]?.toUpperCase() : "🎵"
+													}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
+														className: "text-sm font-bold text-white",
+														children: activeGig.selectedMusicianName || "Утвержденный музыкант"
+													}), activeGig.selectedMusicianUsername && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+														className: "text-xs text-slate-400 font-medium",
+														children: ["@", activeGig.selectedMusicianUsername.replace("@", "")]
+													})] })]
+												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+													className: "px-3 py-1 bg-purple-900/50 border border-purple-500/40 text-purple-300 text-xs font-bold rounded-xl shrink-0",
+													children: "Утвержден"
+												})]
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+												className: "text-xs text-pink-400/90 font-medium leading-relaxed",
+												children: "Ждем выступления в назначенное время! Оплачивайте гонорар добросовестно. За проведением финансовых операций и дальнейшим общением проект «Звук в Кафе» не следит."
+											}),
+											activeGig.selectedMusicianUsername ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
+												href: `https://t.me/${activeGig.selectedMusicianUsername.replace("@", "")}`,
 												target: "_blank",
 												rel: "noopener noreferrer",
-												className: "w-10 h-10 rounded-full bg-linear-to-tr from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-base shadow hover:scale-105 active:scale-95 transition-transform cursor-pointer",
-												title: `Открыть Telegram @${activeGig.selectedMusicianUsername?.replace("@", "")}`,
-												children: activeGig.selectedMusicianUsername ? activeGig.selectedMusicianUsername.replace("@", "")[0]?.toUpperCase() : "🎵"
-											}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
-												className: "text-sm font-bold text-white",
-												children: activeGig.selectedMusicianName || "Утвержденный музыкант"
-											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-												className: "text-xs text-pink-400 font-medium",
-												children: "Ждем выступления в назначенное время! Напишите музыканту по ссылке выше. Оплачивайте гонорар добросовестно, за проведением финансовых операций и дальнейшем общение проект \"Звук в Кафе\" не следит."
-											})] })]
-										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-											className: "px-3 py-1 bg-purple-900/50 border border-purple-500/40 text-purple-300 text-xs font-bold rounded-xl",
-											children: "Утвержден"
-										})]
+												className: "w-full py-3 px-4 bg-linear-to-r from-purple-600 via-pink-600 to-purple-600 hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-purple-500/20 active:scale-[0.99] transition-all flex items-center justify-center gap-2 mt-1",
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "💬" }), " Написать музыканту в Telegram"]
+											}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+												className: "w-full py-2.5 px-4 bg-slate-700/50 text-slate-400 text-center text-xs font-medium rounded-xl",
+												children: "Юзернейм Telegram не указан"
+											})
+										]
 									}) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 										className: "flex flex-col gap-3",
 										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h4", {
@@ -45780,4 +45812,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-C6EGk3vl.js.map
+//# sourceMappingURL=index-gRkrymw6.js.map
