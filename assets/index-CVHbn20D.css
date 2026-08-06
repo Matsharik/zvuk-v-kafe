@@ -777,6 +777,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     --color-pink-400: oklch(71.8% .202 349.761);
     --color-pink-500: oklch(65.6% .241 354.308);
     --color-pink-600: oklch(59.2% .249 .584);
+    --color-pink-950: oklch(28.4% .109 3.907);
     --color-slate-200: oklch(92.9% .013 255.508);
     --color-slate-300: oklch(86.9% .022 252.894);
     --color-slate-400: oklch(70.4% .04 256.788);
@@ -2883,6 +2884,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
     object-fit: contain;
   }
 
+  .object-cover {
+    object-fit: cover;
+  }
+
   .p-0 {
     padding: 0;
   }
@@ -3503,6 +3508,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
     }
   }
 
+  .shadow-pink-950\/20 {
+    --tw-shadow-color: #51042433;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .shadow-pink-950\/20 {
+      --tw-shadow-color: color-mix(in oklab, color-mix(in oklab, var(--color-pink-950) 20%, transparent) var(--tw-shadow-alpha), transparent);
+    }
+  }
+
   .shadow-purple-500\/20 {
     --tw-shadow-color: #ac4bff33;
   }
@@ -3540,6 +3555,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
   @supports (color: color-mix(in lab, red, red)) {
     .shadow-purple-900\/30 {
       --tw-shadow-color: color-mix(in oklab, color-mix(in oklab, var(--color-purple-900) 30%, transparent) var(--tw-shadow-alpha), transparent);
+    }
+  }
+
+  .shadow-purple-950\/20 {
+    --tw-shadow-color: #3c036633;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .shadow-purple-950\/20 {
+      --tw-shadow-color: color-mix(in oklab, color-mix(in oklab, var(--color-purple-950) 20%, transparent) var(--tw-shadow-alpha), transparent);
     }
   }
 
@@ -3707,6 +3732,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
       color: var(--color-white);
     }
 
+    .group-hover\:brightness-110:is(:where(.group):hover *) {
+      --tw-brightness: brightness(110%);
+      filter: var(--tw-blur, ) var(--tw-brightness, ) var(--tw-contrast, ) var(--tw-grayscale, ) var(--tw-hue-rotate, ) var(--tw-invert, ) var(--tw-saturate, ) var(--tw-sepia, ) var(--tw-drop-shadow, );
+    }
+
     .hover\:scale-105:hover {
       --tw-scale-x: 105%;
       --tw-scale-y: 105%;
@@ -3743,6 +3773,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
       }
     }
 
+    .hover\:border-pink-500\/60:hover {
+      border-color: #f6339a99;
+    }
+
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:border-pink-500\/60:hover {
+        border-color: color-mix(in oklab, var(--color-pink-500) 60%, transparent);
+      }
+    }
+
     .hover\:border-purple-500\/50:hover {
       border-color: #ac4bff80;
     }
@@ -3750,6 +3790,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
     @supports (color: color-mix(in lab, red, red)) {
       .hover\:border-purple-500\/50:hover {
         border-color: color-mix(in oklab, var(--color-purple-500) 50%, transparent);
+      }
+    }
+
+    .hover\:border-purple-500\/60:hover {
+      border-color: #ac4bff99;
+    }
+
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:border-purple-500\/60:hover {
+        border-color: color-mix(in oklab, var(--color-purple-500) 60%, transparent);
       }
     }
 

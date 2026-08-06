@@ -18947,7 +18947,7 @@ function LocationPickerMap({ initialCoordinates = [53.9006, 27.559], onLocationS
 				zoomControl: false,
 				attributionControl: false,
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TileLayer, {
-					url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+					url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
 					maxZoom: 19
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapController, {
 					initialCoordinates: validCoords,
@@ -43146,7 +43146,7 @@ function App() {
 		setInvitingGigId(gigId);
 		try {
 			const telegramInitData = window.Telegram?.WebApp?.initData || "";
-			const data = await (await fetch("/api-zvuk/invite-musician", {
+			const data = await (await fetch(`${hrefWebSite}api-zvuk/invite-musician`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -43206,7 +43206,7 @@ function App() {
 		if (!ratingValue) return alert("Пожалуйста, укажите оценку");
 		setIsSubmittingRating(true);
 		try {
-			const data = await (await fetch("/api-zvuk/submit-rating", {
+			const data = await (await fetch(`${hrefWebSite}api-zvuk/submit-rating`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
@@ -44756,7 +44756,7 @@ function App() {
 						})()] })]
 					}),
 					activeTab === "profile" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "p-4 pb-6 relative z-20 flex-1 min-h-0 overflow-y-auto no-scrollbar bg-[#070a13] text-white w-full overflow-x-hidden",
+						className: "p-4 pb-8 relative z-20 flex-1 min-h-0 overflow-y-auto no-scrollbar bg-[#070a13] text-white w-full overflow-x-hidden",
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 								className: "text-lg font-bold text-white mb-4 tracking-tight",
@@ -44836,7 +44836,7 @@ function App() {
 								})]
 							}),
 							role === "cafe" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-								className: "flex flex-col gap-2",
+								className: "flex flex-col gap-2 mb-6",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
 									className: "text-xs text-slate-400 font-bold uppercase tracking-wider",
 									children: "Описание:"
@@ -44848,6 +44848,37 @@ function App() {
 									className: "p-4 rounded-2xl text-sm text-slate-200 leading-relaxed whitespace-pre-wrap wrap-break-word",
 									children: user.description || "Описание не заполнено"
 								})]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "flex flex-col gap-3.5 mt-6",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
+										className: "text-xs text-slate-400 font-bold uppercase tracking-wider",
+										children: "Сервисы и Развлечения:"
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+										href: "https://t.me/slovesny_bot/app",
+										target: "_blank",
+										rel: "noopener noreferrer",
+										className: "block relative rounded-2xl overflow-hidden border border-purple-500/30 hover:border-purple-500/60 shadow-lg shadow-purple-950/20 active:scale-[0.98] transition-all duration-200 group cursor-pointer",
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+											src: "/banners/slovesny_banner.png",
+											alt: "Игра в слова",
+											className: "w-full h-auto object-cover rounded-2xl group-hover:brightness-110 transition-all"
+										})
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+										href: "https://t.me/tonnel_network_bot/gifts?startapp=ref_1711018223",
+										target: "_blank",
+										rel: "noopener noreferrer",
+										className: "block relative rounded-2xl overflow-hidden border border-pink-500/30 hover:border-pink-500/60 shadow-lg shadow-pink-950/20 active:scale-[0.98] transition-all duration-200 group cursor-pointer",
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+											src: "/banners/tonnel_banner.png",
+											alt: "Маркет ТГ подарков",
+											className: "w-full h-auto object-cover rounded-2xl group-hover:brightness-110 transition-all"
+										})
+									})
+								]
 							})
 						]
 					}),
@@ -45812,4 +45843,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-DSI9Fl3W.js.map
+//# sourceMappingURL=index-DYLPA5sc.js.map
