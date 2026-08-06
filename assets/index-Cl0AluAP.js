@@ -43569,8 +43569,10 @@ function App() {
 							setLoading(false);
 						}
 					}
-					if (savedRole == "musician") if (userData.description != null) setCurrentStepOnboarding(getMaxSteps());
-					else setCurrentStepOnboarding(userData?.has_seen_onboarding);
+					if (savedRole == "musician") if (userData.description != null) {
+						console.log("Скип страничек после захода");
+						setCurrentStepOnboarding(getMaxSteps());
+					} else setCurrentStepOnboarding(userData?.has_seen_onboarding);
 					if (savedRole == "cafe") if (userData.description != null) setCurrentStepOnboarding(getMaxSteps());
 					else setCurrentStepOnboarding(userData?.has_seen_onboarding);
 					if (savedRole == null) setCurrentStepOnboarding(userData?.has_seen_onboarding);
@@ -45798,4 +45800,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-B13p912c.js.map
+//# sourceMappingURL=index-Cl0AluAP.js.map
