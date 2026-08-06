@@ -44384,25 +44384,11 @@ function App() {
 	}
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		style: globalStyle,
-		className: "flex flex-col h-screen antialiased select-none",
+		className: "flex flex-col h-[100dvh] w-full overflow-hidden antialiased select-none bg-[#070a13]",
 		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("style", { children: `
-      .glass-header {
-        background: rgba(15, 23, 42, 0.75);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border-b: 1px solid rgba(255, 255, 255, 0.05);
-      }
-      .glass-footer {
-        background: rgba(15, 23, 42, 0.85);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-t: 1px solid rgba(255, 255, 255, 0.06);
-      }
-    ` }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
-				style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 36px)" },
-				className: "glass-header px-4 py-3 flex justify-between items-center z-50 shrink-0 w-full overflow-x-hidden",
+				style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 12px)" },
+				className: "glass-header px-4 pb-3 flex justify-between items-center z-50 shrink-0 w-full overflow-x-hidden",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 					className: "flex items-center gap-2",
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
@@ -44432,7 +44418,7 @@ function App() {
 				})]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "flex-1 relative w-full h-full bg-[#070a13]",
+				className: "flex-1 min-h-0 relative w-full overflow-y-auto overscroll-contain bg-[#070a13]",
 				children: [
 					activeTab === "map" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "w-full h-full relative overflow-hidden bg-[#070a13]",
@@ -45360,106 +45346,111 @@ function App() {
 				]
 			}),
 			" ",
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("footer", {
-				className: "bg-slate-900 border-t border-slate-800/80 px-4 py-3 flex justify-around items-center z-50 shrink-0 w-full overflow-x-hidden",
-				children: role === "cafe" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						onClick: () => {
-							setActiveTab("gigs");
-						},
-						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "gigs" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-xl",
-							children: "🎪"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-[10px] mt-1 font-bold tracking-wide",
-							children: "Выступления"
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						onClick: async () => {
-							if (musiciansList == null) {
-								setLoading(true);
-								const telegramInitData = window.Telegram?.WebApp?.initData || "";
-								const response2 = await fetch(`${hrefWebSite}api-zvuk/musicians`, {
-									method: "POST",
-									headers: {
-										"Content-Type": "application/json",
-										"Authorization": `Bearer ${telegramInitData}`
-									}
-								});
-								if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
-								const data2 = await response2.json();
-								console.log("data2?.musicians", data2?.musicians);
-								setMusiciansList(data2?.musicians);
-								setActiveTab("musicians");
-								setLoading(false);
-							} else setActiveTab("musicians");
-						},
-						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "musicians" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-xl",
-							children: "🎸"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-[10px] mt-1 font-bold tracking-wide",
-							children: "Музыканты"
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						onClick: () => {
-							setActiveTab("profile");
-						},
-						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "profile" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-xl",
-							children: "🏢"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-[10px] mt-1 font-bold tracking-wide",
-							children: "Профиль"
-						})]
-					})
-				] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						onClick: async () => {
-							setActiveTab("requests");
-						},
-						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "requests" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-xl",
-							children: "📅"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-[10px] mt-1 font-bold tracking-wide",
-							children: "Заявки"
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						onClick: () => {
-							setSelectedCafe(null);
-							setActiveTab("map");
-						},
-						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "map" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-xl",
-							children: "🗺️"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-[10px] mt-1 font-bold tracking-wide",
-							children: "Карта"
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						onClick: () => {
-							setActiveTab("profile");
-						},
-						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "profile" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-xl",
-							children: "👤"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-[10px] mt-1 font-bold tracking-wide",
-							children: "Профиль"
-						})]
-					})
-				] })
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("footer", {
+				className: "glass-footer shrink-0 z-50",
+				children: [
+					"/* ================= ТАББАР ДЛЯ ЗАВЕДЕНИЙ ================= */",
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: () => {
+								setActiveTab("gigs");
+							},
+							className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "gigs" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-xl",
+								children: "🎪"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-[10px] mt-1 font-bold tracking-wide",
+								children: "Выступления"
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: async () => {
+								if (musiciansList == null) {
+									setLoading(true);
+									const telegramInitData = window.Telegram?.WebApp?.initData || "";
+									const response2 = await fetch(`${hrefWebSite}api-zvuk/musicians`, {
+										method: "POST",
+										headers: {
+											"Content-Type": "application/json",
+											"Authorization": `Bearer ${telegramInitData}`
+										}
+									});
+									if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
+									const data2 = await response2.json();
+									console.log("data2?.musicians", data2?.musicians);
+									setMusiciansList(data2?.musicians);
+									setActiveTab("musicians");
+									setLoading(false);
+								} else setActiveTab("musicians");
+							},
+							className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "musicians" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-xl",
+								children: "🎸"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-[10px] mt-1 font-bold tracking-wide",
+								children: "Музыканты"
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: () => {
+								setActiveTab("profile");
+							},
+							className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "profile" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-xl",
+								children: "🏢"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-[10px] mt-1 font-bold tracking-wide",
+								children: "Профиль"
+							})]
+						})
+					] }),
+					") : ( /* ================= ТАББАР ДЛЯ МУЗЫКАНТОВ ================= */",
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: async () => {
+								setActiveTab("requests");
+							},
+							className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "requests" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-xl",
+								children: "📅"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-[10px] mt-1 font-bold tracking-wide",
+								children: "Заявки"
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: () => {
+								setSelectedCafe(null);
+								setActiveTab("map");
+							},
+							className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "map" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-xl",
+								children: "🗺️"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-[10px] mt-1 font-bold tracking-wide",
+								children: "Карта"
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: () => {
+								setActiveTab("profile");
+							},
+							className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "profile" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-xl",
+								children: "👤"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-[10px] mt-1 font-bold tracking-wide",
+								children: "Профиль"
+							})]
+						})
+					] })
+				]
 			}),
 			showVerificationModal && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(VerificationModal, {
 				venueName: user.name || "вашего заведения",
@@ -45849,4 +45840,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-Jic9r_fY.js.map
+//# sourceMappingURL=index-vMWvqWLk.js.map
