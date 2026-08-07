@@ -43082,7 +43082,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "2";
+	const appVersion = "v0.0.0";
 	console.log(appVersion);
 	const [isInviteModalOpen, setIsInviteModalOpen] = (0, import_react.useState)(false);
 	const [selectedMusicianToInvite, setSelectedMusicianToInvite] = (0, import_react.useState)(null);
@@ -43865,6 +43865,7 @@ function App() {
 												console.log("data2?.cafesAfisha", data2?.cafesAfisha);
 												setCafesAfisha(data2?.cafesAfisha);
 												setCurrentStepOnboarding(1);
+												setActiveTab("afisha");
 											},
 											className: `liquid-card p-5 rounded-3xl text-left transition-all ${role === "visitor" ? "border-indigo-500 bg-indigo-500/10" : ""}`,
 											children: [
@@ -45937,4 +45938,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-CWBXXlHK.js.map
+//# sourceMappingURL=index-BX_6qo4V.js.map
