@@ -43852,8 +43852,19 @@ function App() {
 										}),
 										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 											onClick: async () => {
-												setCurrentStepOnboarding(1);
 												await initUserRole("visitor");
+												const response2 = await fetch(`${hrefWebSite}api-zvuk/map-cafes-afisha`, {
+													method: "POST",
+													headers: {
+														"Content-Type": "application/json",
+														"Authorization": `Bearer ${telegramInitData}`
+													}
+												});
+												if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
+												const data2 = await response2.json();
+												console.log("data2?.cafesAfisha", data2?.cafesAfisha);
+												setCafesAfisha(data2?.cafesAfisha);
+												setCurrentStepOnboarding(1);
 											},
 											className: `liquid-card p-5 rounded-3xl text-left transition-all ${role === "visitor" ? "border-indigo-500 bg-indigo-500/10" : ""}`,
 											children: [
@@ -45926,4 +45937,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-C9QGKyhf.js.map
+//# sourceMappingURL=index-CWBXXlHK.js.map
