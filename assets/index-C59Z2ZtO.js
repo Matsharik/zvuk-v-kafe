@@ -42781,7 +42781,7 @@ var VideoUploader = ({ onUploadSuccess, onError, hrefWebSite = "", currentUrl = 
 		setError("");
 		try {
 			const telegramInitData = window.Telegram?.WebApp?.initData || "";
-			const requestUrl = `${hrefWebSite ? hrefWebSite.replace(/\/+$/, "") : ""}/api/upload/get-presigned-url`;
+			const requestUrl = `${hrefWebSite ? hrefWebSite.replace(/\/+$/, "") : ""}/api-zvuk/upload/get-presigned-url`;
 			const res = await fetch(requestUrl, {
 				method: "POST",
 				headers: {
@@ -43082,7 +43082,7 @@ var repoName = "zvuk-v-kafe";
 var hrefWebSite = `https://slovesny.ru/`;
 new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manifest.json` });
 function App() {
-	const appVersion = "v0.0.0";
+	const appVersion = "";
 	console.log(appVersion);
 	const [isInviteModalOpen, setIsInviteModalOpen] = (0, import_react.useState)(false);
 	const [selectedMusicianToInvite, setSelectedMusicianToInvite] = (0, import_react.useState)(null);
@@ -45938,4 +45938,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-BX_6qo4V.js.map
+//# sourceMappingURL=index-C59Z2ZtO.js.map
