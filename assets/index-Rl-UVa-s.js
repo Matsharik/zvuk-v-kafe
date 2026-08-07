@@ -18921,7 +18921,7 @@ function MapController({ initialCoordinates, onLocationSelect }) {
 function LocationPickerMap({ initialCoordinates = [53.9006, 27.559], onLocationSelect }) {
 	const validCoords = Array.isArray(initialCoordinates) && initialCoordinates.length === 2 ? initialCoordinates : [53.9006, 27.559];
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "relative w-full h-56 rounded-2xl overflow-hidden border border-white/10 shadow-xl bg-slate-900",
+		className: "relative w-full h-96 rounded-2xl overflow-hidden border border-white/10 shadow-xl bg-slate-900",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				className: "absolute inset-0 z-1000 pointer-events-none flex items-center justify-center pb-6",
@@ -43151,6 +43151,7 @@ function App() {
 	};
 	const [musiciansList, setMusiciansList] = (0, import_react.useState)(null);
 	const [cafes, setCafes] = (0, import_react.useState)(null);
+	const [cafesAfisha, setCafesAfisha] = (0, import_react.useState)(null);
 	const [musicianApplications, setMusicianApplications] = (0, import_react.useState)([]);
 	const [selectedAppId, setSelectedAppId] = (0, import_react.useState)(null);
 	const [isLoadingApps, setIsLoadingApps] = (0, import_react.useState)(false);
@@ -43293,6 +43294,7 @@ function App() {
 		return true;
 	};
 	const [selectedCafe, setSelectedCafe] = (0, import_react.useState)(null);
+	const [selectedCafeAfisha, setSelectedCafeAfisha] = (0, import_react.useState)(null);
 	const carouselRef = (0, import_react.useRef)(null);
 	const scrollCarousel = (direction) => {
 		if (carouselRef.current) {
@@ -43480,6 +43482,7 @@ function App() {
 	const getMaxSteps = () => {
 		if (role === "musician") return 8;
 		if (role === "cafe") return 5;
+		if (role === "cafe") return 1;
 		return 1;
 	};
 	const handlePrevOnboardingStep = () => {
@@ -43578,6 +43581,22 @@ function App() {
 					}
 					if (savedRole == "cafe") if (userData.description != null) setCurrentStepOnboarding(getMaxSteps());
 					else setCurrentStepOnboarding(userData?.has_seen_onboarding);
+					if (savedRole == "visitor") {
+						console.log("savedRole == visitor initta");
+						setCurrentStepOnboarding(getMaxSteps());
+						const response2 = await fetch(`${hrefWebSite}api-zvuk/map-cafes-afisha`, {
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json",
+								"Authorization": `Bearer ${telegramInitData}`
+							}
+						});
+						if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
+						const data2 = await response2.json();
+						console.log("data2?.cafesAfisha", data2?.cafesAfisha);
+						setCafesAfisha(data2?.cafesAfisha);
+						setActiveTab("afisha");
+					}
 					if (savedRole == null) {
 						console.log("savedRole == null");
 						setCurrentStepOnboarding(userData?.has_seen_onboarding);
@@ -43620,8 +43639,8 @@ function App() {
 			else if (currentStepOnboarding > 1) handlePrevOnboardingStep();
 			else if (selectedCafe != null && activeTab == "map") setSelectedCafe(null);
 			else {
-				if (savedRole == "musician") setActiveTab("requests");
-				if (savedRole == "cafe") setActiveTab("gigs");
+				if (role == "musician") setActiveTab("requests");
+				if (role == "cafe") setActiveTab("gigs");
 			}
 		};
 		tg.BackButton.onClick(handleBack);
@@ -43788,47 +43807,71 @@ function App() {
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 									className: "flex flex-col gap-4 w-full",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-										onClick: async () => {
-											setCurrentStepOnboarding(1);
-											await initUserRole("musician");
-										},
-										className: `liquid-card p-5 rounded-3xl text-left transition-all ${role === "musician" ? "border-pink-500 bg-pink-500/10" : ""}`,
-										children: [
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-												className: "text-3xl mb-2",
-												children: "🎸"
-											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-												className: "font-bold text-base text-white",
-												children: "Музыкант / Бэнд"
-											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-												className: "text-xs text-slate-400 mt-1",
-												children: "Исполнители, соло-артисты и музыкальные коллективы."
-											})
-										]
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-										onClick: async () => {
-											setCurrentStepOnboarding(1);
-											await initUserRole("cafe");
-										},
-										className: `liquid-card p-5 rounded-3xl text-left transition-all ${role === "cafe" ? "border-indigo-500 bg-indigo-500/10" : ""}`,
-										children: [
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-												className: "text-3xl mb-2",
-												children: "☕"
-											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-												className: "font-bold text-base text-white",
-												children: "Кафе / Заказчик"
-											}),
-											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-												className: "text-xs text-slate-400 mt-1",
-												children: "Рестораны, бары, пабы и организаторы лайвов."
-											})
-										]
-									})]
+									children: [
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+											onClick: async () => {
+												setCurrentStepOnboarding(1);
+												await initUserRole("musician");
+											},
+											className: `liquid-card p-5 rounded-3xl text-left transition-all ${role === "musician" ? "border-pink-500 bg-pink-500/10" : ""}`,
+											children: [
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+													className: "text-3xl mb-2",
+													children: "🎸"
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+													className: "font-bold text-base text-white",
+													children: "Музыкант / Бэнд"
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+													className: "text-xs text-slate-400 mt-1",
+													children: "Исполнители, соло-артисты и музыкальные коллективы."
+												})
+											]
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+											onClick: async () => {
+												setCurrentStepOnboarding(1);
+												await initUserRole("cafe");
+											},
+											className: `liquid-card p-5 rounded-3xl text-left transition-all ${role === "cafe" ? "border-indigo-500 bg-indigo-500/10" : ""}`,
+											children: [
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+													className: "text-3xl mb-2",
+													children: "☕"
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+													className: "font-bold text-base text-white",
+													children: "Кафе / Заказчик"
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+													className: "text-xs text-slate-400 mt-1",
+													children: "Рестораны, бары, пабы и организаторы лайвов."
+												})
+											]
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+											onClick: async () => {
+												setCurrentStepOnboarding(1);
+												await initUserRole("visitor");
+											},
+											className: `liquid-card p-5 rounded-3xl text-left transition-all ${role === "visitor" ? "border-indigo-500 bg-indigo-500/10" : ""}`,
+											children: [
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+													className: "text-3xl mb-2",
+													children: "🏄‍♂️"
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+													className: "font-bold text-base text-white",
+													children: "Послушать музыку вживую"
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+													className: "text-xs text-slate-400 mt-1",
+													children: "Афиша-карта запланированных на платформе выступлений Беларуси"
+												})
+											]
+										})
+									]
 								})
 							]
 						}),
@@ -44346,7 +44389,7 @@ function App() {
 						const isMusicianDisabled = role === "musician" && currentStepOnboarding == 4 && !isExperienceValid;
 						const isCafeStep1Invalid = role === "cafe" && currentStepOnboarding === 1 && (!onboardingData.name?.trim() || !onboardingData.address?.trim() || !isMapMoved);
 						const isDescriptionValid = Boolean(onboardingData.description?.trim());
-						const isDisabled = isMusicianDisabled || isCafeStep1Invalid || role === "cafe" && currentStepOnboarding === 3 && !isDescriptionValid || onboardingData.description == "" || onboardingData.description == null;
+						const isDisabled = isMusicianDisabled || isCafeStep1Invalid || role === "cafe" && currentStepOnboarding === 3 && !isDescriptionValid || role === "musician" && currentStepOnboarding === 7 && !isDescriptionValid;
 						return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 							type: "button",
 							onClick: handleNextOnboardingStep,
@@ -44397,6 +44440,87 @@ function App() {
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "flex-1 min-h-0 relative w-full overflow-y-auto overscroll-contain bg-[#070a13]",
 				children: [
+					activeTab === "afisha" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "w-full h-full relative overflow-hidden bg-[#070a13]",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapView, {
+							cafes: cafesAfisha,
+							onSelectCafe: (cafe) => setSelectedCafeAfisha(cafe)
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: `fixed bottom-0 left-0 right-0 z-9999 bg-[#0f172a] border-t border-slate-700/60 rounded-t-4xl shadow-[0_-10px_40px_rgba(0,0,0,0.8)] transition-transform duration-300 ease-out flex flex-col max-h-[85vh] ${selectedCafeAfisha ? "translate-y-0" : "translate-y-full"}`,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "w-full flex items-center justify-between px-6 pt-3 pb-2 relative",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "w-12 h-1.5 bg-slate-600/60 rounded-full mx-auto" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									type: "button",
+									onClick: () => setSelectedCafeAfisha(null),
+									className: "absolute right-4 top-3 w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold hover:text-white active:scale-90 transition-all",
+									children: "✕"
+								})]
+							}), selectedCafeAfisha && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "p-4 pt-1 flex flex-col gap-4 overflow-y-auto no-scrollbar pb-8",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "flex items-center justify-between gap-3",
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "flex items-center gap-3",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+												className: "w-14 h-14 bg-pink-500/20 border border-pink-500/30 rounded-2xl flex items-center justify-center text-2xl shrink-0",
+												children: selectedCafeAfisha.image
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+												className: "text-lg font-black text-white leading-tight",
+												children: selectedCafeAfisha.title
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+												className: "text-xs text-slate-400 mt-0.5",
+												children: selectedCafeAfisha.address
+											})] })]
+										})
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("hr", { className: "border-slate-800" }),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "flex flex-col gap-2",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "flex items-center justify-between px-1",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "text-xs font-black uppercase text-slate-400 tracking-wider",
+												children: "Здесь играют/поют:"
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+												className: "flex items-center gap-1.5",
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+													type: "button",
+													onClick: () => scrollCarousel("left"),
+													className: "w-7 h-7 bg-slate-800 border border-slate-700/60 rounded-lg flex items-center justify-center active:scale-90 transition-all hover:bg-slate-700 text-pink-400 text-[10px]",
+													children: "◀"
+												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+													type: "button",
+													onClick: () => scrollCarousel("right"),
+													className: "w-7 h-7 bg-slate-800 border border-slate-700/60 rounded-lg flex items-center justify-center active:scale-90 transition-all hover:bg-slate-700 text-pink-400 text-[10px]",
+													children: "▶"
+												})]
+											})]
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+											ref: carouselRef,
+											className: "flex items-center gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar py-1 scroll-smooth",
+											children: selectedCafeAfisha.events.map((evt) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+												className: "snap-center shrink-0 w-[82vw] max-w-85 p-4 bg-slate-800/80 border border-slate-700/70 rounded-2xl flex flex-col gap-3 transition-all hover:border-pink-500/50 shadow-lg",
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+													className: "flex justify-between items-center",
+													children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+														className: "text-[11px] font-bold text-pink-400 bg-pink-500/10 border border-pink-500/20 px-2.5 py-1 rounded-lg",
+														children: evt.date
+													}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+														className: "text-xs font-black text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20",
+														children: evt.price
+													})]
+												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
+													className: "text-sm font-black text-white line-clamp-2 leading-snug",
+													children: evt.title
+												})]
+											}, evt.id))
+										})]
+									})
+								]
+							})]
+						})]
+					}),
 					activeTab === "map" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "w-full h-full relative overflow-hidden bg-[#070a13]",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapView, {
@@ -45812,4 +45936,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-D0Gt6tLx.js.map
+//# sourceMappingURL=index-Rl-UVa-s.js.map

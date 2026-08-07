@@ -1430,16 +1430,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
     height: calc(var(--spacing) * 16);
   }
 
-  .h-56 {
-    height: calc(var(--spacing) * 56);
-  }
-
   .h-60 {
     height: calc(var(--spacing) * 60);
   }
 
   .h-80 {
     height: calc(var(--spacing) * 80);
+  }
+
+  .h-96 {
+    height: calc(var(--spacing) * 96);
   }
 
   .h-\[100dvh\] {
@@ -4552,6 +4552,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
   -webkit-backdrop-filter: blur(20px);
   background: #0f172ad9;
   border-top: 1px solid #ffffff0f;
+}
+
+html, body {
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-text-size-adjust: 100%;
 }
 
 @property --tw-translate-x {
