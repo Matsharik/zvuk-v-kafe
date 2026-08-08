@@ -21333,10 +21333,10 @@ function App() {
 						if (gigs != void 0 && gigs != null) {
 							const activeGig = gigs?.find((g) => g.id === selectedGigId);
 							const nowUnix = Math.floor(Date.now() / 1e3);
-							console.log("activeTab: gigs. activeGig.status:", activeGig.status);
+							console.log("activeTab: gigs. activeGig.status:", activeGig?.status);
 							console.log("activeGig.end_at / 1000:", activeGig.end_at / 1e3);
 							console.log("nowUnix:", nowUnix);
-							const isGigEnded = activeGig && activeGig.status === "selected" && activeGig.end_at && nowUnix > activeGig.end_at / 1e3;
+							const isGigEnded = activeGig && activeGig?.status === "selected" && activeGig.end_at && nowUnix > activeGig.end_at / 1e3;
 							console.log("isGigEnded:", isGigEnded);
 						}
 						return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -21388,8 +21388,8 @@ function App() {
 										className: "max-w-[70%]",
 										children: [
 											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-												className: `text-[10px] font-black uppercase tracking-wider block ${isGigEnded ? "text-emerald-400" : activeGig.status === "selected" ? "text-purple-400" : "text-pink-400"}`,
-												children: isGigEnded ? "🎉 Выступление завершено" : activeGig.status === "selected" ? "🤝 Артист утвержден" : "🔍 Поиск артиста"
+												className: `text-[10px] font-black uppercase tracking-wider block ${isGigEnded ? "text-emerald-400" : activeGig?.status === "selected" ? "text-purple-400" : "text-pink-400"}`,
+												children: isGigEnded ? "🎉 Выступление завершено" : activeGig?.status === "selected" ? "🤝 Артист утвержден" : "🔍 Поиск артиста"
 											}),
 											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
 												className: "text-base font-black text-white mt-0.5 truncate",
@@ -21486,7 +21486,7 @@ function App() {
 												})
 											]
 										})]
-									}) : activeGig.status === "selected" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									}) : activeGig?.status === "selected" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 										className: "bg-slate-800/80 border border-purple-500/30 p-4 rounded-2xl flex flex-col gap-3 shadow-md",
 										children: [
 											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -22298,4 +22298,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-BW5bU44T.js.map
+//# sourceMappingURL=index-C8CUEjAl.js.map
