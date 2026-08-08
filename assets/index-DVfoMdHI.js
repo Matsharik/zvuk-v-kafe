@@ -19307,6 +19307,15 @@ function App() {
 	const [user, setUser] = (0, import_react.useState)(null);
 	const [gigs, setGigs] = (0, import_react.useState)(null);
 	const [selectedGigId, setSelectedGigId] = (0, import_react.useState)(null);
+	const safeShowAlert = (message) => {
+		try {
+			const tg = window.Telegram?.WebApp;
+			if (tg?.showAlert) tg.showAlert(message);
+			else alert(message);
+		} catch (err) {
+			console.warn("Не удалось открыть Telegram Popup:", err);
+		}
+	};
 	const handleInviteClick = (musician) => {
 		if (gigs.filter((g) => g.status === "search").length === 0) {
 			setActiveTab("gigs");
@@ -19333,12 +19342,12 @@ function App() {
 				})
 			})).json();
 			if (data.success) {
-				window.Telegram?.WebApp?.showAlert(`Приглашение отправлено артисту ${selectedMusicianToInvite.name || ""}!`);
+				safeShowAlert(`Приглашение отправлено артисту ${selectedMusicianToInvite.name || ""}!`);
 				setIsInviteModalOpen(false);
-			} else window.Telegram?.WebApp?.showAlert(data.error || "Ошибка при отправке");
+			} else safeShowAlert(data.error || "Ошибка при отправке");
 		} catch (err) {
 			console.error(err);
-			window.Telegram?.WebApp?.showAlert("Ошибка сети при отправке приглашения");
+			safeShowAlert("Ошибка сети при отправке приглашения");
 		} finally {
 			setInvitingGigId(null);
 		}
@@ -19379,7 +19388,7 @@ function App() {
 	* @param targetType — 'musician' (если кафе ценит музыканта) или 'cafe' (если музыкант ценит кафе)
 	*/
 	const handleRatingSubmit = async (orderId, targetType) => {
-		if (!ratingValue) return window.Telegram?.WebApp?.showAlert("Пожалуйста, укажите оценку");
+		if (!ratingValue) return safeShowAlert("Пожалуйста, укажите оценку");
 		setIsSubmittingRating(true);
 		try {
 			const telegramInitData = window.Telegram?.WebApp?.initData || "";
@@ -19396,13 +19405,13 @@ function App() {
 				})
 			})).json();
 			if (data.success) {
-				window.Telegram?.WebApp?.showAlert(data.isFullyEnded ? "Отзыв сохранен! Выступление официально завершено обеими сторонами 🎉" : "Спасибо! Ваш отзыв сохранен.");
+				safeShowAlert(data.isFullyEnded ? "Отзыв сохранен! Выступление официально завершено обеими сторонами 🎉" : "Спасибо! Ваш отзыв сохранен.");
 				setRatingValue(5);
 				if (typeof fetchGigs === "function") fetchGigs();
-			} else window.Telegram?.WebApp?.showAlert(data.error || "Ошибка сохранения отзыва");
+			} else safeShowAlert(data.error || "Ошибка сохранения отзыва");
 		} catch (err) {
 			console.error("Ошибка отправки отзыва:", err);
-			window.Telegram?.WebApp?.showAlert("Ошибка сети при отправке отзыва");
+			safeShowAlert("Ошибка сети при отправке отзыва");
 		} finally {
 			setIsSubmittingRating(false);
 		}
@@ -19437,11 +19446,11 @@ function App() {
 			});
 			const data = await response.json();
 			if (!response.ok || !data.success) throw new Error(data.error || "Не удалось утвердить артиста");
-			window.Telegram.WebApp.showAlert("🎉 Артист успешно выбран!");
+			safeShowAlert("🎉 Артист успешно выбран!");
 			await fetchMyGigs(false);
 		} catch (err) {
 			console.error("Ошибка выбора артиста:", err);
-			window.Telegram?.WebApp?.showAlert(err.message || "Произошла ошибка при выборе артиста");
+			safeShowAlert(err.message || "Произошла ошибка при выборе артиста");
 		} finally {
 			setLoading(false);
 		}
@@ -19479,7 +19488,7 @@ function App() {
 				setIsLoadingApps(false);
 				setLoading(false);
 				setActiveTab("requests");
-			} else window.Telegram?.WebApp?.showAlert(data.error || "Не удалось отправить отклик");
+			} else safeShowAlert(data.error || "Не удалось отправить отклик");
 		} catch (err) {
 			console.error("Ошибка отклика:", err);
 		} finally {
@@ -19551,12 +19560,12 @@ function App() {
 		setIsSubmittingGig(true);
 		try {
 			if (!gigForm.date || !gigForm.time) {
-				window.Telegram?.WebApp?.showAlert("Пожалуйста, укажите дату и время");
+				safeShowAlert("Пожалуйста, укажите дату и время");
 				return;
 			}
 			const startDateTime = /* @__PURE__ */ new Date(`${gigForm.date}T${gigForm.time}:00`);
 			if (isNaN(startDateTime.getTime())) {
-				window.Telegram?.WebApp?.showAlert("Некорректная дата или время");
+				safeShowAlert("Некорректная дата или время");
 				return;
 			}
 			const durationMinutes = Number(gigForm.durationMinutes) || 120;
@@ -19582,7 +19591,7 @@ function App() {
 			if (!result.success) throw new Error(result.error || "Не удалось создать выступление");
 			setShowCreateGigModal(false);
 			await fetchMyGigs(true);
-			window.Telegram?.WebApp?.showAlert("Выступление создано и запущено в поиск! 🚀");
+			safeShowAlert("Выступление создано и запущено в поиск! 🚀");
 			setGigForm({
 				genres: [],
 				instruments: [],
@@ -19593,7 +19602,7 @@ function App() {
 			});
 		} catch (err) {
 			console.error("Ошибка сохранения выступления:", err);
-			window.Telegram?.WebApp?.showAlert(`Ошибка: ${err.message}`);
+			safeShowAlert(`Ошибка: ${err.message}`);
 		} finally {
 			setIsSubmittingGig(false);
 		}
@@ -20481,7 +20490,7 @@ function App() {
 											}));
 										},
 										onError: (errMessage) => {
-											window.Telegram?.WebApp?.showAlert(`Ошибка загрузки: ${errMessage}`);
+											safeShowAlert(`Ошибка загрузки: ${errMessage}`);
 										}
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
@@ -21191,7 +21200,7 @@ function App() {
 								}) }), !user?.is_verified && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 									onClick: () => {
 										verifyCafe();
-										window.Telegram?.WebApp?.showAlert("Запрос на верификацию отправлен");
+										safeShowAlert("Запрос на верификацию отправлен");
 									},
 									className: "px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold rounded-xl text-slate-200 transition-all active:scale-95",
 									children: "Пройти"
@@ -22279,4 +22288,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-Wu07YpAv.js.map
+//# sourceMappingURL=index-DVfoMdHI.js.map
