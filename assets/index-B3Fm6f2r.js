@@ -42766,7 +42766,16 @@ function isEmbeddedActionOptions(options) {
 }
 //#endregion
 //#region src/components/onboarding/VideoUploader.jsx
-var VideoUploader = ({ onUploadSuccess, onError, hrefWebSite = "", currentUrl = "", maxSizeMb = 150, accept = "video/mp4,video/quicktime,video/mov,video/webm" }) => {
+var getFallbackMimeType = (fileName) => {
+	switch (fileName?.split(".").pop()?.toLowerCase()) {
+		case "mov": return "video/quicktime";
+		case "mp4": return "video/mp4";
+		case "webm": return "video/webm";
+		case "m4v": return "video/x-m4v";
+		default: return "video/mp4";
+	}
+};
+var VideoUploader = ({ onUploadSuccess, onError, hrefWebSite = "", currentUrl = "", maxSizeMb = 150, accept = "video/mp4,video/quicktime,video/mov,video/webm", autoSaveToDb = false }) => {
 	const [progress, setProgress] = (0, import_react.useState)(0);
 	const [isUploading, setIsUploading] = (0, import_react.useState)(false);
 	const [uploadedUrl, setUploadedUrl] = (0, import_react.useState)(currentUrl);
@@ -42780,8 +42789,9 @@ var VideoUploader = ({ onUploadSuccess, onError, hrefWebSite = "", currentUrl = 
 		setError("");
 		try {
 			const telegramInitData = window.Telegram?.WebApp?.initData || "";
-			const requestUrl = `${hrefWebSite ? hrefWebSite.replace(/\/+$/, "") : ""}/api-zvuk/upload/get-presigned-url`;
-			const res = await fetch(requestUrl, {
+			const baseUrl = hrefWebSite ? hrefWebSite.replace(/\/+$/, "") : "";
+			const safeFileType = fileToUpload.type || getFallbackMimeType(fileToUpload.name);
+			const res = await fetch(`${baseUrl}/api-zvuk/upload/get-presigned-url`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -42789,7 +42799,7 @@ var VideoUploader = ({ onUploadSuccess, onError, hrefWebSite = "", currentUrl = 
 				},
 				body: JSON.stringify({
 					fileName: fileToUpload.name,
-					fileType: fileToUpload.type
+					fileType: safeFileType
 				})
 			});
 			if (!res.ok) throw new Error(`Ошибка сервера: ${res.status}`);
@@ -42800,25 +42810,39 @@ var VideoUploader = ({ onUploadSuccess, onError, hrefWebSite = "", currentUrl = 
 			xhr.upload.onprogress = (event) => {
 				if (event.lengthComputable) setProgress(Math.round(event.loaded / event.total * 100));
 			};
-			xhr.onload = () => {
-				setIsUploading(false);
+			xhr.onload = async () => {
 				if (xhr.status === 200 || xhr.status === 204) {
+					if (autoSaveToDb) try {
+						const saveData = await (await fetch(`${baseUrl}/api-zvuk/save-musician-video`, {
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json",
+								"Authorization": `Bearer ${telegramInitData}`
+							},
+							body: JSON.stringify({ videoUrl: publicUrl })
+						})).json();
+						if (!saveData.success) throw new Error(saveData.error);
+					} catch (dbErr) {
+						console.error("Ошибка сохранения URL в БД:", dbErr);
+					}
 					setUploadedUrl(publicUrl);
+					setIsUploading(false);
 					if (onUploadSuccess) onUploadSuccess(publicUrl);
 				} else {
-					const errMsg = "Не удалось загрузить видео на сервер хранилища";
+					setIsUploading(false);
+					const errMsg = "Хранилище R2 отклонило загрузку (ошибка авторизации/CORS)";
 					setError(errMsg);
 					if (onError) onError(errMsg);
 				}
 			};
 			xhr.onerror = () => {
 				setIsUploading(false);
-				const errMsg = "Сбой сети при загрузке видео";
+				const errMsg = "Сбой сети при прямой загрузке в R2";
 				setError(errMsg);
 				if (onError) onError(errMsg);
 			};
 			xhr.open("PUT", uploadUrl, true);
-			xhr.setRequestHeader("Content-Type", fileToUpload.type);
+			xhr.setRequestHeader("Content-Type", safeFileType);
 			xhr.send(fileToUpload);
 		} catch (err) {
 			setIsUploading(false);
@@ -42840,14 +42864,20 @@ var VideoUploader = ({ onUploadSuccess, onError, hrefWebSite = "", currentUrl = 
 		setSelectedFileName(selectedFile.name);
 		const videoElement = document.createElement("video");
 		videoElement.preload = "metadata";
-		videoElement.src = URL.createObjectURL(selectedFile);
+		const objectUrl = URL.createObjectURL(selectedFile);
+		videoElement.src = objectUrl;
 		videoElement.onloadedmetadata = () => {
-			URL.revokeObjectURL(videoElement.src);
+			URL.revokeObjectURL(objectUrl);
 			if (videoElement.duration > MAX_DURATION_SEC) {
 				const msg = `Длительность видео больше 3 минут (${Math.round(videoElement.duration)} сек)`;
 				setError(msg);
 				if (onError) onError(msg);
 			} else startUpload(selectedFile);
+		};
+		videoElement.onerror = () => {
+			URL.revokeObjectURL(objectUrl);
+			console.warn("Не удалось прочитать метаданные видео, загружаем без предварительной проверки длительности");
+			startUpload(selectedFile);
 		};
 	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -42865,7 +42895,7 @@ var VideoUploader = ({ onUploadSuccess, onError, hrefWebSite = "", currentUrl = 
 				type: "button",
 				onClick: () => fileInputRef.current?.click(),
 				className: "w-full py-3 px-4 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold transition-all",
-				children: "📁 Выбрать видео с телефона"
+				children: "📁 Выбрать промо-видео с телефона"
 			}),
 			isUploading && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "mt-2 text-left",
@@ -42897,6 +42927,7 @@ var VideoUploader = ({ onUploadSuccess, onError, hrefWebSite = "", currentUrl = 
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("video", {
 						src: uploadedUrl,
 						controls: true,
+						playsInline: true,
 						className: "w-full max-h-48 rounded-xl border border-slate-700 bg-black"
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
@@ -44457,7 +44488,7 @@ function App() {
 		className: "flex flex-col h-dvh w-full overflow-hidden antialiased select-none bg-[#070a13]",
 		children: [
 			role !== "visitor" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
-				style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 36px)" },
+				style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 44px)" },
 				className: "glass-header px-4 pb-3 flex justify-between items-center z-50 shrink-0 w-full overflow-x-hidden",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 					className: "flex items-center gap-2",
@@ -46054,4 +46085,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-DXgsoQEq.js.map
+//# sourceMappingURL=index-B3Fm6f2r.js.map
