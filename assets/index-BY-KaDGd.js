@@ -19255,7 +19255,7 @@ var VerificationModal = ({ venueName, onClose }) => {
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 					className: "w-14 h-14 rounded-2xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-3xl mt-2",
-					children: "📞"
+					children: "👋"
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
 					className: "text-lg font-black tracking-tight mb-2",
@@ -19276,7 +19276,7 @@ var VerificationModal = ({ venueName, onClose }) => {
 					onClick: handleRequestCall,
 					disabled: isRequested,
 					className: `w-full py-3.5 rounded-2xl font-bold text-sm transition-all active:scale-95 border-none cursor-pointer ${isRequested ? "bg-slate-800 text-slate-500 cursor-not-allowed" : "bg-pink-500 hover:bg-pink-600 text-white shadow-lg shadow-pink-500/25"}`,
-					children: isRequested ? "Заявка отправлена ✅" : "Заказать звонок"
+					children: isRequested ? "Заявка отправлена ✅" : "Пройти верификацию"
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 					className: "text-[11px] text-slate-500 leading-normal",
@@ -19286,7 +19286,7 @@ var VerificationModal = ({ venueName, onClose }) => {
 							className: "text-slate-300 font-semibold",
 							children: "@username"
 						}),
-						", и нажмите «Заказать звонок»"
+						", и нажмите «Пройти верификацию»"
 					]
 				})
 			]
@@ -22300,4 +22300,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-D73f2g6m.js.map
+//# sourceMappingURL=index-BY-KaDGd.js.map
