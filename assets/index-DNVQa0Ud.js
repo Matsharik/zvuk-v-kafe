@@ -19407,7 +19407,8 @@ function App() {
 			if (data.success) {
 				safeShowAlert(data.isFullyEnded ? "Отзыв сохранен! Выступление официально завершено обеими сторонами 🎉" : "Спасибо! Ваш отзыв сохранен.");
 				setRatingValue(5);
-				if (typeof fetchGigs === "function") fetchGigs();
+				await fetchMyGigs();
+				setActiveTab("gigs");
 			} else safeShowAlert(data.error || "Ошибка сохранения отзыва");
 		} catch (err) {
 			console.error("Ошибка отправки отзыва:", err);
@@ -22288,4 +22289,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-DVfoMdHI.js.map
+//# sourceMappingURL=index-DNVQa0Ud.js.map
