@@ -19544,24 +19544,11 @@ function App() {
 	});
 	const [showCreateGigModal, setShowCreateGigModal] = (0, import_react.useState)(false);
 	const [isSubmittingGig, setIsSubmittingGig] = (0, import_react.useState)(false);
-	const getMinskCurrentDateTime = () => {
-		const now = /* @__PURE__ */ new Date();
-		return {
-			date: now.toLocaleDateString("sv-SE", { timeZone: "Europe/Minsk" }),
-			time: now.toLocaleTimeString("ru-RU", {
-				timeZone: "Europe/Minsk",
-				hour: "2-digit",
-				minute: "2-digit",
-				hour12: false
-			})
-		};
-	};
-	const { dateFAKE, timeFAKE } = getMinskCurrentDateTime();
 	const [gigForm, setGigForm] = (0, import_react.useState)({
 		genres: [],
 		instruments: [],
-		date: dateFAKE,
-		time: timeFAKE,
+		date: "2026-08-24",
+		time: "19:00",
 		durationMinutes: 60,
 		price: 350
 	});
@@ -19609,8 +19596,8 @@ function App() {
 			setGigForm({
 				genres: [],
 				instruments: [],
-				date: dateFAKE,
-				time: timeFAKE,
+				date: "2026-08-24",
+				time: "19:00",
 				durationMinutes: 60,
 				price: 350
 			});
@@ -22313,4 +22300,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-C0ELpMv9.js.map
+//# sourceMappingURL=index-B1b5g4Qu.js.map
