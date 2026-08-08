@@ -19263,13 +19263,13 @@ var VerificationModal = ({ venueName, onClose }) => {
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 					className: "text-xs text-slate-400 leading-relaxed",
 					children: [
-						"Мы звоним на номер телефона, указанный в картах/соцсетях",
+						"Мы сверим контактные данные",
 						" ",
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 							className: "text-pink-400 font-bold",
 							children: venueName || "Заведения"
 						}),
-						", чтобы избежать баловства."
+						"и можем запросить дополнительное подтверждение, чтобы избежать баловства. Мы напишем, когда верификация будет пройдена!"
 					]
 				})] }),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
@@ -22300,4 +22300,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-DrMoEl0u.js.map
+//# sourceMappingURL=index-D73f2g6m.js.map
