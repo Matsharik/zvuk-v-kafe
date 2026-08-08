@@ -9968,10 +9968,10 @@ function Loader({ appVersion }) {
 			display: "flex",
 			flexDirection: "column",
 			alignItems: "center",
-			justifyContent: "between",
+			justifyContent: "space-between",
 			backgroundColor: "#020617",
 			color: "#ffffff",
-			padding: "24px",
+			padding: "48px 24px 0px 24px",
 			fontFamily: "system-ui, -apple-system, sans-serif",
 			overflow: "hidden",
 			userSelect: "none"
@@ -10010,11 +10010,10 @@ function Loader({ appVersion }) {
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 					style: {
 						fontSize: "11px",
-						tracking: "0.3em",
 						fontWeight: 700,
 						color: "#64748b",
 						letterSpacing: "0.25em",
-						uppercase: "true"
+						textTransform: "uppercase"
 					},
 					children: "Беларусь"
 				})
@@ -10067,7 +10066,7 @@ function Loader({ appVersion }) {
 							marginTop: "8px",
 							fontWeight: 500
 						},
-						children: "Прогреваем ламповые усилители..."
+						children: "Загружаем данные музыкантов и заказчиков..."
 					})] }),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 						style: {
@@ -43167,9 +43166,13 @@ function App() {
 		if (!ratingValue) return alert("Пожалуйста, укажите оценку");
 		setIsSubmittingRating(true);
 		try {
+			const telegramInitData = window.Telegram?.WebApp?.initData || "";
 			const data = await (await fetch(`${hrefWebSite}api-zvuk/submit-rating`, {
 				method: "POST",
-				headers: { "Content-Type": "application/json" },
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${telegramInitData}`
+				},
 				body: JSON.stringify({
 					orderId,
 					rating: ratingValue,
@@ -44454,7 +44457,7 @@ function App() {
 		className: "flex flex-col h-dvh w-full overflow-hidden antialiased select-none bg-[#070a13]",
 		children: [
 			role !== "visitor" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
-				style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 12px)" },
+				style: { paddingTop: "calc(var(--tg-safe-area-inset-top, 0px) + 36px)" },
 				className: "glass-header px-4 pb-3 flex justify-between items-center z-50 shrink-0 w-full overflow-x-hidden",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 					className: "flex items-center gap-2",
@@ -45089,7 +45092,11 @@ function App() {
 					activeTab === "gigs" && (() => {
 						const activeGig = gigs?.find((g) => g.id === selectedGigId);
 						const nowUnix = Math.floor(Date.now() / 1e3);
+						console.log("activeTab: gigs. activeGig.status:", activeGig.status);
+						console.log("activeGig.end_at:", activeGig.end_at);
+						console.log("nowUnix:", nowUnix);
 						const isGigEnded = activeGig && activeGig.status === "selected" && activeGig.end_at && nowUnix > activeGig.end_at;
+						console.log("isGigEnded:", isGigEnded);
 						return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "flex flex-col h-full min-h-0 p-4 gap-3 overflow-hidden",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -45149,10 +45156,10 @@ function App() {
 											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 												className: "flex flex-wrap gap-1 mt-1.5",
 												children: [activeGig.genres?.slice(0, 3).map((g, idx) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-													className: "px-2 py-0.5 bg-purple-900/40 border border-purple-500/30 text-purple-300 text-[10px] font-semibold rounded-md",
+													className: "px-2 py-0.5 bg-pink-500 border-pink-400 text-white text-[10px] font-semibold rounded-md",
 													children: g
 												}, idx)), (activeGig.genres?.length || 0) > 3 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-													className: "px-1.5 py-0.5 bg-slate-800 text-slate-400 text-[10px] font-semibold rounded-md",
+													className: "px-1.5 py-0.5 bg-pink-500 text-white text-[10px] font-semibold rounded-md",
 													children: ["+", activeGig.genres.length - 3]
 												})]
 											}),
@@ -46047,4 +46054,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-Bu43c9fI.js.map
+//# sourceMappingURL=index-DXgsoQEq.js.map
