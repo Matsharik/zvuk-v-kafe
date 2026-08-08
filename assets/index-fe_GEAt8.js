@@ -19625,7 +19625,7 @@ function App() {
 		address: "г. Минск, ул. ",
 		description: "",
 		coordinates: [53.9006, 27.559],
-		cafeTypes: ["Паб", "Кальянная"]
+		cafeTypes: []
 	});
 	const initUserRole = async (selectedRole) => {
 		setRole(selectedRole);
@@ -20081,11 +20081,11 @@ function App() {
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
 													className: "font-bold text-base text-white",
-													children: "Арт-директор | Заказчик"
+													children: "Арт-директор"
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 													className: "text-xs text-slate-400 mt-1",
-													children: "Найти музыкантов в ресторан/кафе/паб - 140+ исполнителей готовы откликнуться!"
+													children: "Найти музыкантов в ресторан/кафе/паб/отель - 219 музыкантов зарегистировано у нас!"
 												})
 											]
 										}),
@@ -20119,11 +20119,11 @@ function App() {
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
 													className: "font-bold text-base text-white",
-													children: "Ищу музыкантов на свадьбу"
+													children: "Частные мероприятия и корпоративы"
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 													className: "text-xs text-slate-400 mt-1",
-													children: "Поле для вас, если вы не директор заведения, а ищите музыкантов для себя!"
+													children: "Ищите музыкантов на свадьбу, праздник? Для физлиц, НЕ ресторанов/отелей."
 												})
 											]
 										}),
@@ -20603,6 +20603,9 @@ function App() {
 										children: [
 											"Ресторан",
 											"Кафе",
+											"Двор",
+											"Отель",
+											"Лобби-бар",
 											"Кофейня",
 											"Бар с коктейлями",
 											"Паб",
@@ -22300,4 +22303,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-B1b5g4Qu.js.map
+//# sourceMappingURL=index-fe_GEAt8.js.map
