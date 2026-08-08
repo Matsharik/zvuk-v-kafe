@@ -43084,6 +43084,7 @@ new TonConnectUI({ manifestUrl: `https://${github}/${repoName}/tonconnect-manife
 function App() {
 	const appVersion = "";
 	console.log(appVersion);
+	const [isServicesOpen, setIsServicesOpen] = (0, import_react.useState)(false);
 	const [isInviteModalOpen, setIsInviteModalOpen] = (0, import_react.useState)(false);
 	const [selectedMusicianToInvite, setSelectedMusicianToInvite] = (0, import_react.useState)(null);
 	const [invitingGigId, setInvitingGigId] = (0, import_react.useState)(null);
@@ -46012,4 +46013,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-ay5_ou_w.js.map
+//# sourceMappingURL=index-ChW6mBTu.js.map
