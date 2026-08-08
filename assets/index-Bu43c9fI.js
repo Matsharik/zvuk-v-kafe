@@ -42767,7 +42767,7 @@ function isEmbeddedActionOptions(options) {
 }
 //#endregion
 //#region src/components/onboarding/VideoUploader.jsx
-var VideoUploader = ({ onUploadSuccess, onError, hrefWebSite = "", currentUrl = "", maxSizeMb = 50, accept = "video/mp4,video/quicktime,video/mov,video/webm" }) => {
+var VideoUploader = ({ onUploadSuccess, onError, hrefWebSite = "", currentUrl = "", maxSizeMb = 150, accept = "video/mp4,video/quicktime,video/mov,video/webm" }) => {
 	const [progress, setProgress] = (0, import_react.useState)(0);
 	const [isUploading, setIsUploading] = (0, import_react.useState)(false);
 	const [uploadedUrl, setUploadedUrl] = (0, import_react.useState)(currentUrl);
@@ -43843,11 +43843,45 @@ function App() {
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
 													className: "font-bold text-base text-white",
-													children: "Кафе / Заказчик"
+													children: "Арт-директор | Заказчик"
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 													className: "text-xs text-slate-400 mt-1",
-													children: "Рестораны, бары, пабы и организаторы лайвов."
+													children: "Найти музыкантов в ресторан/кафе/паб - 140+ исполнителей готовы откликнуться!"
+												})
+											]
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+											onClick: async () => {
+												await initUserRole("visitor");
+												const response2 = await fetch(`${hrefWebSite}api-zvuk/map-cafes-afisha`, {
+													method: "POST",
+													headers: {
+														"Content-Type": "application/json",
+														"Authorization": `Bearer ${telegramInitData}`
+													}
+												});
+												if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
+												const data2 = await response2.json();
+												console.log("data2?.cafesAfisha", data2?.cafesAfisha);
+												setCafesAfisha(data2?.cafesAfisha);
+												setCurrentStepOnboarding(1);
+												setActiveTab("invidual_create");
+											},
+											disabled: true,
+											className: `liquid-card p-5 rounded-3xl text-left transition-all ${role === "individual" ? "border-indigo-500 bg-indigo-500/10" : ""}`,
+											children: [
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+													className: "text-3xl mb-2",
+													children: "💐"
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+													className: "font-bold text-base text-white",
+													children: "Ищу музыкантов на свадьбу"
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+													className: "text-xs text-slate-400 mt-1",
+													children: "Поле для вас, если вы не директор заведения, а ищите музыкантов для себя!"
 												})
 											]
 										}),
@@ -43876,11 +43910,11 @@ function App() {
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
 													className: "font-bold text-base text-white",
-													children: "Послушать музыку вживую"
+													children: "Послушать музыку вживую | Гость"
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 													className: "text-xs text-slate-400 mt-1",
-													children: "Афиша-карта запланированных на платформе выступлений Беларуси"
+													children: "Афиша-карта запланированных на платформе выступлений Беларуси."
 												})
 											]
 										})
@@ -44205,11 +44239,11 @@ function App() {
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 										className: "text-xs text-slate-400 mb-4 font-medium",
-										children: "Загрузите 1 любимое видео вашей игры/пения (до 3 мин., до 50 МБ):"
+										children: "Загрузите 1 любимое видео вашей игры/пения (до 3 мин., до 150 МБ):"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(VideoUploader, {
 										hrefWebSite,
-										maxSizeMb: 50,
+										maxSizeMb: 150,
 										accept: "video/mp4,video/quicktime,video/webm",
 										currentUrl: onboardingData.videoUrl,
 										onUploadSuccess: (publicUrl) => {
@@ -44250,7 +44284,7 @@ function App() {
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "text-pink-500 text-[10px] tracking-[0.25em] font-black uppercase",
-										children: "ЗАВЕДЕНИЕ • ШАГ 1"
+										children: "ЗАКАЗЧИК • ШАГ 1"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 										className: "text-2xl font-black text-white uppercase mt-1 mb-2",
@@ -44278,7 +44312,7 @@ function App() {
 												...onboardingData,
 												address: e.target.value
 											}),
-											placeholder: "Адрес (ул. Октябрьская, 19)",
+											placeholder: "Адрес (г. Гродно, ул. Весенняя, 19)",
 											className: "w-full px-4 py-3 rounded-2xl liquid-input text-sm font-semibold"
 										})]
 									}),
@@ -44299,7 +44333,7 @@ function App() {
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "text-pink-500 text-[10px] tracking-[0.25em] font-black uppercase",
-										children: "ЗАВЕДЕНИЕ • ШАГ 2"
+										children: "ЗАКАЗЧИК • ШАГ 2"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 										className: "text-2xl font-black text-white uppercase mt-1 mb-2",
@@ -44345,7 +44379,7 @@ function App() {
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "text-pink-500 text-[10px] tracking-[0.25em] font-black uppercase",
-										children: "ЗАВЕДЕНИЕ • ШАГ 3"
+										children: "ЗАКАЗЧИК • ШАГ 3"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 										className: "text-2xl font-black text-white uppercase mt-1 mb-2",
@@ -44358,7 +44392,7 @@ function App() {
 											description: newBio
 										}),
 										maxLength: 400,
-										textLow: "Не оставляйте это поле пустым, мы спросим его у вас для верификации!",
+										textLow: "Не оставляйте это поле пустым, мы можем спросить его у вас для верификации!",
 										placeholder: "Расскажите о своем заведении..."
 									})
 								]
@@ -46013,4 +46047,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-ChW6mBTu.js.map
+//# sourceMappingURL=index-Bu43c9fI.js.map
