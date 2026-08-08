@@ -44999,11 +44999,13 @@ function App() {
 									const isActive = item.id === selectedGigId;
 									const displayDate = item.date || (item.begin_at ? (/* @__PURE__ */ new Date(item.begin_at * 1e3)).toLocaleDateString("ru-RU", {
 										day: "numeric",
-										month: "short"
+										month: "short",
+										timeZone: "Europe/Minsk"
 									}) : "Даты нет");
 									const displayTime = item.time || (item.begin_at ? (/* @__PURE__ */ new Date(item.begin_at * 1e3)).toLocaleTimeString("ru-RU", {
 										hour: "2-digit",
-										minute: "2-digit"
+										minute: "2-digit",
+										timeZone: "Europe/Minsk"
 									}) : "19:00");
 									return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 										type: "button",
@@ -45890,11 +45892,13 @@ function App() {
 							children: gigs.filter((g) => g.status === "search").map((gig) => {
 								const displayDate = gig.date || (gig.begin_at ? (/* @__PURE__ */ new Date(gig.begin_at * 1e3)).toLocaleDateString("ru-RU", {
 									day: "numeric",
-									month: "short"
+									month: "short",
+									timeZone: "Europe/Minsk"
 								}) : "");
 								const displayTime = gig.time || (gig.begin_at ? (/* @__PURE__ */ new Date(gig.begin_at * 1e3)).toLocaleTimeString("ru-RU", {
 									hour: "2-digit",
-									minute: "2-digit"
+									minute: "2-digit",
+									timeZone: "Europe/Minsk"
 								}) : "");
 								return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 									type: "button",
@@ -45938,4 +45942,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-DHSXJKxh.js.map
+//# sourceMappingURL=index-CVcUul6H.js.map
