@@ -21330,13 +21330,15 @@ function App() {
 						]
 					}),
 					activeTab === "gigs" && (() => {
+						const activeGig = gigs?.find((g) => g.id === selectedGigId);
+						let nowUnix = 0;
+						let isGigEnded = 0;
 						if (gigs != void 0 && gigs != null && gigs?.length > 0) {
-							const activeGig = gigs?.find((g) => g.id === selectedGigId);
-							const nowUnix = Math.floor(Date.now() / 1e3);
+							nowUnix = Math.floor(Date.now() / 1e3);
 							console.log("activeTab: gigs. activeGig.status:", activeGig?.status);
 							console.log("activeGig?.end_at / 1000:", activeGig?.end_at / 1e3);
 							console.log("nowUnix:", nowUnix);
-							const isGigEnded = activeGig && activeGig?.status === "selected" && activeGig?.end_at && nowUnix > activeGig?.end_at / 1e3;
+							isGigEnded = activeGig && activeGig?.status === "selected" && activeGig?.end_at && nowUnix > activeGig?.end_at / 1e3;
 							console.log("isGigEnded:", isGigEnded);
 						}
 						return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -22298,4 +22300,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-D1y4Mhdn.js.map
+//# sourceMappingURL=index-DrMoEl0u.js.map
