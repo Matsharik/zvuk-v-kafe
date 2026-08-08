@@ -43479,10 +43479,10 @@ function App() {
 			cafeTypes: [...prev.cafeTypes, newType.trim()]
 		}));
 	};
-	const getMaxSteps = () => {
+	const getMaxSteps = (role) => {
 		if (role === "musician") return 8;
 		if (role === "cafe") return 5;
-		if (role === "cafe") return 1;
+		if (role === "visitor") return 1;
 		return 1;
 	};
 	const handlePrevOnboardingStep = () => {
@@ -43574,16 +43574,16 @@ function App() {
 					}
 					if (savedRole == "musician") if (userData.description != null) {
 						console.log("Убор страничек");
-						setCurrentStepOnboarding(getMaxSteps());
+						setCurrentStepOnboarding(getMaxSteps(savedRole));
 					} else {
 						console.log("userData.description", userData.description);
 						setCurrentStepOnboarding(userData?.has_seen_onboarding);
 					}
-					if (savedRole == "cafe") if (userData.description != null) setCurrentStepOnboarding(getMaxSteps());
+					if (savedRole == "cafe") if (userData.description != null) setCurrentStepOnboarding(getMaxSteps(savedRole));
 					else setCurrentStepOnboarding(userData?.has_seen_onboarding);
 					if (savedRole == "visitor") {
 						console.log("savedRole == visitor initta");
-						setCurrentStepOnboarding(getMaxSteps());
+						setCurrentStepOnboarding(getMaxSteps(savedRole));
 						const response2 = await fetch(`${hrefWebSite}api-zvuk/map-cafes-afisha`, {
 							method: "POST",
 							headers: {
@@ -43627,7 +43627,7 @@ function App() {
 			"musicians",
 			"profile",
 			"requests"
-		].includes(activeTab) && !showVerificationModal && currentStepOnboarding == getMaxSteps() && !(selectedCafe != null && activeTab == "map") || currentStepOnboarding === 0 || currentStepOnboarding === 1) {
+		].includes(activeTab) && !showVerificationModal && currentStepOnboarding == getMaxSteps(role) && !(selectedCafe != null && activeTab == "map") || currentStepOnboarding === 0 || currentStepOnboarding === 1) {
 			tg.BackButton.hide();
 			tg.enableClosingConfirmation();
 		} else if (currentStepOnboarding !== 0 && currentStepOnboarding !== 1) {
@@ -43679,7 +43679,7 @@ function App() {
 				console.error("💥 [App] Запрос к авторизации упал:", err);
 				setErrorStatus("Не удалось связаться с сервером авторизации.");
 			}
-			if (currentStepOnboarding + 1 == getMaxSteps()) {
+			if (currentStepOnboarding + 1 == getMaxSteps(role)) {
 				if (role == "cafe") {
 					await fetchMyGigs();
 					setActiveTab("gigs");
@@ -43733,9 +43733,9 @@ function App() {
 			})
 		]
 	});
-	if (currentStepOnboarding != getMaxSteps()) {
+	if (currentStepOnboarding != getMaxSteps(role)) {
 		console.log("currentStepOnboarding in РАЗДЕЛЬНЫЙ ЭКРАН ОНБОРДИНГА", currentStepOnboarding);
-		const totalSteps = getMaxSteps();
+		const totalSteps = getMaxSteps(role);
 		return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 			style: globalStyle,
 			className: "fixed inset-0 w-screen h-screen bg-[#070a13] text-white select-none overflow-hidden z-99999 flex flex-col justify-between p-6",
@@ -44389,7 +44389,7 @@ function App() {
 						] })
 					]
 				}, `${role}-${currentStepOnboarding}`),
-				currentStepOnboarding > 0 && currentStepOnboarding <= getMaxSteps() - 1 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				currentStepOnboarding > 0 && currentStepOnboarding <= getMaxSteps(role) - 1 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 					className: "w-full shrink-0 z-10 flex gap-3 pt-3",
 					children: [currentStepOnboarding > 1 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 						onClick: handlePrevOnboardingStep,
@@ -44407,7 +44407,7 @@ function App() {
 							onClick: handleNextOnboardingStep,
 							disabled: isDisabled,
 							className: `flex-1 py-3.5 px-4 rounded-xl font-semibold transition ${isDisabled ? "bg-purple-900/40 text-slate-500 cursor-not-allowed shadow-none active:scale-100" : "bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-600/30 active:scale-95"}`,
-							children: currentStepOnboarding === getMaxSteps() - 1 ? "ГОТОВО 🚀" : "ДАЛЕЕ"
+							children: currentStepOnboarding === getMaxSteps(role) - 1 ? "ГОТОВО 🚀" : "ДАЛЕЕ"
 						});
 					})()]
 				})
@@ -44437,13 +44437,13 @@ function App() {
 							education: user?.education,
 							equipment: user?.equipment,
 							videoUrl: user?.video_url,
-							currentStepOnboarding: getMaxSteps() - 1,
+							currentStepOnboarding: getMaxSteps(role) - 1,
 							address: user?.address,
 							description: user?.description,
 							coordinates: user?.coordinates,
 							cafeTypes: user?.cafe_types
 						});
-						setCurrentStepOnboarding(getMaxSteps() - 1);
+						setCurrentStepOnboarding(getMaxSteps(role) - 1);
 					},
 					className: "text-[11px] bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-xl font-bold text-slate-300 active:scale-95 transition-all border border-white/10",
 					children: "Настройки"
@@ -45938,4 +45938,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-C59Z2ZtO.js.map
+//# sourceMappingURL=index-DHSXJKxh.js.map
