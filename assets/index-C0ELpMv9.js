@@ -19609,8 +19609,8 @@ function App() {
 			setGigForm({
 				genres: [],
 				instruments: [],
-				date: "2026-06-21",
-				time: "17:37",
+				date: dateFAKE,
+				time: timeFAKE,
 				durationMinutes: 60,
 				price: 350
 			});
@@ -22313,4 +22313,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-D5q0SZzH.js.map
+//# sourceMappingURL=index-C0ELpMv9.js.map
