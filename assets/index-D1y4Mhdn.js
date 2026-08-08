@@ -21330,7 +21330,7 @@ function App() {
 						]
 					}),
 					activeTab === "gigs" && (() => {
-						if (gigs != void 0 && gigs != null && gigs != []) {
+						if (gigs != void 0 && gigs != null && gigs?.length > 0) {
 							const activeGig = gigs?.find((g) => g.id === selectedGigId);
 							const nowUnix = Math.floor(Date.now() / 1e3);
 							console.log("activeTab: gigs. activeGig.status:", activeGig?.status);
@@ -22298,4 +22298,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-776HVT6Q.js.map
+//# sourceMappingURL=index-D1y4Mhdn.js.map
