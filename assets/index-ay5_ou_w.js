@@ -44951,31 +44951,101 @@ function App() {
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								className: "flex flex-col gap-3.5 mt-6",
 								children: [
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
-										className: "text-xs text-slate-400 font-bold uppercase tracking-wider",
-										children: "Сервисы и Развлечения:"
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+										onClick: () => setIsServicesOpen(!isServicesOpen),
+										className: "w-full flex items-center justify-between p-3.5 bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 hover:border-slate-700 rounded-2xl transition-all duration-200 cursor-pointer group active:scale-[0.99]",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "text-xs text-slate-400 font-bold uppercase tracking-wider group-hover:text-slate-200 transition-colors",
+											children: "Сервисы и Развлечения"
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "flex items-center gap-2",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "text-xs text-slate-500 font-medium",
+												children: isServicesOpen ? "Свернуть" : "Развернуть"
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", {
+												className: `w-4 h-4 text-slate-400 transition-transform duration-300 ${isServicesOpen ? "rotate-180" : ""}`,
+												fill: "none",
+												viewBox: "0 0 24 24",
+												stroke: "currentColor",
+												children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
+													strokeLinecap: "round",
+													strokeLinejoin: "round",
+													strokeWidth: 2,
+													d: "M19 9l-7 7-7-7"
+												})
+											})]
+										})]
 									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-										href: "https://t.me/slovesny_bot/app",
-										target: "_blank",
-										rel: "noopener noreferrer",
-										className: "block relative rounded-2xl overflow-hidden border border-purple-500/30 hover:border-purple-500/60 shadow-lg shadow-purple-950/20 active:scale-[0.98] transition-all duration-200 group cursor-pointer",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-											src: "/zvuk-v-kafe/banners/slovesny_banner.png",
-											alt: "Игра в слова",
-											className: "w-full h-auto object-cover rounded-2xl group-hover:brightness-110 transition-all"
-										})
+									isServicesOpen && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "flex flex-col gap-3.5 pt-1 transition-all duration-300",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+											href: "https://t.me/slovesny_bot/app",
+											target: "_blank",
+											rel: "noopener noreferrer",
+											className: "block relative rounded-2xl overflow-hidden border border-purple-500/30 hover:border-purple-500/60 shadow-lg shadow-purple-950/20 active:scale-[0.98] transition-all duration-200 group cursor-pointer",
+											children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+												src: "/zvuk-v-kafe/banners/slovesny_banner.png",
+												alt: "Игра в слова",
+												className: "w-full h-auto object-cover rounded-2xl group-hover:brightness-110 transition-all"
+											})
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+											href: "https://t.me/tonnel_network_bot/gifts?startapp=ref_1711018223",
+											target: "_blank",
+											rel: "noopener noreferrer",
+											className: "block relative rounded-2xl overflow-hidden border border-pink-500/30 hover:border-pink-500/60 shadow-lg shadow-pink-950/20 active:scale-[0.98] transition-all duration-200 group cursor-pointer",
+											children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+												src: "/zvuk-v-kafe/banners/tonnel_banner.png",
+												alt: "Маркет ТГ подарков",
+												className: "w-full h-auto object-cover rounded-2xl group-hover:brightness-110 transition-all"
+											})
+										})]
 									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-										href: "https://t.me/tonnel_network_bot/gifts?startapp=ref_1711018223",
-										target: "_blank",
-										rel: "noopener noreferrer",
-										className: "block relative rounded-2xl overflow-hidden border border-pink-500/30 hover:border-pink-500/60 shadow-lg shadow-pink-950/20 active:scale-[0.98] transition-all duration-200 group cursor-pointer",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-											src: "/zvuk-v-kafe/banners/tonnel_banner.png",
-											alt: "Маркет ТГ подарков",
-											className: "w-full h-auto object-cover rounded-2xl group-hover:brightness-110 transition-all"
-										})
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "flex flex-col gap-3 mt-4",
+										children: [
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
+												className: "text-xs text-slate-400 font-bold uppercase tracking-wider",
+												children: "Сообщество проекта:"
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+												className: "flex items-center justify-between p-4 bg-slate-900/90 border border-slate-800/80 hover:border-indigo-500/40 rounded-2xl shadow-xl transition-all duration-200",
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+													className: "flex flex-col pr-3",
+													children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+														className: "text-sm font-bold text-slate-100",
+														children: "Наш Threads"
+													}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+														className: "text-xs text-slate-400 mt-0.5",
+														children: "Рекламируйте себя в наших ветках или оставьте пожелания!"
+													})]
+												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+													href: "https://www.threads.com/@zvuk_v_kafe",
+													target: "_blank",
+													rel: "noopener noreferrer",
+													className: "px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl active:scale-95 transition-all shadow-md shadow-indigo-600/20 shrink-0",
+													children: "Перейти"
+												})]
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+												className: "flex items-center justify-between p-4 bg-slate-900/90 border border-slate-800/80 hover:border-sky-500/40 rounded-2xl shadow-xl transition-all duration-200",
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+													className: "flex flex-col pr-3",
+													children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+														className: "text-sm font-bold text-slate-100",
+														children: "Telegram автора проекта"
+													}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+														className: "text-xs text-slate-400 mt-0.5",
+														children: "О партнерствах, новостях, разработке и жизни!"
+													})]
+												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+													href: "https://t.me/ytr_r",
+													target: "_blank",
+													rel: "noopener noreferrer",
+													className: "px-4 py-2.5 bg-sky-500 hover:bg-sky-400 text-white text-xs font-semibold rounded-xl active:scale-95 transition-all shadow-md shadow-sky-500/20 shrink-0",
+													children: "Перейти"
+												})]
+											})
+										]
 									})
 								]
 							})
@@ -45942,4 +46012,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-CVcUul6H.js.map
+//# sourceMappingURL=index-ay5_ou_w.js.map
