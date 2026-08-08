@@ -20107,8 +20107,12 @@ function App() {
 												setActiveTab("invidual_create");
 											},
 											disabled: true,
-											className: `liquid-card p-5 rounded-3xl text-left transition-all ${role === "individual" ? "border-indigo-500 bg-indigo-500/10" : ""}`,
+											className: `liquid-card p-5 rounded-3xl text-left transition-all opacity-40 cursor-not-allowed pointer-events-none select-none grayscale-50 relative overflow-hidden ${role === "individual" ? "border-indigo-500 bg-indigo-500/10" : ""}`,
 											children: [
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+													className: "absolute top-4 right-4 bg-slate-800 text-slate-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider border border-slate-700",
+													children: "Скоро"
+												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 													className: "text-3xl mb-2",
 													children: "💐"
@@ -20217,6 +20221,7 @@ function App() {
 											"Бэк-вокал",
 											"Экстрим-вокал",
 											"Битбокс",
+											"Цимбалы",
 											"Акустическая гитара",
 											"Электрогитара",
 											"Бас-гитара",
@@ -21325,13 +21330,15 @@ function App() {
 						]
 					}),
 					activeTab === "gigs" && (() => {
-						const activeGig = gigs?.find((g) => g.id === selectedGigId);
-						const nowUnix = Math.floor(Date.now() / 1e3);
-						console.log("activeTab: gigs. activeGig.status:", activeGig.status);
-						console.log("activeGig.end_at / 1000:", activeGig.end_at / 1e3);
-						console.log("nowUnix:", nowUnix);
-						const isGigEnded = activeGig && activeGig.status === "selected" && activeGig.end_at && nowUnix > activeGig.end_at / 1e3;
-						console.log("isGigEnded:", isGigEnded);
+						if (gigs != void 0 && gigs != null) {
+							const activeGig = gigs?.find((g) => g.id === selectedGigId);
+							const nowUnix = Math.floor(Date.now() / 1e3);
+							console.log("activeTab: gigs. activeGig.status:", activeGig.status);
+							console.log("activeGig.end_at / 1000:", activeGig.end_at / 1e3);
+							console.log("nowUnix:", nowUnix);
+							const isGigEnded = activeGig && activeGig.status === "selected" && activeGig.end_at && nowUnix > activeGig.end_at / 1e3;
+							console.log("isGigEnded:", isGigEnded);
+						}
 						return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "flex flex-col h-full min-h-0 p-4 gap-3 overflow-hidden",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -21662,6 +21669,7 @@ function App() {
 													"Бэк-вокал",
 													"Экстрим-вокал",
 													"Битбокс",
+													"Цимбалы",
 													"Акустическая гитара",
 													"Электрогитара",
 													"Бас-гитара",
@@ -21978,6 +21986,7 @@ function App() {
 											"Бэк-вокал",
 											"Экстрим-вокал",
 											"Битбокс",
+											"Цимбалы",
 											"Акустическая гитара",
 											"Электрогитара",
 											"Бас-гитара",
@@ -22289,4 +22298,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-DNVQa0Ud.js.map
+//# sourceMappingURL=index-BW5bU44T.js.map
