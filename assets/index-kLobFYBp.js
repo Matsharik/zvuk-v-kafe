@@ -10011,7 +10011,7 @@ function Loader({ appVersion }) {
 						letterSpacing: "0.25em",
 						textTransform: "uppercase"
 					},
-					children: "Беларусь"
+					children: "Мир и Беларусь"
 				})
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -19355,12 +19355,15 @@ function App() {
 	const fetchMyGigs = async (selectNewest = false) => {
 		try {
 			const telegramInitData = window.Telegram?.WebApp?.initData || "";
+			console.log("fair Intl.DateTimeFormat().resolvedOptions().timeZone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
+			const userTimeZone = Intl.DateTimeFormat?.().resolvedOptions?.().timeZone || "Europe/Minsk";
 			const response = await fetch(`${hrefWebSite}api-zvuk/my-gigs`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 					"Authorization": `Bearer ${telegramInitData}`
-				}
+				},
+				body: JSON.stringify({ timeZone: userTimeZone })
 			});
 			if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 			const fetchedGigs = (await response.json())?.gigs || [];
@@ -19472,12 +19475,15 @@ function App() {
 			if (data.success) {
 				setLoading(true);
 				setIsLoadingApps(true);
+				console.log("fair Intl.DateTimeFormat().resolvedOptions().timeZone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
+				const userTimeZone = Intl.DateTimeFormat?.().resolvedOptions?.().timeZone || "Europe/Minsk";
 				const response2 = await fetch(`${hrefWebSite}api-zvuk/musician-applications`, {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 						"Authorization": `Bearer ${telegramInitData}`
-					}
+					},
+					body: JSON.stringify({ timeZone: userTimeZone })
 				});
 				if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
 				const data = await response2.json();
@@ -19564,14 +19570,16 @@ function App() {
 				safeShowAlert("Пожалуйста, укажите дату и время");
 				return;
 			}
-			const startDateTime = /* @__PURE__ */ new Date(`${gigForm.date}T${gigForm.time}:00`);
+			const [year, month, day] = gigForm.date.split("-").map(Number);
+			const [hours, minutes] = gigForm.time.split(":").map(Number);
+			const startDateTime = new Date(year, month - 1, day, hours, minutes);
 			if (isNaN(startDateTime.getTime())) {
 				safeShowAlert("Некорректная дата или время");
 				return;
 			}
-			const durationMinutes = Number(gigForm.durationMinutes) || 120;
+			const durationSeconds = (Number(gigForm.durationMinutes) || 120) * 60;
 			const beginAtTimestamp = Math.floor(startDateTime.getTime() / 1e3);
-			const endAtTimestamp = beginAtTimestamp + durationMinutes * 60;
+			const endAtTimestamp = beginAtTimestamp + durationSeconds;
 			const payload = {
 				genres: gigForm.genres,
 				instruments: gigForm.instruments,
@@ -19579,8 +19587,9 @@ function App() {
 				end_at: endAtTimestamp,
 				price: Number(gigForm.price),
 				status: "search",
-				title: gigForm.title
+				title: gigForm.title?.trim()
 			};
+			Intl.DateTimeFormat?.().resolvedOptions?.().timeZone;
 			const result = await (await fetch(`${hrefWebSite}api-zvuk/orders/create`, {
 				method: "POST",
 				headers: {
@@ -19599,7 +19608,8 @@ function App() {
 				date: "2026-08-24",
 				time: "19:00",
 				durationMinutes: 60,
-				price: 350
+				price: 350,
+				title: ""
 			});
 		} catch (err) {
 			console.error("Ошибка сохранения выступления:", err);
@@ -19780,24 +19790,28 @@ function App() {
 							setLoading(false);
 						}
 						if (savedRole == "musician") {
+							const userTimeZone = Intl.DateTimeFormat?.().resolvedOptions?.().timeZone || "Europe/Minsk";
 							const response2 = await fetch(`${hrefWebSite}api-zvuk/map-cafes`, {
 								method: "POST",
 								headers: {
 									"Content-Type": "application/json",
 									"Authorization": `Bearer ${telegramInitData}`
-								}
+								},
+								body: JSON.stringify({ timeZone: userTimeZone })
 							});
 							if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
 							const data2 = await response2.json();
 							console.log("data2?.cafes", data2?.cafes);
 							setCafes(data2?.cafes);
 							setIsLoadingApps(true);
+							console.log("fair Intl.DateTimeFormat().resolvedOptions().timeZone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
 							const response3 = await fetch(`${hrefWebSite}api-zvuk/musician-applications`, {
 								method: "POST",
 								headers: {
 									"Content-Type": "application/json",
 									"Authorization": `Bearer ${telegramInitData}`
-								}
+								},
+								body: JSON.stringify({ timeZone: userTimeZone })
 							});
 							if (!response3.ok) throw new Error(`HTTP error! status: ${response3.status}`);
 							const data3 = await response3.json();
@@ -19823,12 +19837,14 @@ function App() {
 					if (savedRole == "visitor") {
 						console.log("savedRole == visitor initta");
 						setCurrentStepOnboarding(getMaxSteps(savedRole));
+						const userTimeZone = Intl.DateTimeFormat?.().resolvedOptions?.().timeZone || "Europe/Minsk";
 						const response2 = await fetch(`${hrefWebSite}api-zvuk/map-cafes-afisha`, {
 							method: "POST",
 							headers: {
 								"Content-Type": "application/json",
 								"Authorization": `Bearer ${telegramInitData}`
-							}
+							},
+							body: JSON.stringify({ timeZone: userTimeZone })
 						});
 						if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
 						const data2 = await response2.json();
@@ -19924,12 +19940,14 @@ function App() {
 					setActiveTab("gigs");
 				}
 				if (role == "musician") {
+					const userTimeZone = Intl.DateTimeFormat?.().resolvedOptions?.().timeZone || "Europe/Minsk";
 					const response2 = await fetch(`${hrefWebSite}api-zvuk/map-cafes`, {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json",
 							"Authorization": `Bearer ${telegramInitData}`
-						}
+						},
+						body: JSON.stringify({ timeZone: userTimeZone })
 					});
 					if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
 					const data2 = await response2.json();
@@ -20092,12 +20110,14 @@ function App() {
 										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 											onClick: async () => {
 												await initUserRole("visitor");
+												const userTimeZone = Intl.DateTimeFormat?.().resolvedOptions?.().timeZone || "Europe/Minsk";
 												const response2 = await fetch(`${hrefWebSite}api-zvuk/map-cafes-afisha`, {
 													method: "POST",
 													headers: {
 														"Content-Type": "application/json",
 														"Authorization": `Bearer ${telegramInitData}`
-													}
+													},
+													body: JSON.stringify({ timeZone: userTimeZone })
 												});
 												if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
 												const data2 = await response2.json();
@@ -20130,12 +20150,14 @@ function App() {
 										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 											onClick: async () => {
 												await initUserRole("visitor");
+												const userTimeZone = Intl.DateTimeFormat?.().resolvedOptions?.().timeZone || "Europe/Minsk";
 												const response2 = await fetch(`${hrefWebSite}api-zvuk/map-cafes-afisha`, {
 													method: "POST",
 													headers: {
 														"Content-Type": "application/json",
 														"Authorization": `Bearer ${telegramInitData}`
-													}
+													},
+													body: JSON.stringify({ timeZone: userTimeZone })
 												});
 												if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
 												const data2 = await response2.json();
@@ -21356,16 +21378,8 @@ function App() {
 									})
 								}) : gigs.map((item) => {
 									const isActive = item.id === selectedGigId;
-									const displayDate = item.date || (item.begin_at ? (/* @__PURE__ */ new Date(item.begin_at * 1e3)).toLocaleDateString("ru-RU", {
-										day: "numeric",
-										month: "short",
-										timeZone: "Europe/Minsk"
-									}) : "Даты нет");
-									const displayTime = item.time || (item.begin_at ? (/* @__PURE__ */ new Date(item.begin_at * 1e3)).toLocaleTimeString("ru-RU", {
-										hour: "2-digit",
-										minute: "2-digit",
-										timeZone: "Europe/Minsk"
-									}) : "19:00");
+									const displayDate = item.date || "Даты нет";
+									const displayTime = item.time || "Время не указано";
 									return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 										type: "button",
 										onClick: () => setSelectedGigId(item.id),
@@ -22251,16 +22265,8 @@ function App() {
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 							className: "flex flex-col gap-2 max-h-60 overflow-y-auto custom-scrollbar pr-1",
 							children: gigs.filter((g) => g.status === "search").map((gig) => {
-								const displayDate = gig.date || (gig.begin_at ? new Date(gig.begin_at).toLocaleDateString("ru-RU", {
-									day: "numeric",
-									month: "short",
-									timeZone: "Europe/Minsk"
-								}) : "");
-								const displayTime = gig.time || (gig.begin_at ? new Date(gig.begin_at).toLocaleTimeString("ru-RU", {
-									hour: "2-digit",
-									minute: "2-digit",
-									timeZone: "Europe/Minsk"
-								}) : "");
+								const displayDate = gig.date || "Даты нет";
+								const displayTime = gig.time || "Время не указано";
 								return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 									type: "button",
 									disabled: invitingGigId === gig.id,
@@ -22303,4 +22309,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-fe_GEAt8.js.map
+//# sourceMappingURL=index-kLobFYBp.js.map
