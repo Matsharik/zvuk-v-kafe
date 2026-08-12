@@ -20283,7 +20283,7 @@ function App() {
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 													className: "text-xs text-slate-400 mt-1",
-													children: "Ищите музыкантов на свадьбу, праздник? Для физлиц, НЕ ресторанов/отелей."
+													children: "Ищите музыкантов на свадьбу, праздник? Для физлиц, НЕ ресторанов/отелей - здесь!"
 												})
 											]
 										}),
@@ -20319,7 +20319,7 @@ function App() {
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 													className: "text-xs text-slate-400 mt-1",
-													children: "Афиша-карта запланированных на платформе выступлений Беларуси."
+													children: "Афиша-карта запланированных на платформе выступлений!"
 												})
 											]
 										})
@@ -20876,10 +20876,10 @@ function App() {
 					}), currentStepOnboarding > 0 && (() => {
 						const expStr = String(onboardingData.experienceYears ?? "");
 						const isExperienceValid = expStr !== "" && /^(0|[1-9]\d*)$/.test(expStr) && Number(expStr) <= 120;
-						const isMusicianDisabled = role === "musician" && currentStepOnboarding == 4 && !isExperienceValid;
-						const isCafeStep1Invalid = role === "cafe" && currentStepOnboarding === 1 && (!onboardingData.name?.trim() || !onboardingData.address?.trim() || !isMapMoved);
 						const isDescriptionValid = Boolean(onboardingData.description?.trim());
-						const isDisabled = isMusicianDisabled || isCafeStep1Invalid || role === "cafe" && currentStepOnboarding === 3 && !isDescriptionValid || role === "musician" && currentStepOnboarding === 7 && !isDescriptionValid;
+						const isMusicianDisabled = role === "musician" && (currentStepOnboarding === 1 && !onboardingData.name?.trim() || currentStepOnboarding === 2 && (!onboardingData.instruments || onboardingData.instruments.length === 0) || currentStepOnboarding === 3 && (!onboardingData.genres || onboardingData.genres.length === 0) || currentStepOnboarding === 5 && !isExperienceValid || currentStepOnboarding === 6 && !Object.values(onboardingData.education || {}).some(Boolean) || currentStepOnboarding === 8 && !isDescriptionValid);
+						const isCafeDisabled = role === "cafe" && currentStepOnboarding === 1 && (!onboardingData.name?.trim() || !onboardingData.address?.trim() || !isMapMoved) || role === "cafe" && currentStepOnboarding === 3 && !isDescriptionValid;
+						const isDisabled = isMusicianDisabled || isCafeDisabled;
 						return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 							type: "button",
 							onClick: handleNextOnboardingStep,
@@ -20903,7 +20903,7 @@ function App() {
 					className: "flex items-center gap-2",
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 						className: "text-[11px] font-extrabold uppercase tracking-wider text-slate-200 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm",
-						children: role === "cafe" ? "☕ Заведение" : "🎸 Музыкант"
+						children: role === "cafe" ? "☕ Заведение" : role === "musician" ? "🎸 Музыкант" : "👤 Заказчик"
 					})
 				}), (role === "musician" && musicianApplications.length === 0 || role === "cafe" && !user?.is_verified) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 					onClick: () => {
@@ -22891,4 +22891,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-Yb2KyaWq.js.map
+//# sourceMappingURL=index-BG5jnrdk.js.map
