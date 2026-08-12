@@ -19307,6 +19307,39 @@ function App() {
 	const [user, setUser] = (0, import_react.useState)(null);
 	const [gigs, setGigs] = (0, import_react.useState)(null);
 	const [selectedGigId, setSelectedGigId] = (0, import_react.useState)(null);
+	const ALL_EVENT_TYPES = [
+		"Свадьба",
+		"Корпоратив",
+		"День рождения",
+		"Квартирник",
+		"Частная вечеринка",
+		"Другое",
+		"Ресторан",
+		"Кафе",
+		"Двор",
+		"Отель",
+		"Лобби-бар",
+		"Кофейня",
+		"Бар с коктейлями",
+		"Паб",
+		"Кальянная",
+		"Крафтовый бар"
+	];
+	const DEFAULT_EVENT_TYPES = [
+		"Свадьба",
+		"Корпоратив",
+		"День рождения",
+		"Квартирник",
+		"Частная вечеринка",
+		"Другое",
+		"Ресторан",
+		"Кафе",
+		"Двор",
+		"Отель",
+		"Лобби-бар",
+		"Кофейня",
+		"Бар с коктейлями"
+	];
 	const safeShowAlert = (message) => {
 		try {
 			const tg = window.Telegram?.WebApp;
@@ -19319,7 +19352,8 @@ function App() {
 	const handleInviteClick = (musician) => {
 		if (gigs.filter((g) => g.status === "search").length === 0) {
 			setActiveTab("gigs");
-			handleAddGigClick();
+			if (role == "cafe") handleAddGigClick();
+			if (role == "individual") handleAddGigClick();
 			return;
 		}
 		setSelectedMusicianToInvite(musician);
@@ -19373,6 +19407,31 @@ function App() {
 				if (selectNewest) setSelectedGigId(fetchedGigs[0].id);
 				else if (!selectedGigId) setSelectedGigId(fetchedGigs[0].id);
 			} else setSelectedGigId(null);
+		} catch (err) {
+			console.error("Ошибка загрузки гигов:", err);
+		}
+	};
+	const fetchMyIndividualGigs = async (selectNewest = false) => {
+		try {
+			const telegramInitData = window.Telegram?.WebApp?.initData || "";
+			console.log("fair Intl.DateTimeFormat().resolvedOptions().timeZone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
+			const userTimeZone = Intl.DateTimeFormat?.().resolvedOptions?.().timeZone || "Europe/Minsk";
+			const response = await fetch(`${hrefWebSite}api-zvuk/my-individualgigs`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${telegramInitData}`
+				},
+				body: JSON.stringify({ timeZone: userTimeZone })
+			});
+			if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+			const fetchedGigs = (await response.json())?.gigs || [];
+			console.log("setindividualgigs:", fetchedGigs);
+			setIndividualGigs(fetchedGigs);
+			if (fetchedGigs.length > 0) {
+				if (selectNewest) setSelectedIndividualGigId(fetchedGigs[0].id);
+				else if (!selectedGigId) setSelectedIndividualGigId(fetchedGigs[0].id);
+			} else setSelectedIndividualGigId(null);
 		} catch (err) {
 			console.error("Ошибка загрузки гигов:", err);
 		}
@@ -19459,7 +19518,7 @@ function App() {
 			setLoading(false);
 		}
 	};
-	const handleApplyToOrder = async (orderId) => {
+	const handleApplyToOrder = async (orderId, notifyWell = false) => {
 		if (applyingOrderId) return;
 		setApplyingOrderId(orderId);
 		try {
@@ -19495,6 +19554,7 @@ function App() {
 				setIsLoadingApps(false);
 				setLoading(false);
 				setActiveTab("requests");
+				if (notifyWell == true) safeShowAlert("Заявка на выступление успешно отправлена заказчику на рассмотрение!");
 			} else safeShowAlert(data.error || "Не удалось отправить отклик");
 		} catch (err) {
 			console.error("Ошибка отклика:", err);
@@ -19558,9 +19618,31 @@ function App() {
 		durationMinutes: 60,
 		price: 350
 	});
+	const [showCreateIndividualGigModal, setShowCreateIndividualGigModal] = (0, import_react.useState)(false);
+	const [isSubmittingIndividualGig, setIsSubmittingIndividualGig] = (0, import_react.useState)(false);
+	const [individualGigForm, setIndividualGigForm] = (0, import_react.useState)({
+		eventTypes: [],
+		coordinates: [53.9006, 27.559],
+		genres: [],
+		instruments: [],
+		date: "2026-08-24",
+		time: "19:00",
+		durationMinutes: 60,
+		price: 350,
+		title: ""
+	});
+	const isIndividualGigTimeValid = () => {
+		if (!individualGigForm.date || !individualGigForm.time) return false;
+		const [year, month, day] = individualGigForm.date.split("-").map(Number);
+		const [hours, minutes] = individualGigForm.time.split(":").map(Number);
+		return new Date(year, month - 1, day, hours, minutes).getTime() - Date.now() >= 144e5;
+	};
 	const handleAddGigClick = () => {
 		if (!user.is_verified) setShowVerificationModal(true);
 		else setShowCreateGigModal(true);
+	};
+	const handleAddIndividualGigClick = () => {
+		setShowCreateIndividualGigModal(true);
 	};
 	const handleCreateGigSubmit = async (e) => {
 		if (e) e.preventDefault();
@@ -19618,6 +19700,61 @@ function App() {
 			setIsSubmittingGig(false);
 		}
 	};
+	const handleIndividualGigSubmit = async (e) => {
+		if (e) e.preventDefault();
+		if (!isIndividualGigTimeValid()) return;
+		setIsSubmittingIndividualGig(true);
+		try {
+			const [year, month, day] = individualGigForm.date.split("-").map(Number);
+			const [hours, minutes] = individualGigForm.time.split(":").map(Number);
+			const startDateTime = new Date(year, month - 1, day, hours, minutes);
+			const durationMinutes = Number(individualGigForm.durationMinutes) || 120;
+			const beginAtTimestamp = Math.floor(startDateTime.getTime() / 1e3);
+			const endAtTimestamp = beginAtTimestamp + durationMinutes * 60;
+			const userTimeZone = Intl.DateTimeFormat?.().resolvedOptions?.().timeZone || "Europe/Minsk";
+			const payload = {
+				event_types: individualGigForm.eventTypes,
+				lat: individualGigForm.coordinates[0],
+				lng: individualGigForm.coordinates[1],
+				genres: individualGigForm.genres,
+				instruments: individualGigForm.instruments,
+				begin_at: beginAtTimestamp,
+				end_at: endAtTimestamp,
+				price: Number(individualGigForm.price),
+				status: "search",
+				title: individualGigForm.title?.trim(),
+				timeZone: userTimeZone
+			};
+			const result = await (await fetch(`${hrefWebSite}api-zvuk/orders/create`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${window.Telegram?.WebApp?.initData}`
+				},
+				body: JSON.stringify(payload)
+			})).json();
+			if (!result.success) throw new Error(result.error || "Не удалось создать заказ");
+			setShowIndividualGigModal(false);
+			if (typeof fetchMyGigs === "function") await fetchMyGigs(true);
+			safeShowAlert("Заказ частного мероприятия запущен в поиск! 🚀");
+			setIndividualGigForm({
+				eventType: "Свадьба",
+				coordinates: [53.9006, 27.559],
+				genres: [],
+				instruments: [],
+				date: "2026-08-24",
+				time: "19:00",
+				durationMinutes: 60,
+				price: 350,
+				title: ""
+			});
+		} catch (err) {
+			console.error("Ошибка сохранения частного мероприятия:", err);
+			safeShowAlert(`Ошибка: ${err.message}`);
+		} finally {
+			setIsSubmittingIndividualGig(false);
+		}
+	};
 	const [onboardingData, setOnboardingData] = (0, import_react.useState)({
 		name: "",
 		instruments: [],
@@ -19635,8 +19772,19 @@ function App() {
 		address: "г. Минск, ул. ",
 		description: "",
 		coordinates: [53.9006, 27.559],
-		cafeTypes: []
+		cafeTypes: [],
+		preferred_event_types: DEFAULT_EVENT_TYPES
 	});
+	const toggleEventType = (type) => {
+		setOnboardingData((prev) => {
+			const current = prev.preferred_event_types || DEFAULT_EVENT_TYPES;
+			const updated = current.includes(type) ? current.filter((t) => t !== type) : [...current, type];
+			return {
+				...prev,
+				preferred_event_types: updated
+			};
+		});
+	};
 	const initUserRole = async (selectedRole) => {
 		setRole(selectedRole);
 		const telegramInitData = window.Telegram?.WebApp?.initData || "";
@@ -19671,6 +19819,7 @@ function App() {
 			first_name: window.Telegram?.WebApp.initDataUnsafe?.user.first_name,
 			has_seen_onboarding: hackStep,
 			description: onboardingData.description,
+			preferred_event_types: onboardingData.preferred_event_types,
 			instruments: onboardingData.instruments,
 			genres: onboardingData.genres,
 			experience_years: Number(onboardingData.experienceYears) || 0,
@@ -19729,7 +19878,7 @@ function App() {
 		}));
 	};
 	const getMaxSteps = (role) => {
-		if (role === "musician") return 8;
+		if (role === "musician") return 9;
 		if (role === "cafe") return 5;
 		if (role === "visitor") return 1;
 		return 1;
@@ -19804,25 +19953,55 @@ function App() {
 							console.log("data2?.cafes", data2?.cafes);
 							setCafes(data2?.cafes);
 							setIsLoadingApps(true);
-							console.log("fair Intl.DateTimeFormat().resolvedOptions().timeZone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
-							const response3 = await fetch(`${hrefWebSite}api-zvuk/musician-applications`, {
-								method: "POST",
-								headers: {
-									"Content-Type": "application/json",
-									"Authorization": `Bearer ${telegramInitData}`
-								},
-								body: JSON.stringify({ timeZone: userTimeZone })
-							});
-							if (!response3.ok) throw new Error(`HTTP error! status: ${response3.status}`);
-							const data3 = await response3.json();
-							console.log("data3?.applications", data3?.applications);
-							if (data3.success) {
-								setMusicianApplications(data3.applications || []);
-								if (data3.applications?.length > 0) setSelectedAppId((prev) => prev ?? data3.applications[0].id);
+							const startParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
+							if (startParam && startParam.startsWith("order_")) {
+								const orderId = Number(startParam.replace("order_", ""));
+								if (orderId) {
+									await handleApplyToOrder(orderId, notifyWell = true);
+									setIsLoadingApps(false);
+									setLoading(false);
+								} else {
+									console.log("fair Intl.DateTimeFormat().resolvedOptions().timeZone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
+									const response3 = await fetch(`${hrefWebSite}api-zvuk/musician-applications`, {
+										method: "POST",
+										headers: {
+											"Content-Type": "application/json",
+											"Authorization": `Bearer ${telegramInitData}`
+										},
+										body: JSON.stringify({ timeZone: userTimeZone })
+									});
+									if (!response3.ok) throw new Error(`HTTP error! status: ${response3.status}`);
+									const data3 = await response3.json();
+									console.log("data3?.applications", data3?.applications);
+									if (data3.success) {
+										setMusicianApplications(data3.applications || []);
+										if (data3.applications?.length > 0) setSelectedAppId((prev) => prev ?? data3.applications[0].id);
+									}
+									setIsLoadingApps(false);
+									setActiveTab("requests");
+									setLoading(false);
+								}
+							} else {
+								console.log("fair Intl.DateTimeFormat().resolvedOptions().timeZone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
+								const response3 = await fetch(`${hrefWebSite}api-zvuk/musician-applications`, {
+									method: "POST",
+									headers: {
+										"Content-Type": "application/json",
+										"Authorization": `Bearer ${telegramInitData}`
+									},
+									body: JSON.stringify({ timeZone: userTimeZone })
+								});
+								if (!response3.ok) throw new Error(`HTTP error! status: ${response3.status}`);
+								const data3 = await response3.json();
+								console.log("data3?.applications", data3?.applications);
+								if (data3.success) {
+									setMusicianApplications(data3.applications || []);
+									if (data3.applications?.length > 0) setSelectedAppId((prev) => prev ?? data3.applications[0].id);
+								}
+								setIsLoadingApps(false);
+								setActiveTab("requests");
+								setLoading(false);
 							}
-							setIsLoadingApps(false);
-							setActiveTab("requests");
-							setLoading(false);
 						}
 					}
 					if (savedRole == "musician") if (userData.description != null) {
@@ -20103,13 +20282,13 @@ function App() {
 												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 													className: "text-xs text-slate-400 mt-1",
-													children: "Найти музыкантов в ресторан/кафе/паб/отель - 219 музыкантов зарегистировано у нас!"
+													children: "Найти музыкантов в ресторан/кафе/паб/отель - 240+ музыкантов зарегистировано у нас!"
 												})
 											]
 										}),
 										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 											onClick: async () => {
-												await initUserRole("visitor");
+												await initUserRole("individual");
 												const userTimeZone = Intl.DateTimeFormat?.().resolvedOptions?.().timeZone || "Europe/Minsk";
 												const response2 = await fetch(`${hrefWebSite}api-zvuk/map-cafes-afisha`, {
 													method: "POST",
@@ -20124,10 +20303,11 @@ function App() {
 												console.log("data2?.cafesAfisha", data2?.cafesAfisha);
 												setCafesAfisha(data2?.cafesAfisha);
 												setCurrentStepOnboarding(1);
-												setActiveTab("invidual_create");
+												await fetchMyIndividualGigs();
+												setActiveTab("gigs");
 											},
 											disabled: true,
-											className: `liquid-card p-5 rounded-3xl text-left transition-all opacity-40 cursor-not-allowed pointer-events-none select-none grayscale-50 relative overflow-hidden ${role === "individual" ? "border-indigo-500 bg-indigo-500/10" : ""}`,
+											className: `liquid-card p-5 rounded-3xl text-left transition-all ${role === "individual" ? "border-indigo-500 bg-indigo-500/10" : ""}`,
 											children: [
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 													className: "absolute top-4 right-4 bg-slate-800 text-slate-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider border border-slate-700",
@@ -20305,7 +20485,41 @@ function App() {
 									})
 								]
 							}),
-							currentStepOnboarding === 4 && (() => {
+							currentStepOnboarding === 4 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "w-full flex flex-col h-full overflow-hidden",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "shrink-0 mb-4",
+									children: [
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "text-emerald-400 text-[10px] tracking-[0.25em] font-black uppercase",
+											children: "МУЗЫКАНТ • ШАГ 4"
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+											className: "text-2xl font-black text-white uppercase mt-1 mb-2",
+											children: "Форматы и заведения"
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+											className: "text-xs text-slate-400 font-medium",
+											children: "Отметьте площадки, где вам комфортно выступать:"
+										})
+									]
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									className: "flex-1 overflow-y-auto my-scrollbar min-h-0 pr-1",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "flex flex-wrap gap-2 pb-2",
+										children: ALL_EVENT_TYPES.map((type) => {
+											const selected = (onboardingData.preferred_event_types || DEFAULT_EVENT_TYPES).includes(type);
+											return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+												type: "button",
+												onClick: () => toggleEventType(type),
+												className: `px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all border ${selected ? "bg-emerald-500 border-emerald-400 text-white shadow-lg shadow-emerald-500/20 scale-[1.02]" : "bg-white/5 border-white/10 text-slate-400 hover:border-emerald-500/40"}`,
+												children: [selected ? "✓ " : "+ ", type]
+											}, type);
+										})
+									})
+								})]
+							}),
+							currentStepOnboarding === 5 && (() => {
 								const valStr = String(onboardingData.experienceYears ?? "");
 								const isValidExperience = valStr !== "" && /^(0|[1-9]\d*)$/.test(valStr) && Number(valStr) <= 120;
 								const isInvalid = valStr !== "" && !isValidExperience;
@@ -20314,7 +20528,7 @@ function App() {
 									children: [
 										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 											className: "text-pink-500 text-[10px] tracking-[0.25em] font-black uppercase",
-											children: "МУЗЫКАНТ • ШАГ 4"
+											children: "МУЗЫКАНТ • ШАГ 5"
 										}),
 										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 											className: "text-2xl font-black text-white uppercase mt-1 mb-2",
@@ -20351,12 +20565,12 @@ function App() {
 									]
 								});
 							})(),
-							currentStepOnboarding === 5 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							currentStepOnboarding === 6 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								className: "w-full",
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "text-pink-500 text-[10px] tracking-[0.25em] font-black uppercase",
-										children: "МУЗЫКАНТ • ШАГ 5"
+										children: "МУЗЫКАНТ • ШАГ 6"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 										className: "text-2xl font-black text-white uppercase mt-1 mb-2",
@@ -20425,14 +20639,14 @@ function App() {
 									})
 								]
 							}),
-							currentStepOnboarding === 6 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							currentStepOnboarding === 7 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								className: "w-full flex flex-col h-full overflow-hidden",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 									className: "shrink-0 mb-4",
 									children: [
 										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 											className: "text-pink-500 text-[10px] tracking-[0.25em] font-black uppercase",
-											children: "МУЗЫКАНТ • ШАГ 6"
+											children: "МУЗЫКАНТ • ШАГ 7"
 										}),
 										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 											className: "text-2xl font-black text-white uppercase mt-1 mb-2",
@@ -20468,12 +20682,12 @@ function App() {
 									})
 								})]
 							}),
-							currentStepOnboarding === 7 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							currentStepOnboarding === 8 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								className: "w-full",
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "text-pink-500 text-[10px] tracking-[0.25em] font-black uppercase",
-										children: "МУЗЫКАНТ • ШАГ 7"
+										children: "МУЗЫКАНТ • ШАГ 8"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 										className: "text-2xl font-black text-white uppercase mt-1 mb-2",
@@ -20491,12 +20705,12 @@ function App() {
 									})
 								]
 							}),
-							role === "musician" && currentStepOnboarding === 7 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							role === "musician" && currentStepOnboarding === 8 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								className: "w-full",
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "text-pink-500 text-[10px] tracking-[0.25em] font-black uppercase",
-										children: "ФИНАЛ МУЗЫКАНТА"
+										children: "ФИНАЛЬНЫЙ ШАГ"
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 										className: "text-2xl font-black text-white uppercase mt-1 mb-2",
@@ -21188,7 +21402,7 @@ function App() {
 											children: "Роль:"
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 											className: "text-slate-200 font-bold",
-											children: role === "cafe" ? "☕ Заведение" : "🎸 Музыкант"
+											children: role === "cafe" ? "☕ Заведение" : role === "musician" ? "🎸 Музыкант" : role === "individual" ? "💐 Заказчик" : "—"
 										})]
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -21203,13 +21417,19 @@ function App() {
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 										className: "flex justify-between items-baseline text-sm",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										children: [role === "cafe" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 											className: "text-slate-500 font-semibold",
-											children: role === "cafe" ? "Адрес:" : "Жанры:"
+											children: "Адрес:"
 										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 											className: "text-slate-200 font-semibold text-right max-w-[60%] wrap-break-word",
-											children: role === "cafe" ? onboardingData?.address || user?.address || "—" : Array.isArray(onboardingData?.genres) && onboardingData.genres.length > 0 ? onboardingData.genres.join(", ") : Array.isArray(user?.genres) && user.genres.length > 0 ? user.genres.join(", ") : "—"
-										})]
+											children: onboardingData?.address || user?.address || "—"
+										})] }), role === "musician" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "text-slate-500 font-semibold",
+											children: "Жанры:"
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "text-slate-200 font-semibold text-right max-w-[60%] wrap-break-word",
+											children: Array.isArray(onboardingData?.genres) && onboardingData.genres.length > 0 ? onboardingData.genres.join(", ") : Array.isArray(user?.genres) && user.genres.length > 0 ? user.genres.join(", ") : "—"
+										})] })]
 									})
 								]
 							}),
@@ -21394,7 +21614,10 @@ function App() {
 									}, item.id);
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 									type: "button",
-									onClick: handleAddGigClick,
+									onClick: () => {
+										if (role == "cafe") handleAddGigClick();
+										if (role == "individual") handleAddIndividualGigClick();
+									},
 									className: "shrink-0 w-11 h-11 bg-pink-500 hover:bg-pink-600 text-white rounded-2xl flex items-center justify-center text-2xl font-black shadow-lg shadow-pink-500/30 transition-all active:scale-95",
 									title: "Создать поиск артиста",
 									children: "+"
@@ -21835,96 +22058,150 @@ function App() {
 				]
 			}),
 			" ",
-			(role === "cafe" || role === "musician") && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("footer", {
+			(role === "cafe" || role === "musician" || role === "individual") && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("footer", {
 				className: "bg-slate-900 border-t border-slate-800/80 px-4 py-3 flex justify-around items-center z-50 shrink-0 w-full overflow-x-hidden",
-				children: [role === "cafe" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						onClick: () => setActiveTab("gigs"),
-						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "gigs" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-xl",
-							children: "🎪"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-[10px] mt-1 font-bold tracking-wide",
-							children: "Выступления"
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						onClick: async () => {
-							if (musiciansList == null) {
-								setLoading(true);
-								const telegramInitData = window.Telegram?.WebApp?.initData || "";
-								const response2 = await fetch(`${hrefWebSite}api-zvuk/musicians`, {
-									method: "POST",
-									headers: {
-										"Content-Type": "application/json",
-										"Authorization": `Bearer ${telegramInitData}`
-									}
-								});
-								if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
-								setMusiciansList((await response2.json())?.musicians);
-							}
-							setActiveTab("musicians");
-							setLoading(false);
-						},
-						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "musicians" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-xl",
-							children: "🎸"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-[10px] mt-1 font-bold tracking-wide",
-							children: "Музыканты"
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						onClick: () => setActiveTab("profile"),
-						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "profile" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-xl",
-							children: "🏢"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-[10px] mt-1 font-bold tracking-wide",
-							children: "Профиль"
-						})]
-					})
-				] }), role === "musician" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						onClick: () => setActiveTab("requests"),
-						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "requests" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-xl",
-							children: "📅"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-[10px] mt-1 font-bold tracking-wide",
-							children: "Заявки"
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						onClick: () => {
-							setSelectedCafe(null);
-							setActiveTab("map");
-						},
-						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "map" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-xl",
-							children: "🗺️"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-[10px] mt-1 font-bold tracking-wide",
-							children: "Карта"
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						onClick: () => setActiveTab("profile"),
-						className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "profile" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-xl",
-							children: "👤"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "text-[10px] mt-1 font-bold tracking-wide",
-							children: "Профиль"
-						})]
-					})
-				] })]
+				children: [
+					role === "cafe" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: () => setActiveTab("gigs"),
+							className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "gigs" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-xl",
+								children: "🎪"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-[10px] mt-1 font-bold tracking-wide",
+								children: "Выступления"
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: async () => {
+								if (musiciansList == null) {
+									setLoading(true);
+									const telegramInitData = window.Telegram?.WebApp?.initData || "";
+									const response2 = await fetch(`${hrefWebSite}api-zvuk/musicians`, {
+										method: "POST",
+										headers: {
+											"Content-Type": "application/json",
+											"Authorization": `Bearer ${telegramInitData}`
+										}
+									});
+									if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
+									setMusiciansList((await response2.json())?.musicians);
+								}
+								setActiveTab("musicians");
+								setLoading(false);
+							},
+							className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "musicians" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-xl",
+								children: "🎸"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-[10px] mt-1 font-bold tracking-wide",
+								children: "Музыканты"
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: () => setActiveTab("profile"),
+							className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "profile" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-xl",
+								children: "🏢"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-[10px] mt-1 font-bold tracking-wide",
+								children: "Профиль"
+							})]
+						})
+					] }),
+					role === "individual" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: () => setActiveTab("gigs"),
+							className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "gigs" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-xl",
+								children: "🎪"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-[10px] mt-1 font-bold tracking-wide",
+								children: "Мероприятия"
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: async () => {
+								if (musiciansList == null) {
+									setLoading(true);
+									const telegramInitData = window.Telegram?.WebApp?.initData || "";
+									const response2 = await fetch(`${hrefWebSite}api-zvuk/musicians`, {
+										method: "POST",
+										headers: {
+											"Content-Type": "application/json",
+											"Authorization": `Bearer ${telegramInitData}`
+										}
+									});
+									if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
+									setMusiciansList((await response2.json())?.musicians);
+								}
+								setActiveTab("musicians");
+								setLoading(false);
+							},
+							className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "musicians" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-xl",
+								children: "🎸"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-[10px] mt-1 font-bold tracking-wide",
+								children: "Музыканты"
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: () => setActiveTab("profile"),
+							className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "profile" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-xl",
+								children: "🏢"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-[10px] mt-1 font-bold tracking-wide",
+								children: "Профиль"
+							})]
+						})
+					] }),
+					role === "musician" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: () => setActiveTab("requests"),
+							className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "requests" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-xl",
+								children: "📅"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-[10px] mt-1 font-bold tracking-wide",
+								children: "Заявки"
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: () => {
+								setSelectedCafe(null);
+								setActiveTab("map");
+							},
+							className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "map" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-xl",
+								children: "🗺️"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-[10px] mt-1 font-bold tracking-wide",
+								children: "Карта"
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							onClick: () => setActiveTab("profile"),
+							className: `flex flex-col items-center bg-transparent border-none transition-all ${activeTab === "profile" ? "text-pink-500 scale-105 font-bold" : "text-slate-500"}`,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-xl",
+								children: "👤"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "text-[10px] mt-1 font-bold tracking-wide",
+								children: "Профиль"
+							})]
+						})
+					] })
+				]
 			}),
 			showVerificationModal && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(VerificationModal, {
 				venueName: user.name || "вашего заведения",
@@ -22300,6 +22577,337 @@ function App() {
 						})
 					]
 				})
+			}),
+			showIndividualGigModal && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-md p-0 sm:p-4 animate-fadeIn",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "w-full max-w-lg bg-[#0f172a] border border-slate-700/80 rounded-t-4xl sm:rounded-3xl p-6 shadow-2xl flex flex-col gap-5 max-h-[90vh] overflow-y-auto no-scrollbar relative",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+							onClick: () => setShowIndividualGigModal(false),
+							className: "absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center font-bold",
+							children: "✕"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+							className: "text-xl font-black text-white uppercase tracking-wide border-b border-slate-800 pb-3",
+							children: "Свое мероприятие"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
+							onSubmit: handleIndividualGigSubmit,
+							className: "flex flex-col gap-4",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									className: "flex flex-wrap gap-1.5",
+									children: [
+										"Свадьба",
+										"Корпоратив",
+										"День рождения",
+										"Квартирник",
+										"Частная вечеринка",
+										"Другое"
+									].map((type) => {
+										const active = individualGigForm.eventTypes?.includes(type);
+										return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+											type: "button",
+											onClick: () => {
+												setIndividualGigForm((p) => {
+													const current = p.eventTypes || [];
+													const updated = current.includes(type) ? current.filter((t) => t !== type) : [...current, type];
+													return {
+														...p,
+														eventTypes: updated
+													};
+												});
+											},
+											className: `px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${active ? "bg-cyan-500 border-cyan-400 text-white shadow-lg shadow-cyan-500/30 scale-105" : "bg-slate-800/80 border-slate-700 text-slate-300 hover:border-cyan-500/50"}`,
+											children: [
+												type,
+												" ",
+												active && "✓"
+											]
+										}, type);
+									})
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "flex flex-col gap-2",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+										className: "text-xs font-black uppercase text-emerald-400 tracking-wider flex items-center gap-1.5",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "📍" }), " 2. Место проведения"]
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "w-full h-48 rounded-2xl overflow-hidden border border-slate-700/80 relative shadow-inner",
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LocationPickerMap, {
+											initialCoordinates: individualGigForm.coordinates,
+											onLocationSelect: (newCoords) => {
+												setIndividualGigForm((prev) => ({
+													...prev,
+													coordinates: newCoords
+												}));
+											}
+										})
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "flex flex-col gap-2",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+										className: "text-xs font-black uppercase text-pink-400 tracking-wider flex items-center gap-1.5",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "🔊" }), " 3. Укажите жанры"]
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "flex flex-wrap gap-1.5",
+										children: [
+											"Все",
+											"Рок",
+											"Поп",
+											"Джаз / Блюз",
+											"Реп / Хип-Хоп",
+											"Инди",
+											"Лаундж",
+											"Электроника",
+											"Акустика",
+											"Фанк",
+											"Метал",
+											"Блюз",
+											"Каверы",
+											"Классика",
+											"Фолк"
+										].map((genre) => {
+											const isAll = genre === "Все";
+											const active = isAll ? individualGigForm.genres.length === 0 : individualGigForm.genres.includes(genre);
+											return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+												type: "button",
+												onClick: () => {
+													setIndividualGigForm((p) => ({
+														...p,
+														genres: isAll ? [] : active ? p.genres.filter((g) => g !== genre) : [...p.genres, genre]
+													}));
+												},
+												className: `px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${active ? "bg-pink-500 border-pink-400 text-white shadow-lg shadow-pink-500/30 scale-105" : "bg-slate-800/80 border-slate-700 text-slate-300 hover:border-pink-500/50"}`,
+												children: [
+													genre,
+													" ",
+													active && "✓"
+												]
+											}, genre);
+										})
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "flex flex-col gap-2",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+										className: "text-xs font-black uppercase text-purple-400 tracking-wider flex items-center gap-1.5",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "🥁" }), " 4. Укажите инструменты"]
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "flex flex-wrap gap-1.5",
+										children: [
+											"Все",
+											"Вокал",
+											"Бэк-вокал",
+											"Экстрим-вокал",
+											"Битбокс",
+											"Цимбалы",
+											"Акустическая гитара",
+											"Электрогитара",
+											"Бас-гитара",
+											"Клавишные / Пианино",
+											"Синтезатор",
+											"Ударные",
+											"Кахон",
+											"Перкуссия",
+											"Саксофон",
+											"Скрипка",
+											"DJ-пульт",
+											"Укулеле",
+											"Виолончель",
+											"Контрабас",
+											"Труба",
+											"Тромбон",
+											"Флейта",
+											"Губная гармошка",
+											"Аккордеон",
+											"Баян",
+											"Джембе / Дарбука",
+											"Ханг / Глюкофон",
+											"Live Looping",
+											"Сэмплер / Drum Machine",
+											"Другое"
+										].map((inst) => {
+											const isAll = inst === "Все";
+											const active = isAll ? individualGigForm.instruments.length === 0 : individualGigForm.instruments.includes(inst);
+											return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+												type: "button",
+												onClick: () => {
+													setIndividualGigForm((p) => ({
+														...p,
+														instruments: isAll ? [] : active ? p.instruments.filter((i) => i !== inst) : [...p.instruments, inst]
+													}));
+												},
+												className: `px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${active ? "bg-purple-600 border-purple-400 text-white shadow-lg shadow-purple-600/30 scale-105" : "bg-slate-800/80 border-slate-700 text-slate-300 hover:border-purple-500/50"}`,
+												children: [
+													inst,
+													" ",
+													active && "✓"
+												]
+											}, inst);
+										})
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "flex flex-col gap-2",
+									children: [
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+											className: "text-xs font-black uppercase text-amber-400 tracking-wider flex items-center gap-1.5",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "⏰" }), " 5. Время, длительность и дата"]
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "grid grid-cols-3 gap-2",
+											children: [
+												/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+													className: "bg-slate-800/90 border border-slate-700 rounded-2xl p-2.5 flex flex-col items-center justify-between",
+													children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+														className: "text-[9px] uppercase font-bold text-slate-400 text-center",
+														children: "Время"
+													}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+														type: "time",
+														value: individualGigForm.time || "",
+														onChange: (e) => setIndividualGigForm({
+															...individualGigForm,
+															time: e.target.value
+														}),
+														className: "bg-transparent text-base font-black text-white outline-none text-center w-full mt-1"
+													})]
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+													className: "bg-slate-800/90 border border-slate-700 rounded-2xl p-2.5 flex flex-col items-center justify-between",
+													children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+														className: "text-[9px] uppercase font-bold text-slate-400 text-center",
+														children: "Длительность"
+													}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+														className: "flex items-center justify-between w-full mt-1",
+														children: [
+															/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+																type: "button",
+																onClick: () => {
+																	const current = individualGigForm.durationMinutes ?? 60;
+																	if (current > 15) setIndividualGigForm({
+																		...individualGigForm,
+																		durationMinutes: current - 15
+																	});
+																},
+																disabled: (individualGigForm.durationMinutes ?? 60) <= 15,
+																className: "text-slate-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none active:scale-90 transition-all font-black text-xs p-1",
+																children: "◀"
+															}),
+															/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+																className: "text-sm font-black text-white",
+																children: (() => {
+																	const mins = individualGigForm.durationMinutes ?? 60;
+																	const h = Math.floor(mins / 60);
+																	const m = mins % 60;
+																	return `${h}:${m === 0 ? "00" : m}`;
+																})()
+															}),
+															/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+																type: "button",
+																onClick: () => {
+																	const current = individualGigForm.durationMinutes ?? 60;
+																	setIndividualGigForm({
+																		...individualGigForm,
+																		durationMinutes: current + 15
+																	});
+																},
+																className: "text-slate-400 hover:text-white active:scale-90 transition-all font-black text-xs p-1",
+																children: "▶"
+															})
+														]
+													})]
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+													className: "bg-slate-800/90 border border-slate-700 rounded-2xl p-2.5 flex flex-col items-center justify-between",
+													children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+														className: "text-[9px] uppercase font-bold text-slate-400 text-center",
+														children: "Дата"
+													}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+														type: "date",
+														value: individualGigForm.date || "",
+														onChange: (e) => setIndividualGigForm({
+															...individualGigForm,
+															date: e.target.value
+														}),
+														className: "bg-transparent text-[11px] font-bold text-white outline-none text-center w-full mt-1"
+													})]
+												})
+											]
+										}),
+										individualGigForm.date && individualGigForm.time && !isIndividualGigTimeValid() && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+											className: "text-[11px] font-bold text-amber-400 text-center bg-amber-500/10 border border-amber-500/20 py-1.5 px-3 rounded-xl mt-1",
+											children: "⚠️ До начала должно оставаться минимум 4 часа!"
+										})
+									]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "flex flex-col gap-2",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "flex items-center justify-between",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+											className: "text-xs font-black uppercase text-purple-400 tracking-wider flex items-center gap-1.5",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "📝" }), " 6. Описание для артистов"]
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+											className: `text-[10px] font-bold ${(individualGigForm.title || "").length >= 40 ? "text-pink-400" : "text-slate-400"}`,
+											children: [(individualGigForm.title || "").length, "/40"]
+										})]
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										className: "bg-slate-800/90 border border-slate-700 rounded-2xl p-3",
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", {
+											value: individualGigForm.title || "",
+											onChange: (e) => setIndividualGigForm({
+												...individualGigForm,
+												title: e.target.value
+											}),
+											placeholder: "Коротко: формат, репертуар, пожелания",
+											maxLength: 40,
+											rows: 2,
+											className: "bg-transparent text-sm font-medium text-white placeholder-slate-500 outline-none w-full resize-none no-scrollbar"
+										})
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "flex flex-col gap-2",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+										className: "text-xs font-black uppercase text-emerald-400 tracking-wider flex items-center gap-1.5",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "💰" }), " 7. Гонорар"]
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "bg-slate-800/90 border border-slate-700 rounded-2xl p-3 flex items-center justify-between",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+											type: "text",
+											inputMode: "numeric",
+											value: individualGigForm.price || "",
+											onChange: (e) => {
+												const cleanValue = e.target.value.replace(/\D/g, "").replace(/^0+/, "");
+												if (cleanValue.length <= 6) setIndividualGigForm({
+													...individualGigForm,
+													price: cleanValue
+												});
+											},
+											placeholder: "350",
+											className: "bg-transparent text-2xl font-black text-white outline-none w-full"
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "text-lg font-black text-emerald-400 shrink-0",
+											children: "BYN"
+										})]
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									type: "submit",
+									disabled: isSubmittingIndividualGig || !individualGigForm.eventTypes || individualGigForm.eventTypes.length === 0 || !individualGigForm.title?.trim() || individualGigForm.title.trim().length > 40 || !individualGigForm.price || Number(individualGigForm.price) <= 0 || !isIndividualGigTimeValid(),
+									className: "w-full py-4 mt-2 bg-linear-to-r from-pink-500 via-purple-600 to-pink-500 hover:opacity-95 active:scale-98 text-white font-black text-xs sm:text-sm uppercase tracking-wider rounded-2xl shadow-xl shadow-pink-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none disabled:shadow-none",
+									children: isSubmittingIndividualGig ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "animate-pulse",
+										children: "Запуск..."
+									}) : !individualGigForm.eventTypes || individualGigForm.eventTypes.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "⚠️ Выберите формат мероприятия" }) : !individualGigForm.date || !individualGigForm.time ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "⚠️ Укажите дату и время" }) : !isIndividualGigTimeValid() ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "⚠️ Минимум за 4 часа до начала" }) : !individualGigForm.title?.trim() ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "⚠️ Добавьте описание" }) : !individualGigForm.price || Number(individualGigForm.price) <= 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "⚠️ Укажите гонорар" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "🚀" }), " ЗАПУСТИТЬ ПОИСК!"] })
+								})
+							]
+						})
+					]
+				})
 			})
 		]
 	});
@@ -22309,4 +22917,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-kLobFYBp.js.map
+//# sourceMappingURL=index-DfuxnGKJ.js.map
