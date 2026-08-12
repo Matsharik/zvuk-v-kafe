@@ -19629,7 +19629,8 @@ function App() {
 		time: "19:00",
 		durationMinutes: 60,
 		price: 350,
-		title: ""
+		title: "",
+		address: ""
 	});
 	const isIndividualGigTimeValid = () => {
 		if (!individualGigForm.date || !individualGigForm.time) return false;
@@ -19714,6 +19715,7 @@ function App() {
 			const userTimeZone = Intl.DateTimeFormat?.().resolvedOptions?.().timeZone || "Europe/Minsk";
 			const payload = {
 				event_types: individualGigForm.eventTypes,
+				address: "",
 				lat: individualGigForm.coordinates[0],
 				lng: individualGigForm.coordinates[1],
 				genres: individualGigForm.genres,
@@ -22630,21 +22632,34 @@ function App() {
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 									className: "flex flex-col gap-2",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
-										className: "text-xs font-black uppercase text-emerald-400 tracking-wider flex items-center gap-1.5",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "📍" }), " 2. Место проведения"]
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-										className: "w-full h-48 rounded-2xl overflow-hidden border border-slate-700/80 relative shadow-inner",
-										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LocationPickerMap, {
-											initialCoordinates: individualGigForm.coordinates,
-											onLocationSelect: (newCoords) => {
-												setIndividualGigForm((prev) => ({
-													...prev,
-													coordinates: newCoords
-												}));
-											}
+									children: [
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+											className: "text-xs font-black uppercase text-emerald-400 tracking-wider flex items-center gap-1.5",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "📍" }), " 2. Место проведения"]
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+											type: "text",
+											placeholder: "г. Минск, ул. ...",
+											value: individualGigForm.address || "",
+											onChange: (e) => setIndividualGigForm((prev) => ({
+												...prev,
+												address: e.target.value
+											})),
+											className: "w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white placeholder:text-slate-500 text-xs sm:text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+											className: "w-full h-48 rounded-2xl overflow-hidden border border-slate-700/80 relative shadow-inner",
+											children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LocationPickerMap, {
+												initialCoordinates: individualGigForm.coordinates,
+												onLocationSelect: (newCoords) => {
+													setIndividualGigForm((prev) => ({
+														...prev,
+														coordinates: newCoords
+													}));
+												}
+											})
 										})
-									})]
+									]
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 									className: "flex flex-col gap-2",
@@ -22897,12 +22912,12 @@ function App() {
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 									type: "submit",
-									disabled: isSubmittingIndividualGig || !individualGigForm.eventTypes || individualGigForm.eventTypes.length === 0 || !individualGigForm.title?.trim() || individualGigForm.title.trim().length > 40 || !individualGigForm.price || Number(individualGigForm.price) <= 0 || !isIndividualGigTimeValid(),
+									disabled: isSubmittingIndividualGig || !individualGigForm.eventTypes || individualGigForm.eventTypes.length === 0 || !individualGigForm.address?.trim() || !individualGigForm.title?.trim() || individualGigForm.title.trim().length > 40 || !individualGigForm.price || Number(individualGigForm.price) <= 0 || !isIndividualGigTimeValid(),
 									className: "w-full py-4 mt-2 bg-linear-to-r from-pink-500 via-purple-600 to-pink-500 hover:opacity-95 active:scale-98 text-white font-black text-xs sm:text-sm uppercase tracking-wider rounded-2xl shadow-xl shadow-pink-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none disabled:shadow-none",
 									children: isSubmittingIndividualGig ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "animate-pulse",
 										children: "Запуск..."
-									}) : !individualGigForm.eventTypes || individualGigForm.eventTypes.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "⚠️ Выберите формат мероприятия" }) : !individualGigForm.date || !individualGigForm.time ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "⚠️ Укажите дату и время" }) : !isIndividualGigTimeValid() ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "⚠️ Минимум за 4 часа до начала" }) : !individualGigForm.title?.trim() ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "⚠️ Добавьте описание" }) : !individualGigForm.price || Number(individualGigForm.price) <= 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "⚠️ Укажите гонорар" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "🚀" }), " ЗАПУСТИТЬ ПОИСК!"] })
+									}) : !individualGigForm.eventTypes || individualGigForm.eventTypes.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "⚠️ Выберите формат мероприятия" }) : !individualGigForm.date || !individualGigForm.time ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "⚠️ Укажите дату и время" }) : !isIndividualGigTimeValid() ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "⚠️ Минимум за 4 часа до начала" }) : !individualGigForm.address?.trim() ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "⚠️ Укажите адрес проведения" }) : !individualGigForm.title?.trim() ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "⚠️ Добавьте описание" }) : !individualGigForm.price || Number(individualGigForm.price) <= 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "⚠️ Укажите гонорар" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "🚀" }), " ЗАПУСТИТЬ ПОИСК!"] })
 								})
 							]
 						})
@@ -22917,4 +22932,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-DfuxnGKJ.js.map
+//# sourceMappingURL=index-CYiZ_RPZ.js.map

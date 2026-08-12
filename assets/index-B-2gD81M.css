@@ -3847,7 +3847,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
       --tw-brightness: brightness(110%);
       filter: var(--tw-blur, ) var(--tw-brightness, ) var(--tw-contrast, ) var(--tw-grayscale, ) var(--tw-hue-rotate, ) var(--tw-invert, ) var(--tw-saturate, ) var(--tw-sepia, ) var(--tw-drop-shadow, );
     }
+  }
 
+  .placeholder\:text-slate-500::placeholder {
+    color: var(--color-slate-500);
+  }
+
+  @media (hover: hover) {
     .hover\:scale-105:hover {
       --tw-scale-x: 105%;
       --tw-scale-y: 105%;
@@ -4097,6 +4103,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
     .hover\:opacity-95:hover {
       opacity: .95;
     }
+  }
+
+  .focus\:border-emerald-500:focus {
+    border-color: var(--color-emerald-500);
   }
 
   .focus\:border-indigo-500:focus {
