@@ -19610,6 +19610,8 @@ function App() {
 	});
 	const [showCreateGigModal, setShowCreateGigModal] = (0, import_react.useState)(false);
 	const [isSubmittingGig, setIsSubmittingGig] = (0, import_react.useState)(false);
+	const [showIndividualGigModal, setShowIndividualGigModal] = (0, import_react.useState)(false);
+	const [isSubmittingIndividualGig, setIsSubmittingIndividualGig] = (0, import_react.useState)(false);
 	const [gigForm, setGigForm] = (0, import_react.useState)({
 		genres: [],
 		instruments: [],
@@ -19618,8 +19620,6 @@ function App() {
 		durationMinutes: 60,
 		price: 350
 	});
-	const [showCreateIndividualGigModal, setShowCreateIndividualGigModal] = (0, import_react.useState)(false);
-	const [isSubmittingIndividualGig, setIsSubmittingIndividualGig] = (0, import_react.useState)(false);
 	const [individualGigForm, setIndividualGigForm] = (0, import_react.useState)({
 		eventTypes: [],
 		coordinates: [53.9006, 27.559],
@@ -22932,4 +22932,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-CYiZ_RPZ.js.map
+//# sourceMappingURL=index-CqPOSn71.js.map
