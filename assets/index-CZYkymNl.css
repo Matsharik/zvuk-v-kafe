@@ -1432,10 +1432,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
     height: calc(var(--spacing) * 16);
   }
 
-  .h-48 {
-    height: calc(var(--spacing) * 48);
-  }
-
   .h-60 {
     height: calc(var(--spacing) * 60);
   }
