@@ -19411,31 +19411,6 @@ function App() {
 			console.error("Ошибка загрузки гигов:", err);
 		}
 	};
-	const fetchMyIndividualGigs = async (selectNewest = false) => {
-		try {
-			const telegramInitData = window.Telegram?.WebApp?.initData || "";
-			console.log("fair Intl.DateTimeFormat().resolvedOptions().timeZone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
-			const userTimeZone = Intl.DateTimeFormat?.().resolvedOptions?.().timeZone || "Europe/Minsk";
-			const response = await fetch(`${hrefWebSite}api-zvuk/my-individualgigs`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					"Authorization": `Bearer ${telegramInitData}`
-				},
-				body: JSON.stringify({ timeZone: userTimeZone })
-			});
-			if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-			const fetchedGigs = (await response.json())?.gigs || [];
-			console.log("setindividualgigs:", fetchedGigs);
-			setIndividualGigs(fetchedGigs);
-			if (fetchedGigs.length > 0) {
-				if (selectNewest) setSelectedIndividualGigId(fetchedGigs[0].id);
-				else if (!selectedGigId) setSelectedIndividualGigId(fetchedGigs[0].id);
-			} else setSelectedIndividualGigId(null);
-		} catch (err) {
-			console.error("Ошибка загрузки гигов:", err);
-		}
-	};
 	const [musiciansList, setMusiciansList] = (0, import_react.useState)(null);
 	const [cafes, setCafes] = (0, import_react.useState)(null);
 	const [cafesAfisha, setCafesAfisha] = (0, import_react.useState)(null);
@@ -19643,7 +19618,7 @@ function App() {
 		else setShowCreateGigModal(true);
 	};
 	const handleAddIndividualGigClick = () => {
-		setShowCreateIndividualGigModal(true);
+		setShowIndividualGigModal(true);
 	};
 	const handleCreateGigSubmit = async (e) => {
 		if (e) e.preventDefault();
@@ -20292,7 +20267,7 @@ function App() {
 											onClick: async () => {
 												setCurrentStepOnboarding(1);
 												await initUserRole("individual");
-												await fetchMyIndividualGigs();
+												await fetchMyGigs();
 												setActiveTab("gigs");
 											},
 											disabled: false,
@@ -22916,4 +22891,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-gw4bhPSN.js.map
+//# sourceMappingURL=index-Yb2KyaWq.js.map
