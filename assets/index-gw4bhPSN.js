@@ -20290,21 +20290,8 @@ function App() {
 										}),
 										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 											onClick: async () => {
-												await initUserRole("individual");
-												const userTimeZone = Intl.DateTimeFormat?.().resolvedOptions?.().timeZone || "Europe/Minsk";
-												const response2 = await fetch(`${hrefWebSite}api-zvuk/map-cafes-afisha`, {
-													method: "POST",
-													headers: {
-														"Content-Type": "application/json",
-														"Authorization": `Bearer ${telegramInitData}`
-													},
-													body: JSON.stringify({ timeZone: userTimeZone })
-												});
-												if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
-												const data2 = await response2.json();
-												console.log("data2?.cafesAfisha", data2?.cafesAfisha);
-												setCafesAfisha(data2?.cafesAfisha);
 												setCurrentStepOnboarding(1);
+												await initUserRole("individual");
 												await fetchMyIndividualGigs();
 												setActiveTab("gigs");
 											},
@@ -20329,6 +20316,7 @@ function App() {
 											onClick: async () => {
 												await initUserRole("visitor");
 												const userTimeZone = Intl.DateTimeFormat?.().resolvedOptions?.().timeZone || "Europe/Minsk";
+												const telegramInitData = window.Telegram?.WebApp?.initData || "";
 												const response2 = await fetch(`${hrefWebSite}api-zvuk/map-cafes-afisha`, {
 													method: "POST",
 													headers: {
@@ -22928,4 +22916,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-D1A3nOmB.js.map
+//# sourceMappingURL=index-gw4bhPSN.js.map
