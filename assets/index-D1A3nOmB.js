@@ -20308,13 +20308,9 @@ function App() {
 												await fetchMyIndividualGigs();
 												setActiveTab("gigs");
 											},
-											disabled: true,
+											disabled: false,
 											className: `liquid-card p-5 rounded-3xl text-left transition-all ${role === "individual" ? "border-indigo-500 bg-indigo-500/10" : ""}`,
 											children: [
-												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-													className: "absolute top-4 right-4 bg-slate-800 text-slate-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider border border-slate-700",
-													children: "Скоро"
-												}),
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 													className: "text-3xl mb-2",
 													children: "💐"
@@ -20502,7 +20498,7 @@ function App() {
 										}),
 										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 											className: "text-xs text-slate-400 font-medium",
-											children: "Отметьте площадки, где вам комфортно выступать:"
+											children: "Отметьте площадки, где желаете выступать:"
 										})
 									]
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
@@ -22932,4 +22928,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-CqPOSn71.js.map
+//# sourceMappingURL=index-D1A3nOmB.js.map
