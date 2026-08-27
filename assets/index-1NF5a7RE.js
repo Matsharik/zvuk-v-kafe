@@ -19933,30 +19933,40 @@ function App() {
 							const startParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
 							if (startParam && startParam.startsWith("order_")) {
 								const orderId = Number(startParam.replace("order_", ""));
-								if (orderId) {
-									await handleApplyToOrder(orderId, notifyWell = true);
+								if (orderId && !isNaN(orderId)) try {
+									await handleApplyToOrder(orderId, true);
+								} catch (err) {
+									console.error("Ошибка при автоматическом отклике:", err);
+								} finally {
 									setIsLoadingApps(false);
 									setLoading(false);
-								} else {
+								}
+								else {
 									console.log("fair Intl.DateTimeFormat().resolvedOptions().timeZone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
-									const response3 = await fetch(`${hrefWebSite}api-zvuk/musician-applications`, {
-										method: "POST",
-										headers: {
-											"Content-Type": "application/json",
-											"Authorization": `Bearer ${telegramInitData}`
-										},
-										body: JSON.stringify({ timeZone: userTimeZone })
-									});
-									if (!response3.ok) throw new Error(`HTTP error! status: ${response3.status}`);
-									const data3 = await response3.json();
-									console.log("data3?.applications", data3?.applications);
-									if (data3.success) {
-										setMusicianApplications(data3.applications || []);
-										if (data3.applications?.length > 0) setSelectedAppId((prev) => prev ?? data3.applications[0].id);
+									try {
+										const response3 = await fetch(`${hrefWebSite}api-zvuk/musician-applications`, {
+											method: "POST",
+											headers: {
+												"Content-Type": "application/json",
+												"Authorization": `Bearer ${telegramInitData}`
+											},
+											body: JSON.stringify({ timeZone: userTimeZone })
+										});
+										if (!response3.ok) throw new Error(`HTTP error! status: ${response3.status}`);
+										const data3 = await response3.json();
+										console.log("data3?.applications", data3?.applications);
+										if (data3.success) {
+											setMusicianApplications(data3.applications || []);
+											if (data3.applications?.length > 0) setSelectedAppId((prev) => prev ?? data3.applications[0].id);
+										}
+									} catch (err) {
+										console.error("Ошибка при получении заявок:", err);
+										throw err;
+									} finally {
+										setIsLoadingApps(false);
+										setActiveTab("requests");
+										setLoading(false);
 									}
-									setIsLoadingApps(false);
-									setActiveTab("requests");
-									setLoading(false);
 								}
 							} else {
 								console.log("fair Intl.DateTimeFormat().resolvedOptions().timeZone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -22902,4 +22912,4 @@ function App() {
 import_client.createRoot(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
 
-//# sourceMappingURL=index-vASc2_qT.js.map
+//# sourceMappingURL=index-1NF5a7RE.js.map
